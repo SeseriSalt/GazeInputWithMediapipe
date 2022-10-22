@@ -14,21 +14,18 @@
 		5BACC0E728F6767F00B36EBC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5BACC0E528F6767F00B36EBC /* Main.storyboard */; };
 		5BACC0E928F6768200B36EBC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5BACC0E828F6768200B36EBC /* Assets.xcassets */; };
 		5BACC0EC28F6768200B36EBC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5BACC0EA28F6768200B36EBC /* LaunchScreen.storyboard */; };
-		5BB5497C29044A4E00A3827C /* SYFaceMesh.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B77C397290440AE00C11940 /* SYFaceMesh.framework */; };
-		5BB5497D29044A4E00A3827C /* SYFaceMesh.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5B77C397290440AE00C11940 /* SYFaceMesh.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		5BB5498029044F5300A3827C /* HandTracker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB5497F29044F5300A3827C /* HandTracker.framework */; };
-		5BB5498129044F5300A3827C /* HandTracker.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB5497F29044F5300A3827C /* HandTracker.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5BB54986290457C500A3827C /* SYFaceMesh.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB54983290457C500A3827C /* SYFaceMesh.framework */; };
+		5BB54987290457C500A3827C /* SYFaceMesh.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB54983290457C500A3827C /* SYFaceMesh.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		5BB5497E29044A4E00A3827C /* Embed Frameworks */ = {
+		5BB54988290457C500A3827C /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				5BB5498129044F5300A3827C /* HandTracker.framework in Embed Frameworks */,
-				5BB5497D29044A4E00A3827C /* SYFaceMesh.framework in Embed Frameworks */,
+				5BB54987290457C500A3827C /* SYFaceMesh.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -37,7 +34,6 @@
 
 /* Begin PBXFileReference section */
 		5B0A40C42904328E0060EB7F /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
-		5B77C397290440AE00C11940 /* SYFaceMesh.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SYFaceMesh.framework; path = ../../../Desktop/SYFaceMesh.framework; sourceTree = "<group>"; };
 		5B77C399290441F200C11940 /* IrisEyeGlance-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "IrisEyeGlance-Bridging-Header.h"; sourceTree = "<group>"; };
 		5BACC0DC28F6767F00B36EBC /* IrisEyeGlance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IrisEyeGlance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BACC0DF28F6767F00B36EBC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -47,7 +43,7 @@
 		5BACC0E828F6768200B36EBC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5BACC0EB28F6768200B36EBC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5BACC0ED28F6768200B36EBC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5BB5497F29044F5300A3827C /* HandTracker.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HandTracker.framework; path = "../../../Downloads/HandTracker-master/Example/Carthage/Build/iOS/HandTracker.framework"; sourceTree = "<group>"; };
+		5BB54983290457C500A3827C /* SYFaceMesh.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SYFaceMesh.framework; path = sources/SYFaceMesh.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,8 +51,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5BB5498029044F5300A3827C /* HandTracker.framework in Frameworks */,
-				5BB5497C29044A4E00A3827C /* SYFaceMesh.framework in Frameworks */,
+				5BB54986290457C500A3827C /* SYFaceMesh.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,8 +61,7 @@
 		5B77C396290440AE00C11940 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				5BB5497F29044F5300A3827C /* HandTracker.framework */,
-				5B77C397290440AE00C11940 /* SYFaceMesh.framework */,
+				5BB54983290457C500A3827C /* SYFaceMesh.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -95,12 +89,12 @@
 				5BACC0DF28F6767F00B36EBC /* AppDelegate.swift */,
 				5BACC0E128F6767F00B36EBC /* SceneDelegate.swift */,
 				5BACC0E328F6767F00B36EBC /* ViewController.swift */,
-				5B77C399290441F200C11940 /* IrisEyeGlance-Bridging-Header.h */,
 				5B0A40C42904328E0060EB7F /* Camera.swift */,
 				5BACC0E528F6767F00B36EBC /* Main.storyboard */,
+				5BACC0ED28F6768200B36EBC /* Info.plist */,
+				5B77C399290441F200C11940 /* IrisEyeGlance-Bridging-Header.h */,
 				5BACC0E828F6768200B36EBC /* Assets.xcassets */,
 				5BACC0EA28F6768200B36EBC /* LaunchScreen.storyboard */,
-				5BACC0ED28F6768200B36EBC /* Info.plist */,
 			);
 			path = IrisEyeGlance;
 			sourceTree = "<group>";
@@ -115,7 +109,7 @@
 				5BACC0D828F6767F00B36EBC /* Sources */,
 				5BACC0D928F6767F00B36EBC /* Frameworks */,
 				5BACC0DA28F6767F00B36EBC /* Resources */,
-				5BB5497E29044A4E00A3827C /* Embed Frameworks */,
+				5BB54988290457C500A3827C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -323,19 +317,30 @@
 		5BACC0F128F6768200B36EBC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9MC7A3S99P;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/sources",
+				);
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/sources",
+				);
 				INFOPLIST_FILE = IrisEyeGlance/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = armv7;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -347,27 +352,39 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "IrisEyeGlance/IrisEyeGlance-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
 		5BACC0F228F6768200B36EBC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9MC7A3S99P;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/sources",
+				);
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/sources",
+				);
 				INFOPLIST_FILE = IrisEyeGlance/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = armv7;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -379,8 +396,9 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "IrisEyeGlance/IrisEyeGlance-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
