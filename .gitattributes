@@ -1,0 +1,2 @@
+SYIris filter=lfs diff=lfs merge=lfs -text
+SYFaceMesh filter=lfs diff=lfs merge=lfs -text
