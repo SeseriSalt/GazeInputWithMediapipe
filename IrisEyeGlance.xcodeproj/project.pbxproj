@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5B827BA0290C511C0091E06C /* Depth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B827B9F290C511C0091E06C /* Depth.swift */; };
+		5B827BA0290C511C0091E06C /* LengthAndDepth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B827B9F290C511C0091E06C /* LengthAndDepth.swift */; };
 		5BACC0E028F6767F00B36EBC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BACC0DF28F6767F00B36EBC /* AppDelegate.swift */; };
 		5BACC0E228F6767F00B36EBC /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BACC0E128F6767F00B36EBC /* SceneDelegate.swift */; };
 		5BACC0E428F6767F00B36EBC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BACC0E328F6767F00B36EBC /* ViewController.swift */; };
@@ -34,7 +34,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		5B827B9F290C511C0091E06C /* Depth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Depth.swift; sourceTree = "<group>"; };
+		5B827B9F290C511C0091E06C /* LengthAndDepth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LengthAndDepth.swift; sourceTree = "<group>"; };
 		5BACC0DC28F6767F00B36EBC /* IrisEyeGlance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IrisEyeGlance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BACC0DF28F6767F00B36EBC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5BACC0E128F6767F00B36EBC /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -83,7 +83,7 @@
 				5BACC0DF28F6767F00B36EBC /* AppDelegate.swift */,
 				5BACC0E128F6767F00B36EBC /* SceneDelegate.swift */,
 				5BACC0E328F6767F00B36EBC /* ViewController.swift */,
-				5B827B9F290C511C0091E06C /* Depth.swift */,
+				5B827B9F290C511C0091E06C /* LengthAndDepth.swift */,
 				5BF9DA9629049F9500F7ED35 /* Camera.swift */,
 				5BACC0E528F6767F00B36EBC /* Main.storyboard */,
 				5BACC0E828F6768200B36EBC /* Assets.xcassets */,
@@ -178,7 +178,7 @@
 				5BACC0E428F6767F00B36EBC /* ViewController.swift in Sources */,
 				5BACC0E028F6767F00B36EBC /* AppDelegate.swift in Sources */,
 				5BACC0E228F6767F00B36EBC /* SceneDelegate.swift in Sources */,
-				5B827BA0290C511C0091E06C /* Depth.swift in Sources */,
+				5B827BA0290C511C0091E06C /* LengthAndDepth.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

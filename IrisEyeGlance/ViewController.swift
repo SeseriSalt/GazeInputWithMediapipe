@@ -15,6 +15,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     @IBOutlet weak var label: UILabel!
     @IBOutlet weak var leftLavel: UILabel!
     @IBOutlet weak var rightLabel: UILabel!
+    @IBOutlet weak var winkLabel: UILabel!
     
     let camera = Camera()
     let tracker: SYIris = SYIris()!
@@ -23,6 +24,23 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     public let WIDTH: Float = 1080.0
     public let HEIGHT: Float = 1920.0
     public var frameNum: Int = 0
+    
+    var leftEyelidHeight: Float = 0.0
+    var rightEyelidHeight: Float = 0.0
+    var leftEyelidRatio: Float = 0.0
+    var rightEyelidRatio: Float = 0.0
+    var lrRatio: Float = 0.0
+    var leftPrev: Float = -10000.0
+    var rightPrev: Float = -10000.0
+    var lrDiff: Float = 0.0
+    
+//    public let ikichiWink: Float = 0.6
+    var winkFlag = 0
+    var maxDiff: Float = 0.0
+    var peakFrameNum = 0
+    var distFrameNum = 0
+    var brink = 0
+    var brinkFrameNum = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,10 +63,19 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     
     func irisTracker(_ irisTracker: SYIris!, didOutputLandmarks landmarks: [Landmark]!) {
         var landmarkAll : [[Float]] = []
+        // matplotlibでのランドマーク位置描画用配列
+//        var xPoints: [Float] = []
+//        var yPoints: [Float] = []
         if let unwrapped = landmarks {
             for (point) in unwrapped {
                 landmarkAll.append([point.x, point.y, point.z])
+//                xPoints.append(point.x * WIDTH)
+//                yPoints.append(point.y * HEIGHT)
             }
+//            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+//            print(xPoints)
+//            print("?????????????????????????????????????????????")
+//            print(yPoints)
             let leftEyeLandmark = [
                 landmarkAll[468],
                 landmarkAll[469],
@@ -64,7 +91,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 landmarkAll[477],
             ]
             
-            //Depthの計算
+            // Depthの計算・表示
             let leftIrisSize = caluclateIrisDiamater(landmark: leftEyeLandmark, imageSize: [WIDTH, HEIGHT])
             let rightIrisSize = caluclateIrisDiamater(landmark: rightEyeLandmark, imageSize: [WIDTH, HEIGHT])
             
@@ -79,6 +106,84 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 self.rightLabel.text = "\(rightDepth)"
             }
             
+        // winkの判別
+            // 瞼の高さ
+            leftEyelidHeight = getLandmerkLength(point0: landmarkAll[159], point1: landmarkAll[145], imageSize: [WIDTH, HEIGHT])
+            rightEyelidHeight = getLandmerkLength(point0: landmarkAll[386], point1: landmarkAll[374], imageSize: [WIDTH, HEIGHT])
+            
+            // 1フレーム前の瞼の高さとの変化量
+            leftEyelidRatio = leftEyelidHeight / leftPrev
+            rightEyelidRatio = rightEyelidHeight / rightPrev
+            
+            // 左右の差分の絶対値
+            lrDiff = abs(leftEyelidRatio - rightEyelidRatio)
+            
+            // 波形の出力
+            print("\(frameNum), \(leftEyelidHeight), \(rightEyelidHeight), \(leftEyelidRatio), \(rightEyelidRatio), \(lrDiff)")
+            
+    
+            // 瞬き回避
+            if ((leftEyelidHeight + rightEyelidHeight) / 2 < 0.5 ) {
+                brinkFrameNum = frameNum
+            }
+            // 判別開始
+            let WINK_IKITCH: Float = 0.12
+            if (winkFlag == 0 && lrDiff > WINK_IKITCH && frameNum > 15 && frameNum - distFrameNum > 6 && frameNum - brinkFrameNum > 6) {
+                winkFlag = 1
+                maxDiff = lrDiff
+                peakFrameNum = frameNum   // 現在使っていない
+//                print("first!!!!!!!!!!!!!!!!!!!!!")
+            }
+            else if (winkFlag == 1 && lrDiff > maxDiff) {
+                maxDiff = lrDiff
+                peakFrameNum = frameNum
+//                print("update!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            }
+            else if (winkFlag == 1 && lrDiff < WINK_IKITCH) {
+                winkFlag = 2
+//                print("flag = 2!!!!!!!!!!!!!!!!!!!")
+            }
+            else if (winkFlag == 2 && lrDiff > WINK_IKITCH) {
+                winkFlag = 3
+//                print("flag = 3!!!!!!!!!!!!!!!!!!!")
+            }
+            else if (winkFlag == 3 && lrDiff < WINK_IKITCH) {
+                winkFlag = 4
+//                print("flag = 4!!!!!!!!!!!!!!!!!!!")
+            }
+            
+            // 出力
+            if (winkFlag == 4) {
+//                print("wink!!!!!!!!!!!!!!!!!!!!!!!")
+                winkFlag = 0
+                peakFrameNum = 0
+                distFrameNum = frameNum
+            }
+            if  (frameNum - distFrameNum < 10) {
+                DispatchQueue.main.async {
+                    self.winkLabel.text = "Wink!!"
+                }
+            }
+            else if (frameNum - brinkFrameNum < 10) {
+                DispatchQueue.main.async {
+                    self.winkLabel.text = "Brink."
+                }
+            }
+            else {
+                DispatchQueue.main.async {
+                    self.winkLabel.text = "No Input"
+                }
+            }
+            
+            // winkに失敗した時の初期化
+            if (winkFlag != 0 && frameNum - peakFrameNum > 11) {
+                winkFlag = 0
+                peakFrameNum = 0
+//                print("reset!!!!!!!!!!!!!!!!!!!")
+            }
+            
+            leftPrev = leftEyelidHeight
+            rightPrev = rightEyelidHeight
         }
     }
     
