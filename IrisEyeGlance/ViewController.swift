@@ -37,6 +37,13 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     var lrDiff: Float = 0.0
     
 //    public let ikichiWink: Float = 0.6
+    var determinedIkichiMax: Float = 0.0
+    var determinedIkichiMin: Float = 0.0
+    var determinedIkichBrink: Float = 0.0
+    var winkIkichiMaxNext: Float = 0.0
+    var winkIkichiMinNext: Float = 0.0
+    var brinkIkichNext: Float = 0.0
+    
     var winkFlag = 0
     var maxDiff: Float = 0.0
     var minDiff: Float = 0.0
@@ -46,10 +53,12 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     var firstPoint = 0
     var labelFlag = 0
     var distFrameNum = 0
-    var brink = 0
+    var brinkFlag = 0
     var brinkFrameNum = 0
     var leftDepthPrev: Float = 0.0
     var rightDepthPrev: Float = 0.0
+    var depthAll: [[Float]] = []
+    var defDepth: Float = 0.0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -133,84 +142,96 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             // 左右の高さの差分
             lrDiff = leftEyelidDiff - rightEyelidDiff
             
-    
-            // 瞬き回避
-            let WINK_IKITCH_MIN: Float = -8.0
-            let WINK_IKITCH_MAX: Float = 8.0
-            let BRINK_IKICHI: Float = -8.0
+            // 1フレーム前の距離との差分
+            let leftDepthDiff = leftDepth_mm - leftDepthPrev
+            let rightDepthDiff = rightDepth_mm - rightDepthPrev
             
-            if (frameNum - brinkFrameNum > 6 && leftEyelidDiff < BRINK_IKICHI && rightEyelidDiff < BRINK_IKICHI ) {
-                brink = 1
-                brinkFrameNum = frameNum
-//                print("brink ???????????????????")
+            // 距離の平均値
+            let lrDepthVer: Float = (leftDepth_mm + rightDepth_mm) / 2.0
+            
+            // 1フレーム前の距離との差分の平均値（今のとこ使ってない）
+            let lrDepthDiff: Float = (leftDepthDiff + rightDepthDiff) / 2.0
+            
+            depthAll.append([lrDepthVer, lrDepthDiff])
+        
+            // 5フレーム前のdepthの取得
+            if depthAll.count == 5 {
+                defDepth = depthAll.last![0]
+                depthAll.removeFirst()
             }
-            // 判別開始 左目
+            
+            // 距離から次のフレームの閾値の導出
+            winkIkichiMaxNext = -0.0141 * defDepth + 10.6
+            winkIkichiMinNext = -winkIkichiMaxNext
+            brinkIkichNext = winkIkichiMinNext - 0.5
+            
+            // 判別に用いる閾値の決定
+            let WINK_IKITCH_MAX: Float = determinedIkichiMax
+            let WINK_IKITCH_MIN: Float = determinedIkichiMin
+            let BRINK_IKICHI: Float = determinedIkichBrink
+//            print("\(frameNum), \(defDepth / 10.0), \(WINK_IKITCH_MAX), \(-BRINK_IKICHI)")
+            
+            // 瞬き回避
+            if (frameNum - brinkFrameNum > 6 && leftEyelidDiff < BRINK_IKICHI && rightEyelidDiff < BRINK_IKICHI ) {
+                determinedIkichBrink = BRINK_IKICHI
+                brinkFlag = 1
+                brinkFrameNum = frameNum
+            }
+            // 左目のWink判別
             if (winkFlag == 0 && lrDiff < WINK_IKITCH_MIN && frameNum > 15 && frameNum - distFrameNum > 6 && frameNum - brinkFrameNum > 6) {
                 winkFlag = 1
                 minDiff = lrDiff
                 minPeakFrameNum = frameNum
                 firstPoint = frameNum
-//                print("first!!!!!!!!!!!!!!!!!!!!!")
             }
             else if (winkFlag == 1 && lrDiff < minDiff) {
                 minDiff = lrDiff
                 minPeakFrameNum = frameNum
-//                print("update!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             }
             else if (winkFlag == 1 && lrDiff > WINK_IKITCH_MIN) {
                 winkFlag = 2
-//                print("flag = 2!!!!!!!!!!!!!!!!!!!")
             }
             else if (winkFlag == 2 && lrDiff > WINK_IKITCH_MAX) {
                 winkFlag = 3
                 maxDiff = lrDiff
                 maxPeakFrameNum = frameNum
-//                print("flag = 3!!!!!!!!!!!!!!!!!!!")
             }
             else if (winkFlag == 3 && lrDiff > maxDiff) {
                 maxDiff = lrDiff
                 maxPeakFrameNum = frameNum
-//                print("update!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             }
             else if (winkFlag == 3 && lrDiff < WINK_IKITCH_MAX) {
                 winkFlag = 4
-//                print("flag = 4!!!!!!!!!!!!!!!!!!!")
             }
             
-            // 右目
+            // 右目のWink判別
             if (winkFlag == 0 && lrDiff > WINK_IKITCH_MAX && frameNum > 15 && frameNum - distFrameNum > 6 && frameNum - brinkFrameNum > 6) {
                 winkFlag = -1
                 maxDiff = lrDiff
                 maxPeakFrameNum = frameNum
                 firstPoint = frameNum
-//                print("first!!!!!!!!!!!!!!!!!!!!!")
             }
             else if (winkFlag == -1 && lrDiff > maxDiff) {
                 maxDiff = lrDiff
                 maxPeakFrameNum = frameNum
-//                print("update!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             }
             else if (winkFlag == -1 && lrDiff < WINK_IKITCH_MAX) {
                 winkFlag = -2
-//                print("flag = 2!!!!!!!!!!!!!!!!!!!")
             }
             else if (winkFlag == -2 && lrDiff < WINK_IKITCH_MIN) {
                 winkFlag = -3
                 minDiff = lrDiff
                 minPeakFrameNum = frameNum
-//                print("flag = 3!!!!!!!!!!!!!!!!!!!")
             }
             else if (winkFlag == -3 && lrDiff < minDiff) {
                 minDiff = lrDiff
                 minPeakFrameNum = frameNum
-//                print("update!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             }
             else if (winkFlag == -3 && lrDiff > WINK_IKITCH_MIN) {
                 winkFlag = -4
-//                print("flag = 4!!!!!!!!!!!!!!!!!!!")
             }
             
-            // 出力前のフラグ立てと初期化
+            // 出力のフラグ立てと初期化
             if (winkFlag == 4 || winkFlag == -4) {
                 // ピーク感覚が5フレーム以上10フレーム以下の時、wink入力判定
                 if (abs(maxPeakFrameNum - minPeakFrameNum) >= 5 || abs(maxPeakFrameNum - minPeakFrameNum) <= 10) {
@@ -225,7 +246,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 }
             }
             
-            // winkLabelの出力変更
+            // winkLabelの出力
             if (frameNum - brinkFrameNum <= 6) {
                 DispatchQueue.main.async {
                     self.winkLabel.textColor = UIColor.green
@@ -246,7 +267,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             }
             else {
                 DispatchQueue.main.async {
-                    self.winkLabel.textColor = UIColor.black
+                    self.winkLabel.textColor = UIColor(white:1.0, alpha:0.4)
                     self.winkLabel.text = "No Input"
                 }
                 labelFlag = 0
@@ -264,23 +285,38 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 winkFlag = 0
                 maxPeakFrameNum = 0
                 minPeakFrameNum = 0
-//                print("reset!!!!!!!!!!!!!!!!!!!")
             }
-         
-            let leftDepthDiff = leftDepth_mm - leftDepthPrev
-            let rightDepthDiff = rightDepth_mm - rightDepthPrev
             
             // 波形の出力
-//            print("\(frameNum), \(leftEyelidHeight), \(rightEyelidHeight), \(lrHeightDiff), \(frameNum), \(leftEyelidDiff), \(rightEyelidDiff), \(lrDiff) ,\(winkFlag * 5), \(distFrameNum), \(brinkFrameNum)")
-//            print("\(frameNum), \(leftDepth_mm), \(rightDepth_mm), \(abs(leftDepth_mm - rightDepth_mm)), \(frameNum),\(leftDepthDiff), \(rightDepthDiff), \(abs(leftDepthDiff - rightDepthDiff)), \(frameNum), \(leftEyelidDiff), \(rightEyelidDiff), \(lrDiff)")
+//            var printIkichMax: Float = 0.0
+//            var printIkichMin: Float = 0.0
+//            var printIkichBrink: Float = 0.0
+//            if (winkFlag != 0 || frameNum - brinkFrameNum <= 6) {
+//                printIkichMax = WINK_IKITCH_MAX
+//                printIkichMin = WINK_IKITCH_MIN
+//                printIkichBrink = BRINK_IKICHI
+//            }
+//            print("\(frameNum), \(leftEyelidHeight), \(rightEyelidHeight), \(lrHeightDiff), \(frameNum), \(defDepth / 10.0), \(frameNum), \(leftEyelidDiff), \(rightEyelidDiff), \(BRINK_IKICHI), \(printIkichBrink), \(brinkFlag * 10), \(frameNum), \(lrDiff), \(WINK_IKITCH_MIN), \(WINK_IKITCH_MAX), \(printIkichMin), \(printIkichMax), \(winkFlag * 5), \(distFrameNum), \(brinkFrameNum)")
             
+//            print("\(frameNum), \(leftDepth_mm), \(rightDepth_mm), \(abs(leftDepth_mm - rightDepth_mm)), \(frameNum),\(leftDepthDiff), \(rightDepthDiff), \(abs(leftDepthDiff - rightDepthDiff)), \(frameNum), \(leftEyelidDiff), \(rightEyelidDiff), \(lrDiff)")
+        
+            
+// ↓ここから下：次のフレームで使用する現在の値を保存・初期化
             leftPrev = leftEyelidHeight
             rightPrev = rightEyelidHeight
             
             leftDepthPrev = leftDepth_mm
             rightDepthPrev = rightDepth_mm
             
-            distInterval = 0
+            // フラグが立っていない時のみ閾値を更新（フラグが立っている時、閾値はフラグが立ったフレームの値）
+            if (winkFlag == 0 && frameNum - brinkFrameNum > 6) {
+                determinedIkichiMax = winkIkichiMaxNext
+                determinedIkichiMin = winkIkichiMinNext
+                determinedIkichBrink = brinkIkichNext
+            }
+            
+            distInterval = 0 //ナニコレ
+            brinkFlag = 0
         }
     }
     
