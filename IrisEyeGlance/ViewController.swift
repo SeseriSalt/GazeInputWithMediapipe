@@ -17,6 +17,10 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     @IBOutlet weak var rightLabel: UILabel!
     @IBOutlet weak var winkLabel: UILabel!
     
+    @IBOutlet weak var firstPeak: UILabel!
+    @IBOutlet weak var secondPeak: UILabel!
+    
+    
     let camera = Camera()
     let tracker: SYIris = SYIris()!
     
@@ -54,11 +58,16 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     var labelFlag = 0
     var distFrameNum = 0
     var brinkFlag = 0
+    var brinkFirstPoint = 0
     var brinkFrameNum = 0
     var leftDepthPrev: Float = 0.0
     var rightDepthPrev: Float = 0.0
     var depthAll: [[Float]] = []
     var defDepth: Float = 0.0
+    var winkDatePrev = Date().timeIntervalSince1970
+    var winkInterval = Date().timeIntervalSince1970
+    
+    var SampleList : [String] = ["left","left", "left", "right", "right", "right"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -149,7 +158,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             // 距離の平均値
             let lrDepthVer: Float = (leftDepth_mm + rightDepth_mm) / 2.0
             
-            // 1フレーム前の距離との差分の平均値（今のとこ使ってない）
+            // 1フレーム前の距離との差分の平均値（距離の変更時の雑音を取り除こうとして取得したが、今のとこ使ってない）
             let lrDepthDiff: Float = (leftDepthDiff + rightDepthDiff) / 2.0
             
             depthAll.append([lrDepthVer, lrDepthDiff])
@@ -161,32 +170,32 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             }
             
             // 距離から次のフレームの閾値の導出
-            winkIkichiMaxNext = -0.0141 * defDepth + 10.6
+            winkIkichiMaxNext = -0.01244 * defDepth + 9.524
             winkIkichiMinNext = -winkIkichiMaxNext
-            brinkIkichNext = winkIkichiMinNext - 0.5
+            brinkIkichNext = winkIkichiMinNext
             
             // 判別に用いる閾値の決定
             let WINK_IKITCH_MAX: Float = determinedIkichiMax
             let WINK_IKITCH_MIN: Float = determinedIkichiMin
             let BRINK_IKICHI: Float = determinedIkichBrink
 //            print("\(frameNum), \(defDepth / 10.0), \(WINK_IKITCH_MAX), \(-BRINK_IKICHI)")
-            
-            // 瞬き回避
-            if (frameNum - brinkFrameNum > 6 && leftEyelidDiff < BRINK_IKICHI && rightEyelidDiff < BRINK_IKICHI ) {
-                determinedIkichBrink = BRINK_IKICHI
-                brinkFlag = 1
-                brinkFrameNum = frameNum
-            }
+
             // 左目のWink判別
             if (winkFlag == 0 && lrDiff < WINK_IKITCH_MIN && frameNum > 15 && frameNum - distFrameNum > 6 && frameNum - brinkFrameNum > 6) {
                 winkFlag = 1
                 minDiff = lrDiff
                 minPeakFrameNum = frameNum
                 firstPoint = frameNum
+                DispatchQueue.main.async {
+                    self.firstPeak.text = String(format: "%.3f", self.minDiff)
+                }
             }
             else if (winkFlag == 1 && lrDiff < minDiff) {
                 minDiff = lrDiff
                 minPeakFrameNum = frameNum
+                DispatchQueue.main.async {
+                    self.firstPeak.text = String(format: "%.3f", self.minDiff)
+                }
             }
             else if (winkFlag == 1 && lrDiff > WINK_IKITCH_MIN) {
                 winkFlag = 2
@@ -195,10 +204,16 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 winkFlag = 3
                 maxDiff = lrDiff
                 maxPeakFrameNum = frameNum
+                DispatchQueue.main.async {
+                    self.secondPeak.text = String(format: "%.3f", self.maxDiff)
+                }
             }
             else if (winkFlag == 3 && lrDiff > maxDiff) {
                 maxDiff = lrDiff
                 maxPeakFrameNum = frameNum
+                DispatchQueue.main.async {
+                    self.secondPeak.text = String(format: "%.3f", self.maxDiff)
+                }
             }
             else if (winkFlag == 3 && lrDiff < WINK_IKITCH_MAX) {
                 winkFlag = 4
@@ -210,10 +225,16 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 maxDiff = lrDiff
                 maxPeakFrameNum = frameNum
                 firstPoint = frameNum
+                DispatchQueue.main.async {
+                    self.firstPeak.text = String(format: "%.3f", self.maxDiff)
+                }
             }
             else if (winkFlag == -1 && lrDiff > maxDiff) {
                 maxDiff = lrDiff
                 maxPeakFrameNum = frameNum
+                DispatchQueue.main.async {
+                    self.firstPeak.text = String(format: "%.3f", self.maxDiff)
+                }
             }
             else if (winkFlag == -1 && lrDiff < WINK_IKITCH_MAX) {
                 winkFlag = -2
@@ -222,16 +243,49 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 winkFlag = -3
                 minDiff = lrDiff
                 minPeakFrameNum = frameNum
+                DispatchQueue.main.async {
+                    self.secondPeak.text = String(format: "%.3f", self.minDiff)
+                }
             }
             else if (winkFlag == -3 && lrDiff < minDiff) {
                 minDiff = lrDiff
                 minPeakFrameNum = frameNum
+                DispatchQueue.main.async {
+                    self.secondPeak.text = String(format: "%.3f", self.maxDiff)
+                }
             }
             else if (winkFlag == -3 && lrDiff > WINK_IKITCH_MIN) {
                 winkFlag = -4
+            } //瞬きの回避
+            else if (brinkFlag == 0 && frameNum - brinkFrameNum > 5 && leftEyelidDiff < BRINK_IKICHI && rightEyelidDiff < BRINK_IKICHI) {
+                brinkFlag = 1
+                brinkFirstPoint = frameNum
+            }
+            else if (brinkFlag == 1 && leftEyelidDiff > -BRINK_IKICHI && rightEyelidDiff > -BRINK_IKICHI && frameNum - brinkFirstPoint <= 4) {
+                brinkFlag = 2
+            }
+            
+            // ピーク間隔が短すぎる時の初期化
+            if ((winkFlag == 4 || winkFlag == -4) && frameNum - firstPoint < 5) {
+                winkFlag = 0
+                maxDiff = 0
+                minDiff = 0
+                maxPeakFrameNum = 0
+                minPeakFrameNum = 0
             }
             
             // 出力のフラグ立てと初期化
+            if (brinkFlag == 2) {
+                brinkFlag = 0
+                brinkFrameNum = frameNum
+                
+                winkFlag = 0
+                minDiff = 0
+                maxDiff = 0
+                maxPeakFrameNum = 0
+                minPeakFrameNum = 0
+            }
+            
             if (winkFlag == 4 || winkFlag == -4) {
                 // ピーク感覚が5フレーム以上10フレーム以下の時、wink入力判定
                 if (abs(maxPeakFrameNum - minPeakFrameNum) >= 5 || abs(maxPeakFrameNum - minPeakFrameNum) <= 10) {
@@ -243,6 +297,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                     maxPeakFrameNum = 0
                     minPeakFrameNum = 0
                     distFrameNum = frameNum
+                    winkInterval = Date().timeIntervalSince1970 - winkDatePrev
+                    winkDatePrev = Date().timeIntervalSince1970
                 }
             }
             
@@ -273,32 +329,50 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 labelFlag = 0
             }
             
-            // ピーク間隔が短すぎる時の初期化
-            if ((winkFlag == 4 || winkFlag == -4) && frameNum - firstPoint < 5) {
+            // ピーク感覚が長すぎる時の初期化
+            if (winkFlag != 0 && frameNum - firstPoint > 13) {
                 winkFlag = 0
+                maxDiff = 0
+                minDiff = 0
                 maxPeakFrameNum = 0
                 minPeakFrameNum = 0
             }
-            
-            // ピーク感覚が長すぎる時の初期化
-            if (winkFlag != 0 && frameNum - firstPoint > 10) {
-                winkFlag = 0
-                maxPeakFrameNum = 0
-                minPeakFrameNum = 0
+            // 瞬きが失敗？した時の初期化
+            if (brinkFlag != 0 && frameNum - brinkFirstPoint > 4) {
+                brinkFlag = 0
             }
             
             // 波形の出力
-//            var printIkichMax: Float = 0.0
-//            var printIkichMin: Float = 0.0
-//            var printIkichBrink: Float = 0.0
-//            if (winkFlag != 0 || frameNum - brinkFrameNum <= 6) {
-//                printIkichMax = WINK_IKITCH_MAX
-//                printIkichMin = WINK_IKITCH_MIN
-//                printIkichBrink = BRINK_IKICHI
-//            }
-//            print("\(frameNum), \(leftEyelidHeight), \(rightEyelidHeight), \(lrHeightDiff), \(frameNum), \(defDepth / 10.0), \(frameNum), \(leftEyelidDiff), \(rightEyelidDiff), \(BRINK_IKICHI), \(printIkichBrink), \(brinkFlag * 10), \(frameNum), \(lrDiff), \(WINK_IKITCH_MIN), \(WINK_IKITCH_MAX), \(printIkichMin), \(printIkichMax), \(winkFlag * 5), \(distFrameNum), \(brinkFrameNum)")
+            var printIkichMax: Float = 0.0
+            var printIkichMin: Float = 0.0
+            var printIkichBrink: Float = 0.0
+            if (winkFlag != 0) {
+                printIkichMax = WINK_IKITCH_MAX
+                printIkichMin = WINK_IKITCH_MIN
+            }
+            if (brinkFlag != 0) {
+                printIkichBrink = BRINK_IKICHI
+                
+                printIkichMax = WINK_IKITCH_MAX
+                printIkichMin = WINK_IKITCH_MIN
+            }
+            
+            var printWinkFrame: Int = 0
+            var printBrinkFrame: Int = 0
+            if (distFrameNum == frameNum) {
+                printWinkFrame = distFrameNum
+            }
+            
+            if (brinkFrameNum == frameNum) {
+                printBrinkFrame = brinkFrameNum
+            }
+
+            print("\(frameNum), \(leftEyelidHeight), \(rightEyelidHeight), \(lrHeightDiff), \(frameNum), \(defDepth / 10.0), \(frameNum), \(leftEyelidDiff), \(rightEyelidDiff), \(BRINK_IKICHI), \(printIkichBrink), \(-printIkichBrink), \(Double(brinkFlag) * 4.5), \(frameNum), \(lrDiff), \(WINK_IKITCH_MIN), \(WINK_IKITCH_MAX), \(printIkichMin), \(printIkichMax), \(winkFlag * 5), \(printWinkFrame), \(printBrinkFrame)")
             
 //            print("\(frameNum), \(leftDepth_mm), \(rightDepth_mm), \(abs(leftDepth_mm - rightDepth_mm)), \(frameNum),\(leftDepthDiff), \(rightDepthDiff), \(abs(leftDepthDiff - rightDepthDiff)), \(frameNum), \(leftEyelidDiff), \(rightEyelidDiff), \(lrDiff)")
+            
+            // 秒数の出力
+            //            print("\(winkInterval), \(maxDiff), \(minDiff)")
         
             
 // ↓ここから下：次のフレームで使用する現在の値を保存・初期化
@@ -309,14 +383,25 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             rightDepthPrev = rightDepth_mm
             
             // フラグが立っていない時のみ閾値を更新（フラグが立っている時、閾値はフラグが立ったフレームの値）
-            if (winkFlag == 0 && frameNum - brinkFrameNum > 6) {
+            if (winkFlag == 0) {
                 determinedIkichiMax = winkIkichiMaxNext
                 determinedIkichiMin = winkIkichiMinNext
-                determinedIkichBrink = brinkIkichNext
             }
             
+            if (brinkFlag == 0) {
+                determinedIkichBrink = brinkIkichNext
+                
+                if (winkFlag == 0) {
+                    // 瞬きの時はwinkも止める
+                    determinedIkichiMax = winkIkichiMaxNext
+                    determinedIkichiMin = winkIkichiMinNext
+                }
+            }
+            
+            
+            
+            winkInterval = 0
             distInterval = 0 //ナニコレ
-            brinkFlag = 0
         }
     }
     
