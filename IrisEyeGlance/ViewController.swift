@@ -147,8 +147,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             leftEyelidDiff = leftEyelidHeight - leftPrev
             rightEyelidDiff = rightEyelidHeight - rightPrev
             
-            // 左右の高さの絶対値
-            lrHeightDiff = abs(leftEyelidHeight - rightEyelidHeight)
+            // 左右の高さの差
+            lrHeightDiff = leftEyelidHeight - rightEyelidHeight
             
             // 左右の1フレーム前との差分値の差
             lrDiff = leftEyelidDiff - rightEyelidDiff
@@ -159,7 +159,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             // 左右の高さの差を記録していく
             heightAll.insert(simpleLrDiff, at: 0)
             var heightAvg5: Float = 0
-            if (heightAll.count >= 8) {
+            if (heightAll.count == 8) {
                 for i in (2 ..< 7) {
                     heightAvg5 += heightAll[i]
                 }
