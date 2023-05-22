@@ -15,6 +15,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     @IBOutlet weak var label: UILabel!
     @IBOutlet weak var leftLavel: UILabel!
     @IBOutlet weak var rightLabel: UILabel!
+    @IBOutlet weak var noseLabel: UILabel!
     
     let camera = Camera()
     let tracker: SYIris = SYIris()!
@@ -23,6 +24,15 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     public let WIDTH: Float = 1080.0
     public let HEIGHT: Float = 1920.0
     public var frameNum: Int = 0
+    
+    public let screenWidth = Float(UIScreen.main.bounds.width) // (390.0)
+    public let screenHeight = Float(UIScreen.main.bounds.height) // (844.0)
+    
+    //1つのランドマークの構造体
+    struct landmarkPoint {
+        var x: Float = 0.0
+        var y: Float = 0.0
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -79,6 +89,16 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 self.rightLabel.text = "\(rightDepth)"
             }
             
+        }
+        
+        // 鼻の位置の取得
+        let nosePoint = landmarkPoint(x:landmarkAll[19][0] * screenWidth, y:landmarkAll[19][1] * screenHeight)
+        // 位置が変わった時のフィードバック用
+        let feedbackGenerator = UISelectionFeedbackGenerator()
+        // ランドマーク位置で領域選択する
+        let areaChangeFlnag = LandmarkPositionSerect(nosePoint.x, nosePoint.y)
+        if areaChangeFlnag == 1 {
+            feedbackGenerator.selectionChanged()
         }
     }
     
