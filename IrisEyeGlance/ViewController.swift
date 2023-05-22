@@ -16,6 +16,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     @IBOutlet weak var leftLavel: UILabel!
     @IBOutlet weak var rightLabel: UILabel!
     @IBOutlet weak var noseLabel: UILabel!
+    @IBOutlet weak var design1: UIImageView!
     
     let camera = Camera()
     let tracker: SYIris = SYIris()!
@@ -34,12 +35,23 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         var y: Float = 0.0
     }
     
+    var circleLayer: CAShapeLayer?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         camera.setSampleBufferDelegate(self)
         camera.start()
         tracker.startGraph()
         tracker.delegate = self
+        
+        // 入力画面ドラッグ
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
+            design1.addGestureRecognizer(panGesture)
+            design1.isUserInteractionEnabled = true
+        
+        // 入力画面ピンチイン・ピンチアウト
+        let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(handlePinchGesture(_:)))
+            design1.addGestureRecognizer(pinchGesture)
     }
     
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
@@ -92,7 +104,13 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         }
         
         // 鼻の位置の取得
-        let nosePoint = landmarkPoint(x:landmarkAll[19][0] * screenWidth, y:landmarkAll[19][1] * screenHeight)
+        let nosePoint = landmarkPoint(x: landmarkAll[1][0] * screenWidth, y: landmarkAll[1][1] * screenHeight)
+        
+        //カーソル描画
+        DispatchQueue.main.async {
+            self.drawCursor(nosePoint.x, nosePoint.y)
+        }
+        
         // 位置が変わった時のフィードバック用
         let feedbackGenerator = UISelectionFeedbackGenerator()
         // ランドマーク位置で領域選択する

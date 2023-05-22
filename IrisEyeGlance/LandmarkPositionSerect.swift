@@ -15,11 +15,14 @@ extension ViewController {
    //ランドマークの位置で領域を選択する関数
     func LandmarkPositionSerect(_ xPoint: Float, _ yPoint: Float) -> Int {
         
+        // 入力画面の中心座標・幅・高さを取得
+        let inputScreen = getScreenInfo()
+        
         //選択可能エリア
-        let areaWidth: Float = 300.0 //(max:390.0)
-        let areaWidthCenter: Float = 195.0 // 変更不要
-        let areaHeight: Float = 600.0  //(max:844.0)
-        let areaHeightCenter: Float = 422.0 //(avg:422.0)
+        let areaWidth: Float = Float(inputScreen.width) //(max:390.0)
+        let areaWidthCenter: Float = Float(inputScreen.center.x) // 変更不要(defo: 195.0)
+        let areaHeight: Float = Float(inputScreen.height)  //(max:844.0)
+        let areaHeightCenter: Float = Float(inputScreen.center.y) //(avg:422.0)
         
         //縦線
         let areaCol0 = areaWidthCenter - areaWidth / 2
@@ -138,7 +141,7 @@ extension ViewController {
         let areaChangeFlag = (changePositionFlag != prevChangePositionFlag) ? 1 : 0
         
         prevChangePositionFlag = changePositionFlag
-        print(prevChangePositionFlag)
+//        print(prevChangePositionFlag)
         
         return areaChangeFlag
     }
