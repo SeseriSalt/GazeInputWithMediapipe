@@ -23,24 +23,31 @@ extension ViewController {
         gesture.setTranslation(.zero, in: view)
     }
     
-    @objc func handlePinchGesture(_ gesture: UIPinchGestureRecognizer) {
-        guard let view = gesture.view else { return }
+    @objc func handleDoubleTap(_ gesture: UITapGestureRecognizer) {
+        tapCount += 1
         
-        if gesture.state == .changed {
-            let pinchCenter = CGPoint(x: gesture.location(in: view).x - view.bounds.midX,
-                                      y: gesture.location(in: view).y - view.bounds.midY)
-            let transform = view.transform.translatedBy(x: pinchCenter.x, y: pinchCenter.y)
-                .scaledBy(x: gesture.scale, y: gesture.scale)
-                .translatedBy(x: -pinchCenter.x, y: -pinchCenter.y)
-            
-            view.transform = transform
-            gesture.scale = 1.0
+        if tapCount >= imageSizeList.count {
+            tapCount = 0
         }
+        
+        updateImageViewSize()
+    }
+    
+    func updateImageViewSize() {
+        let imageSize = imageSizeList[tapCount]
+        let center = design1.center
+        
+        design1.frame.size = CGSize(width: imageSize.0, height: imageSize.1)
+        design1.center = center
     }
     
     func getScreenInfo() -> RectInfo {
         let screenInfo = RectInfo(center: design1.center, width: design1.bounds.width, height: design1.bounds.height)
-//        print("width: \(screenInfo.width), Height: \(screenInfo.height)")
+        DispatchQueue.main.async {
+            self.ISCenterLabel.text = "x:\(round(screenInfo.center.x*10)/10) y:\(round(screenInfo.center.y*10)/10)"
+            self.ISWidthLabel.text = "Width:\(screenInfo.width)"
+        }
+//        print("center: \(screenInfo.center), width: \(screenInfo.width), Height: \(screenInfo.height)")
         return screenInfo
     }
 }

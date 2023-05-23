@@ -17,6 +17,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     @IBOutlet weak var rightLabel: UILabel!
     @IBOutlet weak var noseLabel: UILabel!
     @IBOutlet weak var design1: UIImageView!
+    @IBOutlet weak var ISCenterLabel: UILabel!
+    @IBOutlet weak var ISWidthLabel: UILabel!
     
     let camera = Camera()
     let tracker: SYIris = SYIris()!
@@ -37,6 +39,9 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     
     var circleLayer: CAShapeLayer?
     
+    var tapCount = 0
+    let imageSizeList = [(300, 252), (250, 210), (200, 168), (150, 126)]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         camera.setSampleBufferDelegate(self)
@@ -49,9 +54,13 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             design1.addGestureRecognizer(panGesture)
             design1.isUserInteractionEnabled = true
         
-        // 入力画面ピンチイン・ピンチアウト
-        let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(handlePinchGesture(_:)))
-            design1.addGestureRecognizer(pinchGesture)
+        //ダブルタップで大きさ変更
+        let doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap(_:)))
+                doubleTapGesture.numberOfTapsRequired = 2
+                design1.isUserInteractionEnabled = true
+                design1.addGestureRecognizer(doubleTapGesture)
+                
+                updateImageViewSize()
     }
     
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
