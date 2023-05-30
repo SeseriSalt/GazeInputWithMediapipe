@@ -21,6 +21,10 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     @IBOutlet weak var secondPeak: UILabel!
     
     @IBOutlet weak var lateFlagLabel: UILabel!
+    @IBOutlet weak var noseLabel: UILabel!
+    @IBOutlet weak var design1: UIImageView!
+    @IBOutlet weak var ISCenterLabel: UILabel!
+    @IBOutlet weak var ISWidthLabel: UILabel!
     
     let camera = Camera()
     let tracker: SYIris = SYIris()!
@@ -73,13 +77,44 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     var heightAll: [Float] = []
     
     var SampleList : [String] = ["left","left", "left", "right", "right", "right"]
+
+    /////// ここから下はランドマークポイント ///////
+    public let screenWidth = Float(UIScreen.main.bounds.width) // (390.0)
+    public let screenHeight = Float(UIScreen.main.bounds.height) // (844.0)
     
+    //1つのランドマークの構造体
+    struct landmarkPoint {
+        var x: Float = 0.0
+        var y: Float = 0.0
+    }
+    
+    var circleLayer: CAShapeLayer?
+    var rectLayer: CAShapeLayer?
+    
+    var tapCount = 0
+    let imageSizeList = [(300, 252), (250, 210), (200, 168), (150, 126)]
+    let lineWidthList = [2.0,  1.66, 1.33, 1.0]
+    /////// ここまでがランドマークポイント ///////
+
     override func viewDidLoad() {
         super.viewDidLoad()
         camera.setSampleBufferDelegate(self)
         camera.start()
         tracker.startGraph()
         tracker.delegate = self
+        
+        // 入力画面ドラッグ
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
+            design1.addGestureRecognizer(panGesture)
+            design1.isUserInteractionEnabled = true
+        
+        //ダブルタップで大きさ変更
+        let doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap(_:)))
+                doubleTapGesture.numberOfTapsRequired = 2
+                design1.isUserInteractionEnabled = true
+                design1.addGestureRecognizer(doubleTapGesture)
+                
+                updateImageViewSize()
     }
     
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
@@ -460,6 +495,22 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             
             winkInterval = 0
             distInterval = 0 //ナニコレ
+        }
+        
+        // 鼻の位置の取得
+        let nosePoint = landmarkPoint(x: landmarkAll[1][0] * screenWidth, y: landmarkAll[1][1] * screenHeight)
+        
+        //カーソル描画
+        DispatchQueue.main.async {
+            self.drawCursor(nosePoint.x, nosePoint.y)
+        }
+        
+        // 位置が変わった時のフィードバック用
+        let feedbackGenerator = UISelectionFeedbackGenerator()
+        // ランドマーク位置で領域選択する
+        let areaChangeFlnag = LandmarkPositionSerect(nosePoint.x, nosePoint.y)
+        if areaChangeFlnag == 1 {
+            feedbackGenerator.selectionChanged()
         }
     }
     
