@@ -153,7 +153,6 @@ extension ViewController {
         }
         else {
             DispatchQueue.main.async { [self] in
-                self.noseLabel.text = "0"
                 if let oldRectLayer = self.rectLayer {
                     oldRectLayer.removeFromSuperlayer()
                 }
@@ -196,7 +195,10 @@ extension ViewController {
     func selectionDiscernment() {
         // winkLabelの出力
         if (frameNum - brinkFrameNum <= 6) {
-             // 瞬き　何もしない
+            DispatchQueue.main.async {
+                self.lateFlagLabel.text = "brink"
+                self.lateFlagLabel.textColor = UIColor.green
+            }
         }
         else if (frameNum - distFrameNum <= 6) {
             switch changePositionFlag {
@@ -214,7 +216,7 @@ extension ViewController {
                 }
             case 4:
                 DispatchQueue.main.async {
-                    self.noseLabel.text = "Del"
+                    self.noseLabel.text = "削除"
                 }
             case 5:
                 DispatchQueue.main.async {
@@ -230,7 +232,7 @@ extension ViewController {
                 }
             case 8:
                 DispatchQueue.main.async {
-                    self.noseLabel.text = "[　]"
+                    self.noseLabel.text = "空白"
                 }
             case 9:
                 DispatchQueue.main.async {
@@ -246,7 +248,7 @@ extension ViewController {
                 }
             case 12:
                 DispatchQueue.main.async {
-                    self.noseLabel.text = "↩︎"
+                    self.noseLabel.text = "改行"
                 }
             case 13:
                 DispatchQueue.main.async {
@@ -268,17 +270,16 @@ extension ViewController {
                 if labelFlag == 1 {
                     DispatchQueue.main.async {
                         self.noseLabel.textColor = UIColor.blue
+                        self.questionLabel.textColor = UIColor.blue
                     }
                 }
                 else {
                     DispatchQueue.main.async {
                         self.noseLabel.textColor = UIColor.red
+                        self.questionLabel.textColor = UIColor.red
                     }
                 }
             }
-        }
-        else {
-                // 何もしない？
         }
     }
 }

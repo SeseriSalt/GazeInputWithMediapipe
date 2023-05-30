@@ -25,6 +25,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     @IBOutlet weak var ISCenterLabel: UILabel!
     @IBOutlet weak var ISWidthLabel: UILabel!
     
+    @IBOutlet weak var questionLabel: UILabel!
+    
     let camera = Camera()
     let tracker: SYIris = SYIris()!
     
@@ -114,6 +116,10 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 design1.addGestureRecognizer(doubleTapGesture)
                 
                 updateImageViewSize()
+        
+        noseLabel.layer.borderWidth = 0.5
+        questionLabel.layer.borderWidth = 0.5
+        questionLabel.text = "な"
     }
     
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
@@ -172,6 +178,22 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 self.rightLabel.text = "\(rightDepth)"
             }
             
+            // 鼻の位置の取得
+            let nosePoint = landmarkPoint(x: landmarkAll[1][0] * screenWidth, y: landmarkAll[1][1] * screenHeight)
+            
+            //カーソル描画
+            DispatchQueue.main.async {
+                self.drawCursor(nosePoint.x, nosePoint.y)
+            }
+            
+            // 位置が変わった時のフィードバック用
+            let feedbackGenerator = UISelectionFeedbackGenerator()
+            // ランドマーク位置で領域選択する
+            let areaChangeFlnag = LandmarkPositionSerect(nosePoint.x, nosePoint.y)
+            if areaChangeFlnag == 1 {
+                feedbackGenerator.selectionChanged()
+            }
+            
         // winkの判別
             // 瞼の高さ
             leftEyelidHeight = getLandmerkLength(point0: landmarkAll[159], point1: landmarkAll[145], imageSize: [WIDTH, HEIGHT])
@@ -193,7 +215,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             // 左右の高さの差を記録していく
             heightAll.insert(simpleLrDiff, at: 0)
             var heightAvg5: Float = 0
-            if (heightAll.count == 8) {
+            if (heightAll.count >= 8) {
                 for i in (2 ..< 7) {
                     heightAvg5 += heightAll[i]
                 }
@@ -394,6 +416,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 labelFlag = 0
             }
             
+            judgment()
+            
             // ピーク感覚が長すぎる時の初期化
             if (winkFlag != 0 && frameNum - firstPoint > 13) {
                 winkFlag = 0
@@ -468,22 +492,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             
             winkInterval = 0
             distInterval = 0 //ナニコレ
-        }
-        
-        // 鼻の位置の取得
-        let nosePoint = landmarkPoint(x: landmarkAll[1][0] * screenWidth, y: landmarkAll[1][1] * screenHeight)
-        
-        //カーソル描画
-        DispatchQueue.main.async {
-            self.drawCursor(nosePoint.x, nosePoint.y)
-        }
-        
-        // 位置が変わった時のフィードバック用
-        let feedbackGenerator = UISelectionFeedbackGenerator()
-        // ランドマーク位置で領域選択する
-        let areaChangeFlnag = LandmarkPositionSerect(nosePoint.x, nosePoint.y)
-        if areaChangeFlnag == 1 {
-            feedbackGenerator.selectionChanged()
         }
     }
     
