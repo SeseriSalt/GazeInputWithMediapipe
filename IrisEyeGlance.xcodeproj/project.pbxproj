@@ -66,6 +66,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5B97628A2A2573C800E10481 /* PointSelect */ = {
+			isa = PBXGroup;
+			children = (
+				5B9762822A1B36AD00E10481 /* LandmarkPositionSerect.swift */,
+				5B9762862A1BC20800E10481 /* MouseCursor.swift */,
+				5B9762882A1BC59900E10481 /* InputScreenUI.swift */,
+			);
+			path = PointSelect;
+			sourceTree = "<group>";
+		};
 		5BACC0D328F6767F00B36EBC = {
 			isa = PBXGroup;
 			children = (
@@ -89,16 +99,14 @@
 				5BACC0DF28F6767F00B36EBC /* AppDelegate.swift */,
 				5BACC0E128F6767F00B36EBC /* SceneDelegate.swift */,
 				5BACC0E328F6767F00B36EBC /* ViewController.swift */,
-				5B9762822A1B36AD00E10481 /* LandmarkPositionSerect.swift */,
 				5B827B9F290C511C0091E06C /* Depth.swift */,
 				5BF9DA9629049F9500F7ED35 /* Camera.swift */,
+				5B97628A2A2573C800E10481 /* PointSelect */,
 				5BACC0E528F6767F00B36EBC /* Main.storyboard */,
 				5BACC0E828F6768200B36EBC /* Assets.xcassets */,
 				5BF9DA9D2904A2BF00F7ED35 /* IrisEyeGlance-Bridging-Header.h */,
 				5BACC0EA28F6768200B36EBC /* LaunchScreen.storyboard */,
 				5BACC0ED28F6768200B36EBC /* Info.plist */,
-				5B9762862A1BC20800E10481 /* MouseCursor.swift */,
-				5B9762882A1BC59900E10481 /* InputScreenUI.swift */,
 			);
 			path = IrisEyeGlance;
 			sourceTree = "<group>";

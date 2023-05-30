@@ -20,6 +20,7 @@ extension ViewController {
     @objc func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
         let translation = gesture.translation(in: view)
         design1.center = CGPoint(x: design1.center.x + translation.x, y: design1.center.y + translation.y)
+        noseLabel.center = CGPoint(x: noseLabel.center.x + translation.x, y: noseLabel.center.y + translation.y)
         gesture.setTranslation(.zero, in: view)
     }
     
@@ -36,9 +37,11 @@ extension ViewController {
     func updateImageViewSize() {
         let imageSize = imageSizeList[tapCount]
         let center = design1.center
+        let labelHeight = center.y - CGFloat(imageSize.1) / 2 - 11.0
         
         design1.frame.size = CGSize(width: imageSize.0, height: imageSize.1)
         design1.center = center
+        noseLabel.center = CGPoint(x: center.x, y: labelHeight)
     }
     
     func getScreenInfo() -> RectInfo {

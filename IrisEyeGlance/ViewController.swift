@@ -38,9 +38,11 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
     
     var circleLayer: CAShapeLayer?
+    var rectLayer: CAShapeLayer?
     
     var tapCount = 0
     let imageSizeList = [(300, 252), (250, 210), (200, 168), (150, 126)]
+    let lineWidthList = [2.0,  1.66, 1.33, 1.0]
     
     override func viewDidLoad() {
         super.viewDidLoad()

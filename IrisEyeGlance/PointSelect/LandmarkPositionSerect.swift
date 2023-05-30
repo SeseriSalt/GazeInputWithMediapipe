@@ -37,103 +37,141 @@ extension ViewController {
         let areaRow3 = areaHeightCenter + areaHeight / 4
         let areaRow4 = areaHeightCenter + areaHeight / 2
         
+        // 囲い線
+        var lineRect = CGRect(x: CGFloat(0.0), y: CGFloat(0.0), width: CGFloat(0.0), height:(0.0))
+        let RectWidth = CGFloat(len(a: areaCol0, b: areaCol1))
+        let RectHeight0 = CGFloat(len(a: areaRow0, b: areaRow1))
+        let RectHeight1 = CGFloat(len(a: areaRow0, b: areaRow2))
         //1段目
         if (xPoint > areaCol0 && xPoint < areaCol1 && yPoint > areaRow0 && yPoint < areaRow1) {
+            lineRect = CGRect(x: CGFloat(areaCol0), y: CGFloat(areaRow0), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
                 self.noseLabel.text = "1"
+                self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 1
         }
         else if (xPoint > areaCol1 && xPoint < areaCol2 && yPoint > areaRow0 && yPoint < areaRow1) {
+            lineRect = CGRect(x: CGFloat(areaCol1), y: CGFloat(areaRow0), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
                 self.noseLabel.text = "2"
+                self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 2
         }
         else if (xPoint > areaCol2 && xPoint < areaCol3 && yPoint > areaRow0 && yPoint < areaRow1) {
+            lineRect = CGRect(x: CGFloat(areaCol2), y: CGFloat(areaRow0), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
                 self.noseLabel.text = "3"
+                self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 3
         }
         else if (xPoint > areaCol3 && xPoint < areaCol4 && yPoint > areaRow0 && yPoint < areaRow1) {
+            lineRect = CGRect(x: CGFloat(areaCol3), y: CGFloat(areaRow0), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
                 self.noseLabel.text = "4"
+                self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 4
         }
-        //中部
+        //2段目
         else if (xPoint > areaCol0 && xPoint < areaCol1 && yPoint > areaRow1 && yPoint < areaRow2) {
+            lineRect = CGRect(x: CGFloat(areaCol0), y: CGFloat(areaRow1), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
                 self.noseLabel.text = "5"
+                self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 5
         }
         else if (xPoint > areaCol1 && xPoint < areaCol2 && yPoint > areaRow1 && yPoint < areaRow2) {
+            lineRect = CGRect(x: CGFloat(areaCol1), y: CGFloat(areaRow1), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
                 self.noseLabel.text = "6"
+                self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 6
         }
         else if (xPoint > areaCol2 && xPoint < areaCol3 && yPoint > areaRow1 && yPoint < areaRow2) {
+            lineRect = CGRect(x: CGFloat(areaCol2), y: CGFloat(areaRow1), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
                 self.noseLabel.text = "7"
+                self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 7
         }
         else if (xPoint > areaCol3 && xPoint < areaCol4 && yPoint > areaRow1 && yPoint < areaRow2) {
+            lineRect = CGRect(x: CGFloat(areaCol3), y: CGFloat(areaRow1), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
                 self.noseLabel.text = "8"
+                self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 8
         }
         //3段目
         else if (xPoint > areaCol0 && xPoint < areaCol1 && yPoint > areaRow2 && yPoint < areaRow3) {
+            lineRect = CGRect(x: CGFloat(areaCol0), y: CGFloat(areaRow2), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
                 self.noseLabel.text = "9"
+                self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 9
         }
         else if (xPoint > areaCol1 && xPoint < areaCol2 && yPoint > areaRow2 && yPoint < areaRow3) {
+            lineRect = CGRect(x: CGFloat(areaCol1), y: CGFloat(areaRow2), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
                 self.noseLabel.text = "10"
+                self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 10
         }
         else if (xPoint > areaCol2 && xPoint < areaCol3 && yPoint > areaRow2 && yPoint < areaRow3) {
+            lineRect = CGRect(x: CGFloat(areaCol2), y: CGFloat(areaRow2), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
                 self.noseLabel.text = "11"
+                self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 11
         }
         else if (xPoint > areaCol3 && xPoint < areaCol4 && yPoint > areaRow2 && yPoint < areaRow4) {
+            lineRect = CGRect(x: CGFloat(areaCol3), y: CGFloat(areaRow2), width: RectWidth, height: RectHeight1)
             DispatchQueue.main.async {
                 self.noseLabel.text = "12"
+                self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 12
         }
         //4段目
         else if (xPoint > areaCol0 && xPoint < areaCol1 && yPoint > areaRow3 && yPoint < areaRow4) {
+            lineRect = CGRect(x: CGFloat(areaCol0), y: CGFloat(areaRow3), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
                 self.noseLabel.text = "13"
+                self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 13
         }
         else if (xPoint > areaCol1 && xPoint < areaCol2 && yPoint > areaRow3 && yPoint < areaRow4) {
+            lineRect = CGRect(x: CGFloat(areaCol1), y: CGFloat(areaRow3), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
                 self.noseLabel.text = "14"
+                self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 14
         }
         else if (xPoint > areaCol2 && xPoint < areaCol3 && yPoint > areaRow3 && yPoint < areaRow4) {
+            lineRect = CGRect(x: CGFloat(areaCol2), y: CGFloat(areaRow3), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
                 self.noseLabel.text = "15"
+                self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 15
         }
         else {
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [self] in
                 self.noseLabel.text = "0"
+                if let oldRectLayer = self.rectLayer {
+                    oldRectLayer.removeFromSuperlayer()
+                }
             }
             changePositionFlag = 0
         }
@@ -145,5 +183,28 @@ extension ViewController {
         
         return areaChangeFlag
     }
-
+    
+    @objc func drawSelectionBorder(_ rectInfo: CGRect) {
+        let rectPath = UIBezierPath(rect: rectInfo)
+            
+        let shapeLayer = CAShapeLayer()
+        shapeLayer.path = rectPath.cgPath
+        shapeLayer.lineWidth = lineWidthList[tapCount]
+        shapeLayer.strokeColor = UIColor(red: 26/255, green: 128/255, blue: 133/255, alpha: 1.0).cgColor
+        shapeLayer.fillColor = UIColor.clear.cgColor
+        
+        // すでに囲い線が描画されている場合、過去の線を削除
+        if let oldRectLayer = rectLayer {
+            oldRectLayer.removeFromSuperlayer()
+        }
+        
+        view.layer.addSublayer(shapeLayer)
+        
+        rectLayer = shapeLayer
+    }
+    
+    func len(a: Float, b: Float) -> Float {
+        let c = fabsf(b - a)
+        return c
+    }
 }
