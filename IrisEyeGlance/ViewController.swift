@@ -159,7 +159,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             // 左右の高さの差を記録していく
             heightAll.insert(simpleLrDiff, at: 0)
             var heightAvg5: Float = 0
-            if (heightAll.count == 8) {
+            if (heightAll.count >= 8) {
                 for i in (2 ..< 7) {
                     heightAvg5 += heightAll[i]
                 }
