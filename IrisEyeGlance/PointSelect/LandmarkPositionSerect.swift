@@ -46,7 +46,6 @@ extension ViewController {
         if (xPoint > areaCol0 && xPoint < areaCol1 && yPoint > areaRow0 && yPoint < areaRow1) {
             lineRect = CGRect(x: CGFloat(areaCol0), y: CGFloat(areaRow0), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
-                self.noseLabel.text = "1"
                 self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 1
@@ -54,7 +53,6 @@ extension ViewController {
         else if (xPoint > areaCol1 && xPoint < areaCol2 && yPoint > areaRow0 && yPoint < areaRow1) {
             lineRect = CGRect(x: CGFloat(areaCol1), y: CGFloat(areaRow0), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
-                self.noseLabel.text = "2"
                 self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 2
@@ -62,7 +60,6 @@ extension ViewController {
         else if (xPoint > areaCol2 && xPoint < areaCol3 && yPoint > areaRow0 && yPoint < areaRow1) {
             lineRect = CGRect(x: CGFloat(areaCol2), y: CGFloat(areaRow0), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
-                self.noseLabel.text = "3"
                 self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 3
@@ -70,7 +67,6 @@ extension ViewController {
         else if (xPoint > areaCol3 && xPoint < areaCol4 && yPoint > areaRow0 && yPoint < areaRow1) {
             lineRect = CGRect(x: CGFloat(areaCol3), y: CGFloat(areaRow0), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
-                self.noseLabel.text = "4"
                 self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 4
@@ -79,7 +75,6 @@ extension ViewController {
         else if (xPoint > areaCol0 && xPoint < areaCol1 && yPoint > areaRow1 && yPoint < areaRow2) {
             lineRect = CGRect(x: CGFloat(areaCol0), y: CGFloat(areaRow1), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
-                self.noseLabel.text = "5"
                 self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 5
@@ -87,7 +82,6 @@ extension ViewController {
         else if (xPoint > areaCol1 && xPoint < areaCol2 && yPoint > areaRow1 && yPoint < areaRow2) {
             lineRect = CGRect(x: CGFloat(areaCol1), y: CGFloat(areaRow1), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
-                self.noseLabel.text = "6"
                 self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 6
@@ -95,7 +89,6 @@ extension ViewController {
         else if (xPoint > areaCol2 && xPoint < areaCol3 && yPoint > areaRow1 && yPoint < areaRow2) {
             lineRect = CGRect(x: CGFloat(areaCol2), y: CGFloat(areaRow1), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
-                self.noseLabel.text = "7"
                 self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 7
@@ -103,7 +96,6 @@ extension ViewController {
         else if (xPoint > areaCol3 && xPoint < areaCol4 && yPoint > areaRow1 && yPoint < areaRow2) {
             lineRect = CGRect(x: CGFloat(areaCol3), y: CGFloat(areaRow1), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
-                self.noseLabel.text = "8"
                 self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 8
@@ -112,7 +104,6 @@ extension ViewController {
         else if (xPoint > areaCol0 && xPoint < areaCol1 && yPoint > areaRow2 && yPoint < areaRow3) {
             lineRect = CGRect(x: CGFloat(areaCol0), y: CGFloat(areaRow2), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
-                self.noseLabel.text = "9"
                 self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 9
@@ -120,7 +111,6 @@ extension ViewController {
         else if (xPoint > areaCol1 && xPoint < areaCol2 && yPoint > areaRow2 && yPoint < areaRow3) {
             lineRect = CGRect(x: CGFloat(areaCol1), y: CGFloat(areaRow2), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
-                self.noseLabel.text = "10"
                 self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 10
@@ -128,7 +118,6 @@ extension ViewController {
         else if (xPoint > areaCol2 && xPoint < areaCol3 && yPoint > areaRow2 && yPoint < areaRow3) {
             lineRect = CGRect(x: CGFloat(areaCol2), y: CGFloat(areaRow2), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
-                self.noseLabel.text = "11"
                 self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 11
@@ -136,7 +125,6 @@ extension ViewController {
         else if (xPoint > areaCol3 && xPoint < areaCol4 && yPoint > areaRow2 && yPoint < areaRow4) {
             lineRect = CGRect(x: CGFloat(areaCol3), y: CGFloat(areaRow2), width: RectWidth, height: RectHeight1)
             DispatchQueue.main.async {
-                self.noseLabel.text = "12"
                 self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 12
@@ -145,7 +133,6 @@ extension ViewController {
         else if (xPoint > areaCol0 && xPoint < areaCol1 && yPoint > areaRow3 && yPoint < areaRow4) {
             lineRect = CGRect(x: CGFloat(areaCol0), y: CGFloat(areaRow3), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
-                self.noseLabel.text = "13"
                 self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 13
@@ -153,7 +140,6 @@ extension ViewController {
         else if (xPoint > areaCol1 && xPoint < areaCol2 && yPoint > areaRow3 && yPoint < areaRow4) {
             lineRect = CGRect(x: CGFloat(areaCol1), y: CGFloat(areaRow3), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
-                self.noseLabel.text = "14"
                 self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 14
@@ -161,7 +147,6 @@ extension ViewController {
         else if (xPoint > areaCol2 && xPoint < areaCol3 && yPoint > areaRow3 && yPoint < areaRow4) {
             lineRect = CGRect(x: CGFloat(areaCol2), y: CGFloat(areaRow3), width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
-                self.noseLabel.text = "15"
                 self.drawSelectionBorder(lineRect)
             }
             changePositionFlag = 15
@@ -206,5 +191,94 @@ extension ViewController {
     func len(a: Float, b: Float) -> Float {
         let c = fabsf(b - a)
         return c
+    }
+    
+    func selectionDiscernment() {
+        // winkLabelの出力
+        if (frameNum - brinkFrameNum <= 6) {
+             // 瞬き　何もしない
+        }
+        else if (frameNum - distFrameNum <= 6) {
+            switch changePositionFlag {
+            case 1:
+                DispatchQueue.main.async {
+                    self.noseLabel.text = "あ"
+                }
+            case 2:
+                DispatchQueue.main.async {
+                    self.noseLabel.text = "か"
+                }
+            case 3:
+                DispatchQueue.main.async {
+                    self.noseLabel.text = "さ"
+                }
+            case 4:
+                DispatchQueue.main.async {
+                    self.noseLabel.text = "Del"
+                }
+            case 5:
+                DispatchQueue.main.async {
+                    self.noseLabel.text = "た"
+                }
+            case 6:
+                DispatchQueue.main.async {
+                    self.noseLabel.text = "な"
+                }
+            case 7:
+                DispatchQueue.main.async {
+                    self.noseLabel.text = "は"
+                }
+            case 8:
+                DispatchQueue.main.async {
+                    self.noseLabel.text = "[　]"
+                }
+            case 9:
+                DispatchQueue.main.async {
+                    self.noseLabel.text = "ま"
+                }
+            case 10:
+                DispatchQueue.main.async {
+                    self.noseLabel.text = "や"
+                }
+            case 11:
+                DispatchQueue.main.async {
+                    self.noseLabel.text = "ら"
+                }
+            case 12:
+                DispatchQueue.main.async {
+                    self.noseLabel.text = "↩︎"
+                }
+            case 13:
+                DispatchQueue.main.async {
+                    self.noseLabel.text = "○"
+                }
+            case 14:
+                DispatchQueue.main.async {
+                    self.noseLabel.text = "わ"
+                }
+            case 15:
+                DispatchQueue.main.async {
+                    self.noseLabel.text = "、。"
+                }
+            default:
+                print(1)
+            }
+            
+            if changePositionFlag != 0 {
+                if labelFlag == 1 {
+                    DispatchQueue.main.async {
+                        self.noseLabel.textColor = UIColor.blue
+                    }
+                }
+                else {
+                    DispatchQueue.main.async {
+                        self.noseLabel.textColor = UIColor.red
+                    }
+                }
+            }
+        }
+        else {
+                // 何もしない？
+        }
     }
 }

@@ -15,7 +15,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     @IBOutlet weak var label: UILabel!
     @IBOutlet weak var leftLavel: UILabel!
     @IBOutlet weak var rightLabel: UILabel!
-    @IBOutlet weak var winkLabel: UILabel!
     
     @IBOutlet weak var firstPeak: UILabel!
     @IBOutlet weak var secondPeak: UILabel!
@@ -227,8 +226,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             
             
             DispatchQueue.main.async {
-                self.firstPeak.textColor = UIColor.white
-                self.secondPeak.textColor = UIColor.white
+                self.firstPeak.textColor = UIColor.black
+                self.secondPeak.textColor = UIColor.black
                 self.lateFlagLabel.textColor = UIColor.black
                 self.lateFlagLabel.text = "...."
             }
@@ -391,33 +390,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                     winkInterval = Date().timeIntervalSince1970 - winkDatePrev
                     winkDatePrev = Date().timeIntervalSince1970
                 }
-            }
-            
-            
-            // winkLabelの出力
-            if (frameNum - brinkFrameNum <= 6) {
-                DispatchQueue.main.async {
-                    self.winkLabel.textColor = UIColor.green
-                    self.winkLabel.text = "Brink."
-                }
-            }
-            else if (frameNum - distFrameNum <= 6 && labelFlag == 1) {
-                DispatchQueue.main.async {
-                    self.winkLabel.textColor = UIColor.blue
-                    self.winkLabel.text = "Left Wink!!"
-                }
-            }
-            else if (frameNum - distFrameNum <= 6 && labelFlag == 2) {
-                DispatchQueue.main.async {
-                    self.winkLabel.textColor = UIColor.red
-                    self.winkLabel.text = "Right Wink!!"
-                }
-            }
-            else {
-                DispatchQueue.main.async {
-                    self.winkLabel.textColor = UIColor(white:1.0, alpha:0.4)
-                    self.winkLabel.text = "No Input"
-                }
+                selectionDiscernment()
                 labelFlag = 0
             }
             
