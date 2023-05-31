@@ -11,6 +11,8 @@ import UIKit
 public var changePositionFlag = 0
 public var prevChangePositionFlag = 0
 
+let CHARACTER = ["あ", "か", "さ","削除", "た", "な","は", "空白", "ま","や", "ら", "改行","○", "わ", "。?!"]
+
 extension ViewController {
    //ランドマークの位置で領域を選択する関数
     func LandmarkPositionSerect(_ xPoint: Float, _ yPoint: Float) -> Int {
@@ -163,7 +165,6 @@ extension ViewController {
         let areaChangeFlag = (changePositionFlag != prevChangePositionFlag) ? 1 : 0
         
         prevChangePositionFlag = changePositionFlag
-//        print(prevChangePositionFlag)
         
         return areaChangeFlag
     }
@@ -202,71 +203,14 @@ extension ViewController {
         }
         else if (frameNum - distFrameNum <= 6) {
             switch changePositionFlag {
-            case 1:
-                DispatchQueue.main.async {
-                    self.noseLabel.text = "あ"
-                }
-            case 2:
-                DispatchQueue.main.async {
-                    self.noseLabel.text = "か"
-                }
-            case 3:
-                DispatchQueue.main.async {
-                    self.noseLabel.text = "さ"
-                }
-            case 4:
-                DispatchQueue.main.async {
-                    self.noseLabel.text = "削除"
-                }
-            case 5:
-                DispatchQueue.main.async {
-                    self.noseLabel.text = "た"
-                }
-            case 6:
-                DispatchQueue.main.async {
-                    self.noseLabel.text = "な"
-                }
-            case 7:
-                DispatchQueue.main.async {
-                    self.noseLabel.text = "は"
-                }
-            case 8:
-                DispatchQueue.main.async {
-                    self.noseLabel.text = "空白"
-                }
-            case 9:
-                DispatchQueue.main.async {
-                    self.noseLabel.text = "ま"
-                }
-            case 10:
-                DispatchQueue.main.async {
-                    self.noseLabel.text = "や"
-                }
-            case 11:
-                DispatchQueue.main.async {
-                    self.noseLabel.text = "ら"
-                }
-            case 12:
-                DispatchQueue.main.async {
-                    self.noseLabel.text = "改行"
-                }
-            case 13:
-                DispatchQueue.main.async {
-                    self.noseLabel.text = "○"
-                }
-            case 14:
-                DispatchQueue.main.async {
-                    self.noseLabel.text = "わ"
-                }
-            case 15:
-                DispatchQueue.main.async {
-                    self.noseLabel.text = "、。"
-                }
+            case 0:
+                break
             default:
-                print(1)
-            }
-            
-            if changePositionFlag != 0 {
+                DispatchQueue.main.async {
+                    self.noseLabel.text = CHARACTER[changePositionFlag - 1]
+                }
+                inputCharacter = CHARACTER[changePositionFlag - 1]
+                inputCountCha += 1
                 if labelFlag == 1 {
                     DispatchQueue.main.async {
                         self.noseLabel.textColor = UIColor.blue

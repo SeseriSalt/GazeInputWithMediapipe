@@ -8,35 +8,60 @@
 import Foundation
 import UIKit
 
-//var questionList = ["あ", "か", "さ"]
-var questionList = ["あ", "か","さ", "た", "な", "は", "ま", "や", "ら", "わ", "、。", "削除", "空白", "改行", "○"]
+var successTimer = Date().timeIntervalSince1970
+var successTimerPrev = Date().timeIntervalSince1970
+
+var inputCountAll: Int = 0
+var judgeRatioAll: Double = 0.0
+
+var inputCountCha: Int = 0
+var printInputCountCha: Int = 0
+
+var firstInput: Int = 1
+var questionList = ["あ", "か","さ", "た", "な", "は", "ま", "や", "ら", "わ", "。?!", "削除", "空白", "改行", "○", "あ", "か","さ", "た", "な", "は", "ま", "や", "ら", "わ", "。?!", "削除", "空白", "改行", "○"]
+
+var questionCharacter = ""
 
 extension ViewController {
     func judgment() {
-        DispatchQueue.main.async {
-            if self.noseLabel.text == self.questionLabel.text {
+        if inputCharacter == questionCharacter {
+            DispatchQueue.main.async {
                 self.noseLabel.text = ""
-                if questionList.isEmpty {// 全ての文字を表示し終わった場合
+            }
+            successTimer = Date().timeIntervalSince1970 - successTimerPrev
+            successTimerPrev = Date().timeIntervalSince1970
+            if firstInput == 1 {
+                firstInput = 0
+                inputCountCha = 0
+                inputCountAll = 0
+            }
+            else {
+                inputCountAll += inputCountCha
+                printInputCountCha = inputCountCha
+                inputCountCha = 0
+            }
+            if questionList.isEmpty {// 全ての文字を表示し終わった場合
+                DispatchQueue.main.async {
                     self.questionLabel.text = "終わり。"
                     self.questionLabel.textColor = UIColor.green
                 }
-                else {
-                    self.questionLabel.text = self.getRandomLetter()
-                }
+                judgeRatioAll = 30.0 / Double(inputCountAll)
+            }
+            else {
+                getRandomLetter()
             }
         }
     }
     
     // ランダムな文字を取得する関数
-    func getRandomLetter() -> String? {
-        guard !questionList.isEmpty else {
-            return ""
-        }
-        
+    func getRandomLetter() {
         let randomIndex = Int.random(in: 0..<questionList.count)
         let letter = questionList[randomIndex]
         questionList.remove(at: randomIndex)
-        return letter
+        DispatchQueue.main.async {
+            self.questionLabel.text = letter
+        }
+        questionCharacter = letter
     }
     
     
