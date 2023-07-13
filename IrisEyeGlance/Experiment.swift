@@ -20,7 +20,7 @@ var printInputCountCha: Int = 0
 var firstInput: Int = 1
 var questionList = ["あ", "か","さ", "た", "な", "は", "ま", "や", "ら", "わ", "。?!", "削除", "空白", "改行", "○", "あ", "か","さ", "た", "な", "は", "ま", "や", "ら", "わ", "。?!", "削除", "空白", "改行", "○"]
 
-var questionCharacter = ""
+var questionCharacter = "な"
 
 extension ViewController {
     func judgment() {

@@ -47,6 +47,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     var rightPrev: Float = -10000.0
     var lrHeightDiff: Float = 0.0
     var lrDiff: Float = 0.0
+    var lrDiffPrev: Float = 0.0
     
 //    public let ikichiWink: Float = 0.6
     var determinedIkichiMax: Float = 0.0
@@ -60,8 +61,11 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     
     var winkFlag = 0
     var lateWinkFlag = 0
+    var moveMissjudgeFlag = 0
     var maxDiff: Float = 0.0
     var minDiff: Float = 0.0
+    var peakPrev: Float = 0.0
+    var peakNext: Float = 0.0
     var maxPeakFrameNum = 0
     var minPeakFrameNum = 0
     var distInterval = 0
@@ -95,8 +99,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     
     var tapCount = 0
     let imageSizeList = [(300, 252), (225, 189), (150, 126)]
-    let imagePositionList = [(195.0, 414.0), (195.0, 559.0), (195.0, 704.0)]
-    let cursorPointList = [4, 1, 0]
+    let imagePositionList = [(195.0, 204.0), (195.0, 704.0)]
+    let cursorPointList = [6, 1]
     let lineWidthList = [2.0, 1.5, 1.0]
     
     var inputCharacter = ""
@@ -122,7 +126,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         print(imageview.bounds.size.width, imageview.bounds.size.height, imageview.image?.size.width as Any, imageview.image?.size.height as Any)
         
         // 入力画面デザインの初期位置///////////////////////////////
-        design1.center = CGPoint(x: CGFloat(imagePositionList[2].0), y: CGFloat(imagePositionList[2].1))
+        design1.center = CGPoint(x: CGFloat(imagePositionList[1].0), y: CGFloat(imagePositionList[1].1))
         // あ/////////////////////////////////////////////////////////////////////
         // 入力画面ドラッグ
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
@@ -138,6 +142,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 updateImageViewSize()
         
         noseLabel.layer.borderWidth = 0.5
+        noseLabel.text = ""
         questionLabel.layer.borderWidth = 0.5
         questionLabel.text = "な"
     }
@@ -192,8 +197,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
          // 領域選択カーソルの処理
             // 鼻の位置の取得//////////////////////////////////////////////////////////////////////////////////////////////////
             // 顔画像の横幅widthが画面上の幅と違うので正規化する
-            let normalizedValue = (landmarkAll[cursorPointList[0]][0] - minValue) / (maxValue - minValue)
-            let nosePoint = landmarkPoint(x: normalizedValue * screenWidth, y: landmarkAll[cursorPointList[0]][1] * screenHeight)
+            let normalizedValue = (landmarkAll[cursorPointList[1]][0] - minValue) / (maxValue - minValue)
+            let nosePoint = landmarkPoint(x: normalizedValue * screenWidth, y: landmarkAll[cursorPointList[1]][1] * screenHeight)
             // ////////////////////////////////////////////////////////////////////////////////////////////////
             //カーソル描画
             DispatchQueue.main.async {
@@ -275,6 +280,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             if (winkFlag == 0 && lrDiff < WINK_IKITCH_MIN && frameNum > 15 && frameNum - distFrameNum > 6 && frameNum - brinkFrameNum > 6) {
                 winkFlag = 1
                 minDiff = lrDiff
+                peakPrev = lrDiffPrev
                 minPeakFrameNum = frameNum
                 firstPoint = frameNum
                 DispatchQueue.main.async {
@@ -284,16 +290,32 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             }
             else if (winkFlag == 1 && lrDiff < minDiff) {
                 minDiff = lrDiff
+                peakPrev = lrDiffPrev
                 minPeakFrameNum = frameNum
                 DispatchQueue.main.async {
                     self.firstPeak.text = String(format: "%.3f", self.minDiff)
                     self.firstPeak.textColor = UIColor.systemPink
                 }
             }
-            else if (winkFlag == 1 && lrDiff > WINK_IKITCH_MIN) {
-                winkFlag = 2
+            else if (winkFlag == 1 && lrDiff >= minDiff) {
+                if (peakNext == 0.0) {
+                    peakNext = lrDiff
+                }
+                if (moveMissjudgeFlag == 0 && peakPrev * minDiff < 0 && peakNext * minDiff < 0) {
+                    moveMissjudgeFlag = 1   // 他の動作による誤判別の検知
+                }
+                else if (lrDiff > WINK_IKITCH_MIN) {
+                    winkFlag = 2
+                    peakPrev = 0
+                    peakNext = 0
+                    moveMissjudgeFlag = 0
+                }
+                else {
+                    moveMissjudgeFlag = -1 // wink閾値判定の継続
+                }
             }
-            else if (winkFlag == 2 && lrDiff > WINK_IKITCH_MAX) {
+            // Flagが1のフレームから3フレームで1,2,3と上がる時、2のまま放置する→この現象は閉じた時の反動が出てるだけ。その後ちゃんと反対のピークが来るのでその時判別する。
+            else if (winkFlag == 2 && lrDiff > WINK_IKITCH_MAX && frameNum - minPeakFrameNum != 2) {
                 winkFlag = 3
                 maxDiff = lrDiff
                 maxPeakFrameNum = frameNum
@@ -313,14 +335,14 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             else if (winkFlag == 3 && lrDiff < WINK_IKITCH_MAX) {
                 winkFlag = 4
             }
-            else if (frameNum - distFrameNum > 6 && heightAvg5 < -HEIGHT_DIFF_IKICHI && lrDiff > WINK_IKITCH_MAX) {
-                winkFlag = 4
-                lateWinkFlag = 1
-                DispatchQueue.main.async {
-                    self.lateFlagLabel.text = "Late Left"
-                    self.secondPeak.textColor = UIColor.blue
-                }
-            }//瞬きの回避
+//            else if (frameNum - distFrameNum > 6 && heightAvg5 < -HEIGHT_DIFF_IKICHI && lrDiff > WINK_IKITCH_MAX) {
+//                winkFlag = 4
+//                lateWinkFlag = 1
+//                DispatchQueue.main.async {
+//                    self.lateFlagLabel.text = "Late Left"
+//                    self.secondPeak.textColor = UIColor.blue
+//                }
+//            }//瞬きの回避
             else if (brinkFlag == 0 && frameNum - brinkFrameNum > 5 && leftEyelidDiff < BRINK_IKICHI && rightEyelidDiff < BRINK_IKICHI) {
                 brinkFlag = 1
                 brinkFirstPoint = frameNum
@@ -333,6 +355,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             if (winkFlag == 0 && lrDiff > WINK_IKITCH_MAX && frameNum > 15 && frameNum - distFrameNum > 6 && frameNum - brinkFrameNum > 6) {
                 winkFlag = -1
                 maxDiff = lrDiff
+                peakPrev = lrDiffPrev
                 maxPeakFrameNum = frameNum
                 firstPoint = frameNum
                 DispatchQueue.main.async {
@@ -342,16 +365,33 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             }
             else if (winkFlag == -1 && lrDiff > maxDiff) {
                 maxDiff = lrDiff
+                peakPrev = lrDiffPrev
                 maxPeakFrameNum = frameNum
                 DispatchQueue.main.async {
                     self.firstPeak.text = String(format: "%.3f", self.maxDiff)
                     self.firstPeak.textColor = UIColor.systemPink
                 }
             }
-            else if (winkFlag == -1 && lrDiff < WINK_IKITCH_MAX) {
-                winkFlag = -2
+            else if (winkFlag == -1 && lrDiff <= maxDiff) {
+                if (peakNext == 0) {
+                    peakNext = lrDiff
+                }
+                
+                if (moveMissjudgeFlag == 0 && peakPrev * maxDiff < 0 && peakNext * maxDiff < 0) {
+                    moveMissjudgeFlag = 1   // 他の動作による誤判別の検知
+                }
+                else if (lrDiff < WINK_IKITCH_MAX) {
+                    winkFlag = -2
+                    peakPrev = 0
+                    peakNext = 0
+                    moveMissjudgeFlag = 0
+                }
+                else {
+                    moveMissjudgeFlag = -1 // wink閾値判定の継続
+                }
             }
-            else if (winkFlag == -2 && lrDiff < WINK_IKITCH_MIN) {
+            // Flagが-1のフレームから3フレームで1,-2,-3と上がる時、-2のまま放置する→この現象は閉じた時の反動が出てるだけ。その後ちゃんと反対のピークが来るのでその時判別する。
+            else if (winkFlag == -2 && lrDiff < WINK_IKITCH_MIN && frameNum - maxPeakFrameNum != 2) {
                 winkFlag = -3
                 minDiff = lrDiff
                 minPeakFrameNum = frameNum
@@ -371,14 +411,14 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             else if (winkFlag == -3 && lrDiff > WINK_IKITCH_MIN) {
                 winkFlag = -4
             }
-            else if (frameNum - distFrameNum > 6 && heightAvg5 > HEIGHT_DIFF_IKICHI && lrDiff < WINK_IKITCH_MIN) {
-                winkFlag = -4
-                lateWinkFlag = 1
-                DispatchQueue.main.async {
-                    self.lateFlagLabel.text = "Late Right"
-                    self.secondPeak.textColor = UIColor.red
-                }
-            }//瞬きの回避
+//            else if (frameNum - distFrameNum > 6 && heightAvg5 > HEIGHT_DIFF_IKICHI && lrDiff < WINK_IKITCH_MIN) {
+//                winkFlag = -4
+//                lateWinkFlag = 1
+//                DispatchQueue.main.async {
+//                    self.lateFlagLabel.text = "Late Right"
+//                    self.secondPeak.textColor = UIColor.red
+//                }
+//            }//瞬きの回避
             else if (brinkFlag == 0 && frameNum - brinkFrameNum > 5 && leftEyelidDiff < BRINK_IKICHI && rightEyelidDiff < BRINK_IKICHI) {
                 brinkFlag = 1
                 brinkFirstPoint = frameNum
@@ -387,8 +427,21 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 brinkFlag = 2
             }
             
+            // 他の動作による誤判別の場合の初期化
+            if (moveMissjudgeFlag == 1) {
+                winkFlag = 0
+                lateWinkFlag = 0
+                maxDiff = 0
+                minDiff = 0
+                maxPeakFrameNum = 0
+                minPeakFrameNum = 0
+                peakPrev = 0
+                peakNext = 0
+            }
+            
             // ピーク間隔が短すぎる時の初期化
-            if ((winkFlag == 4 || winkFlag == -4) && frameNum - firstPoint < 5) {
+            if ((winkFlag == 4 || winkFlag == -4) && (frameNum - firstPoint < 5 || abs(maxPeakFrameNum - minPeakFrameNum) < 4)) {
+                // frameNum - firstPoint < 5 いる？
                 if (heightAvg5 <= HEIGHT_DIFF_IKICHI && -HEIGHT_DIFF_IKICHI <= heightAvg5) {
                     winkFlag = 0
                     lateWinkFlag = 0
@@ -396,6 +449,9 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                     minDiff = 0
                     maxPeakFrameNum = 0
                     minPeakFrameNum = 0
+                    peakPrev = 0
+                    peakNext = 0
+                    moveMissjudgeFlag = 0
                 }
             }
             
@@ -411,11 +467,15 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 maxDiff = 0
                 maxPeakFrameNum = 0
                 minPeakFrameNum = 0
+                peakPrev = 0
+                peakNext = 0
+                moveMissjudgeFlag = 0
             }
             // wink
             if (winkFlag == 4 || winkFlag == -4) {
                 // ピーク感覚が5フレーム以上10フレーム以下の時、wink入力判定
-                if (abs(maxPeakFrameNum - minPeakFrameNum) >= 5 && abs(maxPeakFrameNum - minPeakFrameNum) <= 10 || lateWinkFlag == 1) {
+                if (abs(maxPeakFrameNum - minPeakFrameNum) >= 4 || lateWinkFlag == 1) {
+//                if (abs(maxPeakFrameNum - minPeakFrameNum) >= 5 && abs(maxPeakFrameNum - minPeakFrameNum) <= 10 || lateWinkFlag == 1) {
                     labelFlag = winkFlag == 4 ? 1 : 2
                     distInterval = maxPeakFrameNum - minPeakFrameNum
                     winkFlag = 0
@@ -429,6 +489,9 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                     winkDatePrev = Date().timeIntervalSince1970
                     selectionDiscernment() //ランドマークによる領域選択
                 }
+//                else if()  { //Wink Flangが立ちっぱなしで放置されてる時
+//
+//                }
             }
             
             judgment()
@@ -441,6 +504,9 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 minDiff = 0
                 maxPeakFrameNum = 0
                 minPeakFrameNum = 0
+                peakPrev = 0
+                peakNext = 0
+                moveMissjudgeFlag = 0
             }
             // 瞬きが失敗？した時の初期化
             if (brinkFlag != 0 && frameNum - brinkFirstPoint > 4) {
@@ -473,7 +539,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             }
 
             //実験データ出力
-            print("\(frameNum), \(inputCharacter), \(printInputCountCha), \(successTimer), \(firstInput), \(inputCountAll), \(String(format: "%.3f", judgeRatioAll)), \(frameNum), \(leftEyelidHeight), \(rightEyelidHeight), \(defDepth / 10.0), \(leftEyelidDiff), \(rightEyelidDiff), \(BRINK_IKICHI), \(Double(brinkFlag) * 4.5), \(frameNum), \(lrHeightDiff), \(heightAvg5), \(HEIGHT_DIFF_IKICHI), \(lrDiff), \(WINK_IKITCH_MIN), \(WINK_IKITCH_MAX), \(winkFlag * 5), \(printWinkFrame), \(printBrinkFrame), \(winkInterval)")
+            print("\(frameNum), \(inputCharacter), \(printInputCountCha), \(successTimer), \(firstInput), \(inputCountAll), \(String(format: "%.3f", judgeRatioAll)), \(frameNum), \(leftEyelidHeight), \(rightEyelidHeight), \(defDepth / 10.0), \(leftEyelidDiff), \(rightEyelidDiff), \(BRINK_IKICHI), \(Double(brinkFlag) * 4.5), \(frameNum), \(lrHeightDiff), \(heightAvg5), \(HEIGHT_DIFF_IKICHI), \(lrDiff), \(WINK_IKITCH_MIN), \(WINK_IKITCH_MAX), \(winkFlag * 5), \(printWinkFrame), \(printBrinkFrame), \(moveMissjudgeFlag),  \(winkInterval)")
             
             
         
@@ -481,6 +547,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
 // ↓ここから下：次のフレームで使用する現在の値を保存・初期化
             leftPrev = leftEyelidHeight
             rightPrev = rightEyelidHeight
+            
+            lrDiffPrev = lrDiff
             
             leftDepthPrev = leftDepth_mm
             rightDepthPrev = rightDepth_mm
@@ -506,6 +574,10 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             labelFlag = 0
             winkInterval = 0
             distInterval = 0 //ナニコレ
+            
+            if (moveMissjudgeFlag == 1) {
+                moveMissjudgeFlag = 0
+            }
             
             inputCharacter = ""
             successTimer = 0
