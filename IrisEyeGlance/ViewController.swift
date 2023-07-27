@@ -124,7 +124,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     var rightInnerWhitePrev: CGFloat = 0.0
     var rightOuterWhitePrev: CGFloat = 0.0
     
-    //初期化した時のフレーム（wink, brink, glance共通）
+    //短すぎて初期化した時のフレーム（wink, brink, glance共通）
     var distInitNum: Int = 0
     
     /////// ここから下はランドマークポイント ///////
@@ -193,42 +193,14 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
     
     func irisTracker(_ irisTracker: SYIris!, didOutputLandmarks landmarks: [Landmark]!) {
+  // 全ランドマーク取得
         var landmarkAll : [[Float]] = []
         if let unwrapped = landmarks {
             for (point) in unwrapped {
                 landmarkAll.append([point.x, point.y])
             }
-            let leftEyeLandmark = [
-                landmarkAll[468],
-                landmarkAll[469],
-                landmarkAll[470],
-                landmarkAll[471],
-                landmarkAll[472],
-            ]
-            let rightEyeLandmark = [
-                landmarkAll[473],
-                landmarkAll[474],
-                landmarkAll[475],
-                landmarkAll[476],
-                landmarkAll[477],
-            ]
             
-            // Depthの計算・表示
-            let leftIrisSize = caluclateIrisDiamater(landmark: leftEyeLandmark, imageSize: [WIDTH, HEIGHT])
-            let rightIrisSize = caluclateIrisDiamater(landmark: rightEyeLandmark, imageSize: [WIDTH, HEIGHT])
-            
-            let leftDepth_mm = caluclateDepth(centerPoint: leftEyeLandmark[0] , focalLength: FOCAL_LENGTH, irisSize: leftIrisSize, width: WIDTH, height: HEIGHT)
-            let rightDepth_mm = caluclateDepth(centerPoint: rightEyeLandmark[0], focalLength: FOCAL_LENGTH, irisSize: rightIrisSize, width: WIDTH, height: HEIGHT)
-            
-            let leftDepth = Int(round(leftDepth_mm / 10))
-            let rightDepth = Int(round(rightDepth_mm / 10))
-            
-            DispatchQueue.main.async {
-                self.leftLavel.text = "\(leftDepth)"
-                self.rightLabel.text = "\(rightDepth)"
-            }
-            
-// 領域選択カーソルの処理
+  // 領域選択カーソルの処理
             // 正規化した鼻の位置の取得
             let normalizedNosePoint = normalizedLandmarkPoint(point: landmarkAll[cursorPointList[1]])
             let nosePoint = CGPoint(x: normalizedNosePoint.x * screenWidth, y: normalizedNosePoint.y * screenHeight)
@@ -246,7 +218,34 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 feedbackGenerator.selectionChanged()
             }
             
-//Eye Glance
+  // Depthの計算・表示
+            let leftEyeLandmark = [
+                landmarkAll[468],
+                landmarkAll[469],
+                landmarkAll[470],
+                landmarkAll[471],
+                landmarkAll[472],
+            ]
+            let rightEyeLandmark = [
+                landmarkAll[473],
+                landmarkAll[474],
+                landmarkAll[475],
+                landmarkAll[476],
+                landmarkAll[477],
+            ]
+            
+            let leftIrisSize = caluclateIrisDiamater(landmark: leftEyeLandmark, imageSize: [WIDTH, HEIGHT])
+            let rightIrisSize = caluclateIrisDiamater(landmark: rightEyeLandmark, imageSize: [WIDTH, HEIGHT])
+            
+            let leftDepth_mm = caluclateDepth(centerPoint: leftEyeLandmark[0] , focalLength: FOCAL_LENGTH, irisSize: leftIrisSize, width: WIDTH, height: HEIGHT)
+            let rightDepth_mm = caluclateDepth(centerPoint: rightEyeLandmark[0], focalLength: FOCAL_LENGTH, irisSize: rightIrisSize, width: WIDTH, height: HEIGHT)
+            
+            DispatchQueue.main.async {
+                self.leftLavel.text = "\(Int(round(leftDepth_mm / 10)))"
+                self.rightLabel.text = "\(Int(round(rightDepth_mm / 10)))"
+            }
+            
+  //Eye Glance用データ
             //irisの正規化
             let normalizedLeftIris: [CGPoint] = normalizeLandmarks(leftEyeLandmark)
             let normalizedRightIris: [CGPoint] = normalizeLandmarks(rightEyeLandmark)
@@ -259,11 +258,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             let leftIrisDiff_x = normalizedLeftIris[0].x - leftIrisPrev.x
             let rightIrisDiff_x = normalizedRightIris[0].x - rightIrisPrev.x
             
-            // Eye Glance判別
-            let eyeWave = eyeGlanceDitect(leftY: leftIrisDiff_y, rightY: rightIrisDiff_y, leftX: leftIrisDiff_x, rightX: rightIrisDiff_x)
-            
-            
-// Wink
+  // Wink・brink用データ
             // 瞼の高さ
             leftEyelidHeight = getLandmerkLength(point0: landmarkAll[159], point1: landmarkAll[145], imageSize: [WIDTH, HEIGHT])
             rightEyelidHeight = getLandmerkLength(point0: landmarkAll[386], point1: landmarkAll[374], imageSize: [WIDTH, HEIGHT])
@@ -278,7 +273,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             // 左右の1フレーム前との差分値の差
             lrDiff = leftEyelidDiff - rightEyelidDiff
             
-            // 左右の高さの差を記録していく
+            // 左右の高さの差を5フレーム分記録
             heightAll.insert(lrHeightDiff, at: 0)
             var heightAvg5: Float = 0
             if (heightAll.count >= 8) {
@@ -306,17 +301,20 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 depthAll.removeFirst()
             }
             
+  // 判別
+            // brink判別
+            let brinkIkichi = brinkDitect()
+            
+            // Eye Glance判別
+            let eyeWave = eyeGlanceDitect(leftY: leftIrisDiff_y, rightY: rightIrisDiff_y, leftX: leftIrisDiff_x, rightX: rightIrisDiff_x)
+            
             // wink判別
             let wink = winkDitect()
             
-// 瞬き
-            // 瞬き判別
-            let brinkIkichi = brinkDitect()
-            
-            // 実験用入力判別関数
+            // 実験用入力判別
             judgment()
             
-// 入力が起こったフレームの出力用
+  // 入力が起こったフレームの出力用
             var printWinkFrame: Int = 0
             var printBrinkFrame: Int = 0
             var printGlanceFrame: Int = 0
@@ -335,7 +333,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             }
             
             
-//実験データ出力
+  //実験データ出力
 //            print("\(frameNum), \(inputCharacter), \(printInputCountCha), \(successTimer), \(firstInput), \(inputCountAll), \(String(format: "%.3f", judgeRatioAll)), \(frameNum), \(leftEyelidHeight), \(rightEyelidHeight), \(defDepth / 10.0), \(leftEyelidDiff), \(rightEyelidDiff), \(brinkIkichi), \(Double(brinkFlag) * 4.5), \(frameNum), \(lrHeightDiff), \(lrDiff), \(wink.WINK_IKITCH_MIN), \(wink.WINK_IKITCH_MAX), \(winkFlag * 5), \(printWinkFrame), \(printBrinkFrame), \(moveMissjudgeFlag)")
             //            print("\(frameNum), \(leftIrisDiff_y), \(rightIrisDiff_y), \(frameNum), \(glanceDist), \(glanceFlag), \(glanceFirstPoint), \(printGlanceFrame), \(brinkFlag),  \(printBrinkFrame), \(printInitFrame), \(frameNum), \(leftIrisDiff_x), \(rightIrisDiff_x), \(normalizedLeftIris[0].x), \(refPoint.x), \(refPointDiff), \(relativeDistance_x.l), \(relativeDistance_x.r), \(relativeDistanceLeftDiff), \(relativeDistanceRightDiff), \(frameNum), \(leftInnerWhite), \(leftOuterWhite), \(rightInnerWhite), \(rightOuterWhite), \(frameNum), \(leftInnerWhiteDiff), \(leftOuterWhiteDiff), \(rightInnerWhiteDiff), \(rightOuterWhiteDiff)")
             //            print("\(frameNum), \(leftIrisDiff_y), \(rightIrisDiff_y), \(frameNum), \(glanceDist), \(glanceFlag), \(glanceFirstPoint), \(printGlanceFrame), \(brinkFlag),  \(printBrinkFrame), \(printInitFrame), \(frameNum), \(leftIrisDiff_x), \(rightIrisDiff_x), \(directionDist), \(firstDirect), \(secondDirect), \(firstDirectIris.l), \(firstDirectIris.r), \(secondDirectIris.l), \(secondDirectIris.r), \(glanceResult)")
@@ -343,7 +341,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             
             
             
-            // ↓ここから下：次のフレームで使用する現在の値を保存・初期化
+  // ↓ここから下：次のフレームで使用する現在の値を保存・初期化
             leftPrev = leftEyelidHeight
             rightPrev = rightEyelidHeight
             
@@ -395,30 +393,21 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
     
     
+    // 設定画面遷移ボタン 画面キャプチャを止める
     @IBAction func settingButtonPush(_ sender: Any) {
         camera.stop()
     }
     
-    // 設定画面から戻る時の処理  あとでwinkのやつも入れる
+    // 設定画面から戻る時の処理
     func restartCapture() {
         camera.start()
+        
         frameNum = 0
-        
-        brinkFlag = 0
-        distBrinkNum = 0
-        distWinkNum = 0
-        distInitNum = 0
-        distGlanceNum = 0
-        glanceFlag = 0
-        glanceFirstPoint = 0
-        firstDirect = 0.0
-        firstDirectIris = lrPoint(l: 0.0, r: 0.0)
-        secondDirect = 0.0
-        secondDirectIris = lrPoint(l: 0.0, r: 0.0)
-        
+        allInit()
     }
     
     func irisTracker(_ irisTracker: SYIris!, didOutputPixelBuffer pixelBuffer: CVPixelBuffer!) {
+        // キャプチャにランドマークを描画
         DispatchQueue.main.async {
             self.imageview.image = UIImage(ciImage: CIImage(cvPixelBuffer: pixelBuffer))
         }

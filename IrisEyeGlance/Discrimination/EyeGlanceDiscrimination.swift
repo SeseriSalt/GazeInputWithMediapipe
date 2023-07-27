@@ -89,15 +89,10 @@ extension ViewController {
                     self.movementLabel.text = String(vowelNumber)
                 }
                 glanceResult = vowelNumber
-                
                 distGlanceNum = frameNum
                 selectionDiscernment(vowelNumber: vowelNumber) // 入力
-                glanceFlag = 0
-                glanceFirstPoint = 0
-                firstDirect = 0.0
-                firstDirectIris = lrPoint(l: 0.0, r: 0.0)
-                secondDirect = 0.0
-                secondDirectIris = lrPoint(l: 0.0, r: 0.0)
+                
+                allInit()
             }
         }
         
@@ -108,22 +103,13 @@ extension ViewController {
         //短すぎるeye glance初期化
         if ((glanceFlag == 4 || glanceFlag == -4) && frameNum - glanceFirstPoint <= 5) {
             distInitNum = frameNum
-            glanceFlag = 0
-            glanceFirstPoint = 0
-            firstDirect = 0.0
-            firstDirectIris = lrPoint(l: 0.0, r: 0.0)
-            secondDirect = 0.0
-            secondDirectIris = lrPoint(l: 0.0, r: 0.0)
+            glanceInit()
         }
         
         //長すぎるeye glance初期化
         if (glanceFlag != 0 && frameNum - glanceFirstPoint > 15) {
-            glanceFlag = 0
-            glanceFirstPoint = 0
-            firstDirect = 0.0
-            firstDirectIris = lrPoint(l: 0.0, r: 0.0)
-            secondDirect = 0.0
-            secondDirectIris = lrPoint(l: 0.0, r: 0.0)
+            distInitNum = frameNum
+            glanceInit()
         }
         return(glanceDist, directionDist)
     }

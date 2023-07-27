@@ -22,24 +22,11 @@ extension ViewController {
         }
         
         if (brinkFlag == 2) {
-            brinkFlag = 0
             distBrinkNum = frameNum
-            
-            winkFlag = 0
-            lateWinkFlag = 0
-            maxDiff = 0
-            minDiff = 0
-            maxPeakFrameNum = 0
-            minPeakFrameNum = 0
-            peakPrev = 0
-            peakNext = 0
-            moveMissjudgeFlag = 0
-            
-            glanceFlag = 0
-            glanceFirstPoint = 0
+            allInit()
         }
         
-        // 瞬きが失敗？した時の初期化
+        // 瞬きが失敗？(長すぎる)した時の初期化
         if (brinkFlag != 0 && frameNum - brinkFirstPoint > 4) {
             brinkFlag = 0
         }
