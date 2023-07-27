@@ -12,10 +12,25 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     
     
     @IBOutlet weak var imageview: UIImageView!
-    @IBOutlet weak var label: UILabel!
+    @IBOutlet weak var frameLabel: UILabel!
     @IBOutlet weak var leftLavel: UILabel!
     @IBOutlet weak var rightLabel: UILabel!
-    @IBOutlet weak var winkLabel: UILabel!
+    
+    @IBOutlet weak var firstPeak: UILabel!
+    @IBOutlet weak var secondPeak: UILabel!
+    @IBOutlet weak var lateFlagLabel: UILabel!
+    
+    @IBOutlet weak var inputLabel: UILabel!
+    @IBOutlet weak var imputDesignImage: UIImageView!
+    @IBOutlet weak var ISCenterLabel: UILabel!
+    @IBOutlet weak var ISWidthLabel: UILabel!
+    
+    @IBOutlet weak var questionLabel: UILabel!
+    
+    @IBOutlet weak var movementLabel: UILabel!
+    
+    @IBOutlet weak var settingButton: UIButton!
+    
     
     let camera = Camera()
     let tracker: SYIris = SYIris()!
@@ -25,40 +40,108 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     public let HEIGHT: Float = 1920.0
     public var frameNum: Int = 0
     
+    // 1つのランドマークの構造体
+    struct landmarkPoint {
+        var x: Float = 0.0
+        var y: Float = 0.0
+    }
+    // 右左の構造体
+    struct lrPoint {
+        var l: CGFloat = 0.0
+        var r: CGFloat = 0.0
+    }
+    
+    // x軸正規化の最小値・最大値
+    let NORMALIZED_CONST: (min: CGFloat, max: CGFloat) = (min: 0.08978804, max: 0.9095595)
+    
     var leftEyelidHeight: Float = 0.0
     var rightEyelidHeight: Float = 0.0
     var leftEyelidDiff: Float = 0.0
     var rightEyelidDiff: Float = 0.0
     var lrRatio: Float = 0.0
-    var leftPrev: Float = -10000.0
-    var rightPrev: Float = -10000.0
+    var leftPrev: Float = 0.0
+    var rightPrev: Float = 0.0
     var lrHeightDiff: Float = 0.0
-    var lrAbsDiff: Float = 0.0
     var lrDiff: Float = 0.0
+    var lrDiffPrev: Float = 0.0
     
-//    public let ikichiWink: Float = 0.6
+    //    public let ikichiWink: Float = 0.6
     var determinedIkichiMax: Float = 0.0
     var determinedIkichiMin: Float = 0.0
     var determinedIkichBrink: Float = 0.0
+    var determinedIkichiHeight: Float = 0.0
     var winkIkichiMaxNext: Float = 0.0
     var winkIkichiMinNext: Float = 0.0
     var brinkIkichNext: Float = 0.0
+    var heightIkichiNext: Float = 0.0
     
     var winkFlag = 0
+    var lateWinkFlag = 0
+    var moveMissjudgeFlag = 0
     var maxDiff: Float = 0.0
     var minDiff: Float = 0.0
+    var peakPrev: Float = 0.0
+    var peakNext: Float = 0.0
     var maxPeakFrameNum = 0
     var minPeakFrameNum = 0
-    var distInterval = 0
     var firstPoint = 0
-    var labelFlag = 0
-    var distFrameNum = 0
+    var inputLabelFlag = 0
+    var distWinkNum = 0
     var brinkFlag = 0
-    var brinkFrameNum = 0
+    var brinkFirstPoint = 0
+    var distBrinkNum = 0
     var leftDepthPrev: Float = 0.0
     var rightDepthPrev: Float = 0.0
     var depthAll: [[Float]] = []
     var defDepth: Float = 0.0
+    
+    var heightAll: [Float] = []
+    
+    //Eye Glance用
+    var normalizedLeftIris: [CGPoint] = []
+    var normalizedRightIris: [CGPoint] = []
+    
+    var leftIrisPrev =  CGPoint(x: CGFloat(0.0), y: CGFloat(0.0))
+    var rightIrisPrev = CGPoint(x: CGFloat(0.0), y: CGFloat(0.0))
+    
+    var glanceFlag: Int = 0
+    var glanceFirstPoint: Int = 0
+    var distGlanceNum: Int = 0
+    
+    var firstDirect: CGFloat = 0.0
+    var firstDirectIris = lrPoint(l: CGFloat(0.0), r: CGFloat(0.0))
+    var secondDirect: CGFloat = 0.0
+    var secondDirectIris = lrPoint(l: CGFloat(0.0), r: CGFloat(0.0))
+    
+    var glanceResult: Int = 0
+    
+    var relativeDistance_x = lrPoint(l: 0.0, r: 0.0)
+    var relativeDistance_xPrev = lrPoint(l: 0.0, r: 0.0)
+    var refPointPrev = CGPoint(x: CGFloat(0.0), y: CGFloat(0.0))
+    
+    var leftInnerWhitePrev: CGFloat = 0.0
+    var leftOuterWhitePrev: CGFloat = 0.0
+    var rightInnerWhitePrev: CGFloat = 0.0
+    var rightOuterWhitePrev: CGFloat = 0.0
+    
+    //初期化した時のフレーム（wink, brink, glance共通）
+    var distInitNum: Int = 0
+    
+    /////// ここから下はランドマークポイント ///////
+    let screenWidth = UIScreen.main.bounds.width // (390.0)
+    let screenHeight = UIScreen.main.bounds.height // (844.0)
+    
+    var circleLayer: CAShapeLayer?
+    var rectLayer: CAShapeLayer?
+    
+    var tapCount = 0
+    let imageSizeList = [(150, 126), (225, 189)]
+    //    let imagePositionList = [(195.0, 204.0), (195.0, 704.0)]
+    let cursorPointList = [6, 1]
+    let lineWidthList = [2.0, 1.5, 1.0]
+    
+    var inputCharacter = ""
+    /////// ここまでがランドマークポイント ///////
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,6 +149,36 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         camera.start()
         tracker.startGraph()
         tracker.delegate = self
+        
+        imageview.translatesAutoresizingMaskIntoConstraints = false
+        imageview.contentMode = .scaleAspectFill
+        
+        NSLayoutConstraint.activate([
+            imageview.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            imageview.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            imageview.topAnchor.constraint(equalTo: view.topAnchor),
+            imageview.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+        
+        // 入力画面デザインの初期位置
+        //        design1.center = CGPoint(x: CGFloat(imagePositionList[1].0), y: CGFloat(imagePositionList[1].1))
+        // 入力画面ドラッグ
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
+        imputDesignImage.addGestureRecognizer(panGesture)
+        imputDesignImage.isUserInteractionEnabled = true
+        
+        //ダブルタップで大きさ変更
+        let doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap(_:)))
+        doubleTapGesture.numberOfTapsRequired = 2
+        imputDesignImage.isUserInteractionEnabled = true
+        imputDesignImage.addGestureRecognizer(doubleTapGesture)
+        
+        updateImageViewSize()
+        
+        inputLabel.layer.borderWidth = 0.5
+        inputLabel.text = ""
+        questionLabel.layer.borderWidth = 0.5
+        questionLabel.text = "な"
     }
     
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
@@ -75,25 +188,16 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         frameNum += 1
         DispatchQueue.main.async {
             self.imageview.image = UIImage(ciImage: CIImage(cvPixelBuffer: pixelBuffer!))
-            self.label.text = "\(self.frameNum)"
+            self.frameLabel.text = "\(self.frameNum)"
         }
     }
     
     func irisTracker(_ irisTracker: SYIris!, didOutputLandmarks landmarks: [Landmark]!) {
         var landmarkAll : [[Float]] = []
-        // matplotlibでのランドマーク位置描画用配列
-//        var xPoints: [Float] = []
-//        var yPoints: [Float] = []
         if let unwrapped = landmarks {
             for (point) in unwrapped {
-                landmarkAll.append([point.x, point.y, point.z])
-//                xPoints.append(point.x * WIDTH)
-//                yPoints.append(point.y * HEIGHT)
+                landmarkAll.append([point.x, point.y])
             }
-//            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-//            print(xPoints)
-//            print("?????????????????????????????????????????????")
-//            print(yPoints)
             let leftEyeLandmark = [
                 landmarkAll[468],
                 landmarkAll[469],
@@ -124,23 +228,65 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 self.rightLabel.text = "\(rightDepth)"
             }
             
-        // winkの判別
+// 領域選択カーソルの処理
+            // 正規化した鼻の位置の取得
+            let normalizedNosePoint = normalizedLandmarkPoint(point: landmarkAll[cursorPointList[1]])
+            let nosePoint = CGPoint(x: normalizedNosePoint.x * screenWidth, y: normalizedNosePoint.y * screenHeight)
+            
+            //カーソル描画
+            DispatchQueue.main.async {
+                self.drawCursor(point: nosePoint)
+            }
+            
+            // 位置が変わった時のフィードバック用バイブレーション
+            let feedbackGenerator = UISelectionFeedbackGenerator()
+            
+            let areaChangeFlnag = LandmarkPositionSerect(point: nosePoint)
+            if areaChangeFlnag == 1 {
+                feedbackGenerator.selectionChanged()
+            }
+            
+//Eye Glance
+            //irisの正規化
+            let normalizedLeftIris: [CGPoint] = normalizeLandmarks(leftEyeLandmark)
+            let normalizedRightIris: [CGPoint] = normalizeLandmarks(rightEyeLandmark)
+            
+            //  y方向
+            let leftIrisDiff_y = normalizedLeftIris[0].y - leftIrisPrev.y
+            let rightIrisDiff_y = normalizedRightIris[0].y - rightIrisPrev.y
+            
+            // x方向
+            let leftIrisDiff_x = normalizedLeftIris[0].x - leftIrisPrev.x
+            let rightIrisDiff_x = normalizedRightIris[0].x - rightIrisPrev.x
+            
+            // Eye Glance判別
+            let eyeWave = eyeGlanceDitect(leftY: leftIrisDiff_y, rightY: rightIrisDiff_y, leftX: leftIrisDiff_x, rightX: rightIrisDiff_x)
+            
+            
+// Wink
             // 瞼の高さ
             leftEyelidHeight = getLandmerkLength(point0: landmarkAll[159], point1: landmarkAll[145], imageSize: [WIDTH, HEIGHT])
             rightEyelidHeight = getLandmerkLength(point0: landmarkAll[386], point1: landmarkAll[374], imageSize: [WIDTH, HEIGHT])
             
-            // 1フレーム前の瞼の高さとの差分
+            // 1フレーム前の瞼の高さとの差分値
             leftEyelidDiff = leftEyelidHeight - leftPrev
             rightEyelidDiff = rightEyelidHeight - rightPrev
             
-            // 左右の高さの絶対値
-            lrHeightDiff = abs(leftEyelidHeight - rightEyelidHeight)
+            // 左右の高さの差
+            lrHeightDiff = leftEyelidHeight - rightEyelidHeight
             
-            // 左右の高さの絶対値の差分
-            lrAbsDiff =  abs(leftEyelidDiff) - abs(rightEyelidDiff)
-            
-            // 左右の高さの差分
+            // 左右の1フレーム前との差分値の差
             lrDiff = leftEyelidDiff - rightEyelidDiff
+            
+            // 左右の高さの差を記録していく
+            heightAll.insert(lrHeightDiff, at: 0)
+            var heightAvg5: Float = 0
+            if (heightAll.count >= 8) {
+                for i in (0 ..< 5) {
+                    heightAvg5 += heightAll[i]
+                }
+                heightAvg5 = heightAvg5 / 5
+            }
             
             // 1フレーム前の距離との差分
             let leftDepthDiff = leftDepth_mm - leftDepthPrev
@@ -149,175 +295,127 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             // 距離の平均値
             let lrDepthVer: Float = (leftDepth_mm + rightDepth_mm) / 2.0
             
-            // 1フレーム前の距離との差分の平均値（今のとこ使ってない）
+            // 1フレーム前の距離との差分の平均値（距離の変更時の雑音を取り除こうとして取得したが、今のとこ使ってない）
             let lrDepthDiff: Float = (leftDepthDiff + rightDepthDiff) / 2.0
             
             depthAll.append([lrDepthVer, lrDepthDiff])
-        
+            
             // 5フレーム前のdepthの取得
             if depthAll.count == 5 {
                 defDepth = depthAll.last![0]
                 depthAll.removeFirst()
             }
             
-            // 距離から次のフレームの閾値の導出
-            winkIkichiMaxNext = -0.0141 * defDepth + 10.6
-            winkIkichiMinNext = -winkIkichiMaxNext
-            brinkIkichNext = winkIkichiMinNext - 0.5
+            // wink判別
+            let wink = winkDitect()
             
-            // 判別に用いる閾値の決定
-            let WINK_IKITCH_MAX: Float = determinedIkichiMax
-            let WINK_IKITCH_MIN: Float = determinedIkichiMin
-            let BRINK_IKICHI: Float = determinedIkichBrink
-//            print("\(frameNum), \(defDepth / 10.0), \(WINK_IKITCH_MAX), \(-BRINK_IKICHI)")
+// 瞬き
+            // 瞬き判別
+            let brinkIkichi = brinkDitect()
             
-            // 瞬き回避
-            if (frameNum - brinkFrameNum > 6 && leftEyelidDiff < BRINK_IKICHI && rightEyelidDiff < BRINK_IKICHI ) {
-                determinedIkichBrink = BRINK_IKICHI
-                brinkFlag = 1
-                brinkFrameNum = frameNum
+            // 実験用入力判別関数
+            judgment()
+            
+// 入力が起こったフレームの出力用
+            var printWinkFrame: Int = 0
+            var printBrinkFrame: Int = 0
+            var printGlanceFrame: Int = 0
+            var printInitFrame: Int = 0
+            if (distWinkNum == frameNum) {
+                printWinkFrame = distWinkNum
             }
-            // 左目のWink判別
-            if (winkFlag == 0 && lrDiff < WINK_IKITCH_MIN && frameNum > 15 && frameNum - distFrameNum > 6 && frameNum - brinkFrameNum > 6) {
-                winkFlag = 1
-                minDiff = lrDiff
-                minPeakFrameNum = frameNum
-                firstPoint = frameNum
+            if (distBrinkNum == frameNum) {
+                printBrinkFrame = distBrinkNum
             }
-            else if (winkFlag == 1 && lrDiff < minDiff) {
-                minDiff = lrDiff
-                minPeakFrameNum = frameNum
+            if (distGlanceNum == frameNum) {
+                printGlanceFrame = distGlanceNum
             }
-            else if (winkFlag == 1 && lrDiff > WINK_IKITCH_MIN) {
-                winkFlag = 2
-            }
-            else if (winkFlag == 2 && lrDiff > WINK_IKITCH_MAX) {
-                winkFlag = 3
-                maxDiff = lrDiff
-                maxPeakFrameNum = frameNum
-            }
-            else if (winkFlag == 3 && lrDiff > maxDiff) {
-                maxDiff = lrDiff
-                maxPeakFrameNum = frameNum
-            }
-            else if (winkFlag == 3 && lrDiff < WINK_IKITCH_MAX) {
-                winkFlag = 4
+            if (distInitNum == frameNum) {
+                printInitFrame = distInitNum
             }
             
-            // 右目のWink判別
-            if (winkFlag == 0 && lrDiff > WINK_IKITCH_MAX && frameNum > 15 && frameNum - distFrameNum > 6 && frameNum - brinkFrameNum > 6) {
-                winkFlag = -1
-                maxDiff = lrDiff
-                maxPeakFrameNum = frameNum
-                firstPoint = frameNum
-            }
-            else if (winkFlag == -1 && lrDiff > maxDiff) {
-                maxDiff = lrDiff
-                maxPeakFrameNum = frameNum
-            }
-            else if (winkFlag == -1 && lrDiff < WINK_IKITCH_MAX) {
-                winkFlag = -2
-            }
-            else if (winkFlag == -2 && lrDiff < WINK_IKITCH_MIN) {
-                winkFlag = -3
-                minDiff = lrDiff
-                minPeakFrameNum = frameNum
-            }
-            else if (winkFlag == -3 && lrDiff < minDiff) {
-                minDiff = lrDiff
-                minPeakFrameNum = frameNum
-            }
-            else if (winkFlag == -3 && lrDiff > WINK_IKITCH_MIN) {
-                winkFlag = -4
-            }
             
-            // 出力のフラグ立てと初期化
-            if (winkFlag == 4 || winkFlag == -4) {
-                // ピーク感覚が5フレーム以上10フレーム以下の時、wink入力判定
-                if (abs(maxPeakFrameNum - minPeakFrameNum) >= 5 || abs(maxPeakFrameNum - minPeakFrameNum) <= 10) {
-                    labelFlag = winkFlag == 4 ? 1 : 2
-                    distInterval = maxPeakFrameNum - minPeakFrameNum
-                    winkFlag = 0
-                    minDiff = 0
-                    maxDiff = 0
-                    maxPeakFrameNum = 0
-                    minPeakFrameNum = 0
-                    distFrameNum = frameNum
-                }
-            }
+//実験データ出力
+//            print("\(frameNum), \(inputCharacter), \(printInputCountCha), \(successTimer), \(firstInput), \(inputCountAll), \(String(format: "%.3f", judgeRatioAll)), \(frameNum), \(leftEyelidHeight), \(rightEyelidHeight), \(defDepth / 10.0), \(leftEyelidDiff), \(rightEyelidDiff), \(brinkIkichi), \(Double(brinkFlag) * 4.5), \(frameNum), \(lrHeightDiff), \(lrDiff), \(wink.WINK_IKITCH_MIN), \(wink.WINK_IKITCH_MAX), \(winkFlag * 5), \(printWinkFrame), \(printBrinkFrame), \(moveMissjudgeFlag)")
+            //            print("\(frameNum), \(leftIrisDiff_y), \(rightIrisDiff_y), \(frameNum), \(glanceDist), \(glanceFlag), \(glanceFirstPoint), \(printGlanceFrame), \(brinkFlag),  \(printBrinkFrame), \(printInitFrame), \(frameNum), \(leftIrisDiff_x), \(rightIrisDiff_x), \(normalizedLeftIris[0].x), \(refPoint.x), \(refPointDiff), \(relativeDistance_x.l), \(relativeDistance_x.r), \(relativeDistanceLeftDiff), \(relativeDistanceRightDiff), \(frameNum), \(leftInnerWhite), \(leftOuterWhite), \(rightInnerWhite), \(rightOuterWhite), \(frameNum), \(leftInnerWhiteDiff), \(leftOuterWhiteDiff), \(rightInnerWhiteDiff), \(rightOuterWhiteDiff)")
+            //            print("\(frameNum), \(leftIrisDiff_y), \(rightIrisDiff_y), \(frameNum), \(glanceDist), \(glanceFlag), \(glanceFirstPoint), \(printGlanceFrame), \(brinkFlag),  \(printBrinkFrame), \(printInitFrame), \(frameNum), \(leftIrisDiff_x), \(rightIrisDiff_x), \(directionDist), \(firstDirect), \(secondDirect), \(firstDirectIris.l), \(firstDirectIris.r), \(secondDirectIris.l), \(secondDirectIris.r), \(glanceResult)")
+            print("\(frameNum), \(leftIrisDiff_y), \(rightIrisDiff_y), \(eyeWave.glanceDist), \(round(glanceUpSliderValue*10)/10), \(round(glanceDownSliderValue*10)/10), \(glanceFlag), \(glanceFirstPoint), \(printGlanceFrame), \(brinkFlag),  \(printBrinkFrame), \(printInitFrame), \(frameNum), \(leftIrisDiff_x), \(rightIrisDiff_x), \(eyeWave.directionDist),  \(firstDirect), \(secondDirect), \(glanceResult)")
             
-            // winkLabelの出力
-            if (frameNum - brinkFrameNum <= 6) {
-                DispatchQueue.main.async {
-                    self.winkLabel.textColor = UIColor.green
-                    self.winkLabel.text = "Brink."
-                }
-            }
-            else if (frameNum - distFrameNum <= 6 && labelFlag == 1) {
-                DispatchQueue.main.async {
-                    self.winkLabel.textColor = UIColor.blue
-                    self.winkLabel.text = "Left Wink!!"
-                }
-            }
-            else if (frameNum - distFrameNum <= 6 && labelFlag == 2) {
-                DispatchQueue.main.async {
-                    self.winkLabel.textColor = UIColor.red
-                    self.winkLabel.text = "Right Wink!!"
-                }
-            }
-            else {
-                DispatchQueue.main.async {
-                    self.winkLabel.textColor = UIColor(white:1.0, alpha:0.4)
-                    self.winkLabel.text = "No Input"
-                }
-                labelFlag = 0
-            }
             
-            // ピーク間隔が短すぎる時の初期化
-            if ((winkFlag == 4 || winkFlag == -4) && frameNum - firstPoint < 5) {
-                winkFlag = 0
-                maxPeakFrameNum = 0
-                minPeakFrameNum = 0
-            }
             
-            // ピーク感覚が長すぎる時の初期化
-            if (winkFlag != 0 && frameNum - firstPoint > 10) {
-                winkFlag = 0
-                maxPeakFrameNum = 0
-                minPeakFrameNum = 0
-            }
-            
-            // 波形の出力
-//            var printIkichMax: Float = 0.0
-//            var printIkichMin: Float = 0.0
-//            var printIkichBrink: Float = 0.0
-//            if (winkFlag != 0 || frameNum - brinkFrameNum <= 6) {
-//                printIkichMax = WINK_IKITCH_MAX
-//                printIkichMin = WINK_IKITCH_MIN
-//                printIkichBrink = BRINK_IKICHI
-//            }
-//            print("\(frameNum), \(leftEyelidHeight), \(rightEyelidHeight), \(lrHeightDiff), \(frameNum), \(defDepth / 10.0), \(frameNum), \(leftEyelidDiff), \(rightEyelidDiff), \(BRINK_IKICHI), \(printIkichBrink), \(brinkFlag * 10), \(frameNum), \(lrDiff), \(WINK_IKITCH_MIN), \(WINK_IKITCH_MAX), \(printIkichMin), \(printIkichMax), \(winkFlag * 5), \(distFrameNum), \(brinkFrameNum)")
-            
-//            print("\(frameNum), \(leftDepth_mm), \(rightDepth_mm), \(abs(leftDepth_mm - rightDepth_mm)), \(frameNum),\(leftDepthDiff), \(rightDepthDiff), \(abs(leftDepthDiff - rightDepthDiff)), \(frameNum), \(leftEyelidDiff), \(rightEyelidDiff), \(lrDiff)")
-        
-            
-// ↓ここから下：次のフレームで使用する現在の値を保存・初期化
+            // ↓ここから下：次のフレームで使用する現在の値を保存・初期化
             leftPrev = leftEyelidHeight
             rightPrev = rightEyelidHeight
+            
+            lrDiffPrev = lrDiff
             
             leftDepthPrev = leftDepth_mm
             rightDepthPrev = rightDepth_mm
             
-            // フラグが立っていない時のみ閾値を更新（フラグが立っている時、閾値はフラグが立ったフレームの値）
-            if (winkFlag == 0 && frameNum - brinkFrameNum > 6) {
-                determinedIkichiMax = winkIkichiMaxNext
-                determinedIkichiMin = winkIkichiMinNext
-                determinedIkichBrink = brinkIkichNext
+            leftIrisPrev = normalizedLeftIris[0]
+            rightIrisPrev = normalizedRightIris[0]
+            
+            //　glance確認用
+            if (frameNum - distGlanceNum > 4) {
+                DispatchQueue.main.async {
+                    self.movementLabel.text = "___"
+                }
+                glanceResult = 0
             }
             
-            distInterval = 0 //ナニコレ
-            brinkFlag = 0
+            // フラグが立っていない時のみ閾値を更新（フラグが立っている時、閾値はフラグが立ったフレームの値）
+            if (winkFlag == 0) {
+                determinedIkichiMax = winkIkichiMaxNext
+                determinedIkichiMin = winkIkichiMinNext
+                determinedIkichiHeight = heightIkichiNext
+            }
+            
+            if (brinkFlag == 0) {
+                determinedIkichBrink = brinkIkichNext
+                
+                if (winkFlag == 0) {
+                    // 瞬きの時はwinkも止める
+                    determinedIkichiMax = winkIkichiMaxNext
+                    determinedIkichiMin = winkIkichiMinNext
+                    determinedIkichiHeight = heightIkichiNext
+                }
+            }
+            
+            // winkが右か左か判別して色付けするやつ
+            inputLabelFlag = 0
+            
+            if (moveMissjudgeFlag == 1) {
+                moveMissjudgeFlag = 0
+            }
+            
+            inputCharacter = ""
+            successTimer = 0
+            printInputCountCha = 0
         }
+    }
+    
+    
+    @IBAction func settingButtonPush(_ sender: Any) {
+        camera.stop()
+    }
+    
+    // 設定画面から戻る時の処理  あとでwinkのやつも入れる
+    func restartCapture() {
+        camera.start()
+        frameNum = 0
+        
+        brinkFlag = 0
+        distBrinkNum = 0
+        distWinkNum = 0
+        distInitNum = 0
+        distGlanceNum = 0
+        glanceFlag = 0
+        glanceFirstPoint = 0
+        firstDirect = 0.0
+        firstDirectIris = lrPoint(l: 0.0, r: 0.0)
+        secondDirect = 0.0
+        secondDirectIris = lrPoint(l: 0.0, r: 0.0)
+        
     }
     
     func irisTracker(_ irisTracker: SYIris!, didOutputPixelBuffer pixelBuffer: CVPixelBuffer!) {
