@@ -12,11 +12,10 @@ public var circleLayer: CAShapeLayer?
 
 extension ViewController {
     
-    @objc func drawCursor(_ xPoint: Float, _ yPoint: Float) {
-        let circleCenter = CGPoint(x: CGFloat(xPoint), y: CGFloat(yPoint))
-        let circleRadius: CGFloat = 3.0
+    @objc func drawCursor(point: CGPoint) {
+        let circleRadius: CGFloat = 2.5
         
-        let circlePath = UIBezierPath(arcCenter: circleCenter, radius: circleRadius, startAngle: 0, endAngle: CGFloat.pi * 2, clockwise: true)
+        let circlePath = UIBezierPath(arcCenter: point, radius: circleRadius, startAngle: 0, endAngle: CGFloat.pi * 2, clockwise: true)
         
         let shapeLayer = CAShapeLayer()
         shapeLayer.path = circlePath.cgPath
