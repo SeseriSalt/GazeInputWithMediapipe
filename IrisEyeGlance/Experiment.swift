@@ -26,7 +26,7 @@ extension ViewController {
     func judgment() {
         if inputCharacter == questionCharacter {
             DispatchQueue.main.async {
-                self.noseLabel.text = ""
+                self.inputLabel.text = ""
             }
             successTimer = Date().timeIntervalSince1970 - successTimerPrev
             successTimerPrev = Date().timeIntervalSince1970

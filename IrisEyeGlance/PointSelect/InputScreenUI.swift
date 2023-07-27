@@ -19,8 +19,8 @@ extension ViewController {
     
     @objc func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
         let translation = gesture.translation(in: view)
-        design1.center = CGPoint(x: design1.center.x + translation.x, y: design1.center.y + translation.y)
-        noseLabel.center = CGPoint(x: noseLabel.center.x + translation.x, y: noseLabel.center.y + translation.y)
+        imputDesignImage.center = CGPoint(x: imputDesignImage.center.x + translation.x, y: imputDesignImage.center.y + translation.y)
+        inputLabel.center = CGPoint(x: inputLabel.center.x + translation.x, y: inputLabel.center.y + translation.y)
         questionLabel.center = CGPoint(x: questionLabel.center.x + translation.x, y: questionLabel.center.y + translation.y)
         gesture.setTranslation(.zero, in: view)
     }
@@ -37,17 +37,17 @@ extension ViewController {
     
     func updateImageViewSize() {
         let imageSize = imageSizeList[tapCount]
-        let center = design1.center
+        let center = imputDesignImage.center
         let labelHeight = center.y - CGFloat(imageSize.1) / 2 - 11.0
         
-        design1.frame.size = CGSize(width: imageSize.0, height: imageSize.1)
-        design1.center = center
-        noseLabel.center = CGPoint(x: center.x, y: labelHeight)
+        imputDesignImage.frame.size = CGSize(width: imageSize.0, height: imageSize.1)
+        imputDesignImage.center = center
+        inputLabel.center = CGPoint(x: center.x, y: labelHeight)
         questionLabel.center = CGPoint(x: center.x, y: labelHeight - 22.0)
     }
     
     func getScreenInfo() -> RectInfo {
-        let screenInfo = RectInfo(center: design1.center, width: design1.bounds.width, height: design1.bounds.height)
+        let screenInfo = RectInfo(center: imputDesignImage.center, width: imputDesignImage.bounds.width, height: imputDesignImage.bounds.height)
         DispatchQueue.main.async {
             self.ISCenterLabel.text = "x:\(round(screenInfo.center.x*10)/10) y:\(round(screenInfo.center.y*10)/10)"
             self.ISWidthLabel.text = "Width:\(screenInfo.width)"
