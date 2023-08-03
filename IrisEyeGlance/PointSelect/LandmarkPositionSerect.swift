@@ -47,22 +47,28 @@ extension ViewController {
         //1段目
         if (point.x > areaCol0 && point.x < areaCol1 && point.y > areaRow0 && point.y < areaRow1) {
             lineRect = CGRect(x: areaCol0, y: areaRow0, width: RectWidth, height: RectHeight0)
+            let position = CGPoint(x: (areaCol0 + areaCol1) / 2, y: (areaRow0 + areaRow1) / 2)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.showConsonantImage(named: "rowA", at: position)
             }
             changePositionFlag = 1
         }
         else if (point.x > areaCol1 && point.x < areaCol2 && point.y > areaRow0 && point.y < areaRow1) {
             lineRect = CGRect(x: areaCol1, y: areaRow0, width: RectWidth, height: RectHeight0)
+            let position = CGPoint(x: (areaCol1 + areaCol2) / 2, y: (areaRow0 + areaRow1) / 2)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.showConsonantImage(named: "rowK", at: position)
             }
             changePositionFlag = 2
         }
         else if (point.x > areaCol2 && point.x < areaCol3 && point.y > areaRow0 && point.y < areaRow1) {
             lineRect = CGRect(x: areaCol2, y: areaRow0, width: RectWidth, height: RectHeight0)
+            let position = CGPoint(x: (areaCol2 + areaCol3) / 2, y: (areaRow0 + areaRow1) / 2)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.showConsonantImage(named: "rowS", at: position)
             }
             changePositionFlag = 3
         }
@@ -70,28 +76,35 @@ extension ViewController {
             lineRect = CGRect(x: areaCol3, y: areaRow0, width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.consonantDesignImage.image = nil
             }
             changePositionFlag = 4
         }
         //2段目
         else if (point.x > areaCol0 && point.x < areaCol1 && point.y > areaRow1 && point.y < areaRow2) {
             lineRect = CGRect(x: areaCol0, y: areaRow1, width: RectWidth, height: RectHeight0)
+            let position = CGPoint(x: (areaCol0 + areaCol1) / 2, y: (areaRow1 + areaRow2) / 2)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.showConsonantImage(named: "rowT", at: position)
             }
             changePositionFlag = 5
         }
         else if (point.x > areaCol1 && point.x < areaCol2 && point.y > areaRow1 && point.y < areaRow2) {
             lineRect = CGRect(x: areaCol1, y: areaRow1, width: RectWidth, height: RectHeight0)
+            let position = CGPoint(x: (areaCol1 + areaCol2) / 2, y: (areaRow1 + areaRow2) / 2)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.showConsonantImage(named: "rowN", at: position)
             }
             changePositionFlag = 6
         }
         else if (point.x > areaCol2 && point.x < areaCol3 && point.y > areaRow1 && point.y < areaRow2) {
             lineRect = CGRect(x: areaCol2, y: areaRow1, width: RectWidth, height: RectHeight0)
+            let position = CGPoint(x: (areaCol2 + areaCol3) / 2, y: (areaRow1 + areaRow2) / 2)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.showConsonantImage(named: "rowH", at: position)
             }
             changePositionFlag = 7
         }
@@ -99,28 +112,35 @@ extension ViewController {
             lineRect = CGRect(x: areaCol3, y: areaRow1, width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.consonantDesignImage.image = nil
             }
             changePositionFlag = 8
         }
         //3段目
         else if (point.x > areaCol0 && point.x < areaCol1 && point.y > areaRow2 && point.y < areaRow3) {
             lineRect = CGRect(x: areaCol0, y: areaRow2, width: RectWidth, height: RectHeight0)
+            let position = CGPoint(x: (areaCol0 + areaCol1) / 2, y: (areaRow2 + areaRow3) / 2)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.showConsonantImage(named: "rowM", at: position)
             }
             changePositionFlag = 9
         }
         else if (point.x > areaCol1 && point.x < areaCol2 && point.y > areaRow2 && point.y < areaRow3) {
             lineRect = CGRect(x: areaCol1, y: areaRow2, width: RectWidth, height: RectHeight0)
+            let position = CGPoint(x: (areaCol1 + areaCol2) / 2, y: (areaRow2 + areaRow3) / 2)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.showConsonantImage(named: "rowY", at: position)
             }
             changePositionFlag = 10
         }
         else if (point.x > areaCol2 && point.x < areaCol3 && point.y > areaRow2 && point.y < areaRow3) {
             lineRect = CGRect(x: areaCol2, y: areaRow2, width: RectWidth, height: RectHeight0)
+            let position = CGPoint(x: (areaCol2 + areaCol3) / 2, y: (areaRow2 + areaRow3) / 2)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.showConsonantImage(named: "rowR", at: position)
             }
             changePositionFlag = 11
         }
@@ -128,6 +148,7 @@ extension ViewController {
             lineRect = CGRect(x: areaCol3, y: areaRow2, width: RectWidth, height: RectHeight1)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.consonantDesignImage.image = nil
             }
             changePositionFlag = 12
         }
@@ -136,20 +157,25 @@ extension ViewController {
             lineRect = CGRect(x: areaCol0, y: areaRow3, width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.consonantDesignImage.image = nil
             }
             changePositionFlag = 13
         }
         else if (point.x > areaCol1 && point.x < areaCol2 && point.y > areaRow3 && point.y < areaRow4) {
             lineRect = CGRect(x: areaCol1, y: areaRow3, width: RectWidth, height: RectHeight0)
+            let position = CGPoint(x: (areaCol1 + areaCol2) / 2, y: (areaRow3 + areaRow4) / 2)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.showConsonantImage(named: "rowW", at: position)
             }
             changePositionFlag = 14
         }
         else if (point.x > areaCol2 && point.x < areaCol3 && point.y > areaRow3 && point.y < areaRow4) {
             lineRect = CGRect(x: areaCol2, y: areaRow3, width: RectWidth, height: RectHeight0)
+            let position = CGPoint(x: (areaCol2 + areaCol3) / 2, y: (areaRow3 + areaRow4) / 2)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.showConsonantImage(named: "rowX", at: position)
             }
             changePositionFlag = 15
         }
@@ -158,6 +184,7 @@ extension ViewController {
                 if let oldRectLayer = self.rectLayer {
                     oldRectLayer.removeFromSuperlayer()
                 }
+                consonantDesignImage.image = nil
             }
             changePositionFlag = 0
         }
@@ -175,7 +202,12 @@ extension ViewController {
         let shapeLayer = CAShapeLayer()
         shapeLayer.path = rectPath.cgPath
         shapeLayer.lineWidth = lineWidthList[tapCount]
-        shapeLayer.strokeColor = UIColor(red: 26/255, green: 128/255, blue: 133/255, alpha: 1.0).cgColor
+        if (faceMoveFlag != 0 || frameNum - distInitNum <= 4 || frameNum - distWinkNum <= 5 || frameNum - distGlanceNum <= 5 || frameNum - distBrinkNum <= 5) {
+            shapeLayer.strokeColor = UIColor.red.cgColor
+        }
+        else {
+            shapeLayer.strokeColor = UIColor(red: 26/255, green: 128/255, blue: 133/255, alpha: 1.0).cgColor
+        }
         shapeLayer.fillColor = UIColor.clear.cgColor
         
         // すでに囲い線が描画されている場合、過去の線を削除
@@ -188,15 +220,21 @@ extension ViewController {
         rectLayer = shapeLayer
     }
     
+    func showConsonantImage(named imageName: String, at position: CGPoint) {
+        let image = UIImage(named: imageName)
+            consonantDesignImage.image = image
+            consonantDesignImage.center = position
+    }
+    
     func selectionDiscernment(vowelNumber: Int) {
-        // winkLabelの出力   →今viewControllerで使われてない
+        // winkLabelの出力   →多分ここ入らない
         if (frameNum - distBrinkNum <= 6) {
             DispatchQueue.main.async {
                 self.lateFlagLabel.text = "brink"
                 self.lateFlagLabel.textColor = UIColor.green
             }
         }
-        else if (frameNum - distWinkNum <= 6) {    // これ違うくない？ 普通にframeNum = distFramenumでいんじゃね
+        else if (frameNum - distWinkNum <= 5) {
             switch changePositionFlag {
             case 0:
                 break
@@ -220,7 +258,7 @@ extension ViewController {
                 }
             }
         }
-        else if (frameNum == distGlanceNum) {
+        else if (frameNum - distGlanceNum <= 5) {
             switch changePositionFlag {
             case 0:
                 break

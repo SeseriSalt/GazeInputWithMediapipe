@@ -9,9 +9,7 @@ import Foundation
 
 extension ViewController {
     func brinkDitect() -> Float {
-        
-        brinkIkichNext = winkIkichiMinNext
-        let BRINK_IKICHI: Float = determinedIkichBrink
+        let BRINK_IKICHI: Float = brinkIkichi
         
         if (brinkFlag == 0 && frameNum - distBrinkNum > 5 && leftEyelidDiff < BRINK_IKICHI && rightEyelidDiff < BRINK_IKICHI) {
             brinkFlag = 1
@@ -22,6 +20,11 @@ extension ViewController {
         }
         
         if (brinkFlag == 2) {
+            let inputNumber = 0
+            DispatchQueue.main.async {
+                self.movementLabel.text = String(inputNumber)
+            }
+            inputResult = inputNumber
             distBrinkNum = frameNum
             allInit()
         }

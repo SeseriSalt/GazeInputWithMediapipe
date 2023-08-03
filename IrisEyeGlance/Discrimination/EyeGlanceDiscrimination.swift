@@ -8,27 +8,60 @@
 import Foundation
 
 extension ViewController {
-    func eyeGlanceDitect(leftY: CGFloat, rightY: CGFloat, leftX: CGFloat, rightX: CGFloat) -> (glanceDist: CGFloat, directionDist: CGFloat) {
+    func eyeGlanceWithoutFaceMove(faceMove: CGFloat, left: CGPoint, right: CGPoint, ikichi: (max: CGFloat, min: CGFloat, face: CGFloat)) -> (glanceDist: CGFloat, directionDist: CGFloat) {
+        let FACEMOVE_IKICHI = ikichi.face
+        // Eye Glance判別波形
+        let glanceDist = (left.y + right.y) / 2 * 800
+        let directionDist = left.x * right.x * 100000
         
-        //判別波形
-        let glanceDist = (leftY + rightY) / 2 * 800
-        let directionDist = leftX * rightX * 100000
+        // 顔移動検知
+        if (frameNum > 15 && faceMoveFlag == 0 && faceMove > FACEMOVE_IKICHI) {
+            faceMoveFlag = 1
+            faceMoveFirstNum = frameNum
+        }
+        else if (faceMoveFlag == 1 && faceMove < FACEMOVE_IKICHI) {
+            faceMoveFlag = 2
+            faceMoveEndNum = frameNum
+        }
+        else if (faceMoveFlag == 2 && frameNum - faceMoveEndNum <= 6) {
+            faceMoveFlag = 0
+            glanceInit()
+        }
+        else if (faceMoveFlag == 0 && frameNum - faceMoveEndNum > 6) {
+            // Eye Glance判別
+            eyeGlanceDitect(glanceDist: glanceDist, directionDist: directionDist, xPoint: lrPoint(l: left.x, r: right.x), ikichi: (max: ikichi.max, min: ikichi.min))
+        }
+        
+        // バグった時の初期化
+        if (faceMoveFlag != 0 && frameNum - faceMoveFirstNum > 10) {
+            faceMoveFlag = 0
+            glanceInit()
+        }
+        
+        return(glanceDist, directionDist)
+    }
+    
+    func eyeGlanceDitect(glanceDist: CGFloat, directionDist: CGFloat, xPoint: lrPoint, ikichi: (max: CGFloat, min: CGFloat)) {
         
         // eye glance判別の閾値 上方向と下方向の移動で分ける
-        let glanceIkichiUp: CGFloat = glanceUpSliderValue
-        let glanceIkichiDown: CGFloat = glanceDownSliderValue
+        let glanceIkichiUp: CGFloat = ikichi.min
+        let glanceIkichiDown: CGFloat = ikichi.max
         
         // eye glance判別開始
         if (frameNum > 15 && frameNum - distGlanceNum > 6 && frameNum - distBrinkNum > 6 && frameNum - distWinkNum > 6 && frameNum - distInitNum > 5) {
             if (glanceFlag == 0 && glanceDist < glanceIkichiUp) {
                 glanceFlag = 1
                 glanceFirstPoint = frameNum
+                firstDirect = directionDist
+                firstDirectIris = xPoint
             }
             else if (glanceFlag == 1 && glanceDist > glanceIkichiUp) {
                 glanceFlag = 2
             }
             else if (glanceFlag == 2 && glanceDist > glanceIkichiDown) {
                 glanceFlag = 3
+                secondDirect = directionDist
+                secondDirectIris = xPoint
             }
             else if (glanceFlag == 3 && glanceDist < glanceIkichiDown) {
                 glanceFlag = 4
@@ -36,12 +69,16 @@ extension ViewController {
             else if (glanceFlag == 0 && glanceDist > glanceIkichiDown) {
                 glanceFlag = -1
                 glanceFirstPoint = frameNum
+                firstDirect = directionDist
+                firstDirectIris = xPoint
             }
             else if (glanceFlag == -1 && glanceDist < glanceIkichiDown) {
                 glanceFlag = -2
             }
             else if (glanceFlag == -2 && glanceDist < glanceIkichiUp) {
                 glanceFlag = -3
+                secondDirect = directionDist
+                secondDirectIris = xPoint
             }
             else if (glanceFlag == -3 && glanceDist > glanceIkichiUp) {
                 glanceFlag = -4
@@ -52,45 +89,45 @@ extension ViewController {
         if (glanceFlag == 1 || glanceFlag == -1) {
             if (firstDirect < directionDist) {
                 firstDirect = directionDist
-                firstDirectIris = lrPoint(l: leftX, r: rightX)
+                firstDirectIris = xPoint
             }
         }
         else if (glanceFlag == 3 || glanceFlag == -3) {
             if (secondDirect < directionDist) {
                 secondDirect = directionDist
-                secondDirectIris = lrPoint(l: leftX, r: rightX)
+                secondDirectIris = xPoint
             }
         }
         
         //glance判別関数
         func updateGlanceLabel(glanceDirection: Int, glanceSymbol1: Int, glanceSymbol2: Int) {
             if (glanceFlag == glanceDirection && frameNum - glanceFirstPoint > 5) {
-                var vowelNumber: Int
+                var inputNumber: Int
                 
                 if (firstDirect > secondDirect) {
                     if ((abs(firstDirectIris.l) > abs(firstDirectIris.r) ? firstDirectIris.l : firstDirectIris.r) < 0.0) {
-                        vowelNumber = glanceSymbol1
+                        inputNumber = glanceSymbol1
                     }
                     else {
-                        vowelNumber = glanceSymbol2
+                        inputNumber = glanceSymbol2
                     }
                 }
                 else {
                     if ((abs(secondDirectIris.l) > abs(secondDirectIris.r) ? secondDirectIris.l : secondDirectIris.r) > 0.0) {
-                        vowelNumber = glanceSymbol1
+                        inputNumber = glanceSymbol1
                     }
                     else {
-                        vowelNumber = glanceSymbol2
+                        inputNumber = glanceSymbol2
                     }
                 }
                 
                 // メインスレッドでラベルのテキストを更新
                 DispatchQueue.main.async {
-                    self.movementLabel.text = String(vowelNumber)
+                    self.movementLabel.text = String(inputNumber)
                 }
-                glanceResult = vowelNumber
+                inputResult = inputNumber
                 distGlanceNum = frameNum
-                selectionDiscernment(vowelNumber: vowelNumber) // 入力
+                selectionDiscernment(vowelNumber: inputNumber) // 入力
                 
                 allInit()
             }
@@ -111,7 +148,6 @@ extension ViewController {
             distInitNum = frameNum
             glanceInit()
         }
-        return(glanceDist, directionDist)
     }
 }
 

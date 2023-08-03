@@ -17,8 +17,8 @@ var judgeRatioAll: Double = 0.0
 var inputCountCha: Int = 0
 var printInputCountCha: Int = 0
 
-var firstInput: Int = 1
-var questionList = ["あ", "か","さ", "た", "な", "は", "ま", "や", "ら", "わ", "。?!", "削除", "空白", "改行", "○", "あ", "か","さ", "た", "な", "は", "ま", "や", "ら", "わ", "。?!", "削除", "空白", "改行", "○"]
+var firstInputFlag: Int = 1
+var questionList = ["あ", "い", "う", "え", "お", "か", "き", "く", "け", "こ", "さ", "し", "す", "せ", "そ","削除", "た", "ち", "つ", "て", "と", "な", "に", "ぬ", "ね", "の", "は", "ひ", "ふ", "へ", "ほ", "空白", "ま", "み", "む", "め", "も", "や", "ゆ", "よ", "ら", "り", "る", "れ", "ろ", "改行", "わ", "を", "ん", "、", "。", "？", "！"]
 
 var questionCharacter = "な"
 
@@ -30,8 +30,8 @@ extension ViewController {
             }
             successTimer = Date().timeIntervalSince1970 - successTimerPrev
             successTimerPrev = Date().timeIntervalSince1970
-            if firstInput == 1 {
-                firstInput = 0
+            if firstInputFlag == 1 {
+                firstInputFlag = 0
                 inputCountCha = 0
                 inputCountAll = 0
             }

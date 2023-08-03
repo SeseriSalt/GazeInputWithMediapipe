@@ -9,14 +9,9 @@ import Foundation
 
 extension ViewController {
     func winkDitect() -> (WINK_IKITCH_MAX: Float, WINK_IKITCH_MIN: Float) {
-        // 距離から次のフレームの閾値の導出
-        winkIkichiMaxNext = -0.01244 * defDepth + 9.524
-        winkIkichiMinNext = -winkIkichiMaxNext
-        heightIkichiNext = -0.03 * defDepth + 23
-        
         // 判別に用いる閾値の決定
-        let WINK_IKITCH_MAX: Float = determinedIkichiMax
-        let WINK_IKITCH_MIN: Float = determinedIkichiMin
+        let WINK_IKITCH_MAX: Float = winkIkichiMax
+        let WINK_IKITCH_MIN: Float = winkIkichiMin
 //        let HEIGHT_DIFF_IKICHI: Float = determinedIkichiHeight
         
         // 左目のWink判別
@@ -132,6 +127,11 @@ extension ViewController {
             if (abs(maxPeakFrameNum - minPeakFrameNum) >= 4 || lateWinkFlag == 1) {
                 //                if (abs(maxPeakFrameNum - minPeakFrameNum) >= 5 && abs(maxPeakFrameNum - minPeakFrameNum) <= 10 || lateWinkFlag == 1) {
                 inputLabelFlag = winkFlag == 4 ? 1 : 2
+                let inputNumber = -inputLabelFlag
+                DispatchQueue.main.async {
+                    self.movementLabel.text = String(inputNumber)
+                }
+                inputResult = inputNumber
                 distWinkNum = frameNum
                 selectionDiscernment(vowelNumber: 0) //入力
                 
