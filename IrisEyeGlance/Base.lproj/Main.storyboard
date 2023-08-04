@@ -104,7 +104,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VM7-Ja-ug3">
-                                <rect key="frame" x="121" y="601" width="141" height="66"/>
+                                <rect key="frame" x="225" y="613" width="140" height="66"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="設定"/>
@@ -124,6 +124,15 @@
                                 <rect key="frame" x="25" y="280" width="116" height="97"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F1N-RH-QqZ">
+                                <rect key="frame" x="30" y="613" width="140" height="66"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="データ取得"/>
+                                <connections>
+                                    <action selector="createCSVButtonPush:" destination="BYZ-38-t0r" eventType="touchUpInside" id="3S7-OA-agi"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -156,6 +165,7 @@
                         <outlet property="ISCenterLabel" destination="JeH-EP-whN" id="PQB-ga-u4w"/>
                         <outlet property="ISWidthLabel" destination="ufT-dx-oEO" id="WIC-JU-Hdq"/>
                         <outlet property="consonantDesignImage" destination="v7v-3J-n4A" id="ALr-8f-vG6"/>
+                        <outlet property="createCSVButton" destination="F1N-RH-QqZ" id="yoD-CT-o06"/>
                         <outlet property="firstPeak" destination="o5u-HT-e8w" id="k3B-r9-GgQ"/>
                         <outlet property="frameLabel" destination="dPr-C1-ZRK" id="YFJ-0H-cWN"/>
                         <outlet property="imageview" destination="OEs-xE-y8E" id="Jgj-YW-2I1"/>

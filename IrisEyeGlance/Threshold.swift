@@ -19,7 +19,7 @@ extension ViewController {
         let glanceIkichiMaxNext: CGFloat = -glanceIkichiMinNext * 0.92
         
         // wink
-        winkIkichiMaxNext = -0.01244 * depth + Float(winkSliderValue)
+        winkIkichiMaxNext = -0.01242 * depth + Float(winkSliderValue)
         winkIkichiMinNext = -winkIkichiMaxNext * 0.96
         heightIkichiNext = -0.03 * depth + 23
         

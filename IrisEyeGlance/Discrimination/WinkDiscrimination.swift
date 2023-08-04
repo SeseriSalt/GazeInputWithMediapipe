@@ -6,16 +6,17 @@
 //
 
 import Foundation
+import UIKit
 
 extension ViewController {
     func winkDitect() -> (WINK_IKITCH_MAX: Float, WINK_IKITCH_MIN: Float) {
         // 判別に用いる閾値の決定
         let WINK_IKITCH_MAX: Float = winkIkichiMax
         let WINK_IKITCH_MIN: Float = winkIkichiMin
-//        let HEIGHT_DIFF_IKICHI: Float = determinedIkichiHeight
+        let HEIGHT_DIFF_IKICHI: Float = winkIkichiHeight
         
-        // 左目のWink判別
         if (frameNum > 15 && frameNum - distGlanceNum > 6 && frameNum - distWinkNum > 6 && frameNum - distBrinkNum > 6 && frameNum - distInitNum > 5) {
+            // 左目のWink判別
             if (winkFlag == 0 && lrDiff < WINK_IKITCH_MIN) {
                 winkFlag = 1
                 minDiff = lrDiff
@@ -58,14 +59,14 @@ extension ViewController {
             else if (winkFlag == 3 && lrDiff < WINK_IKITCH_MAX) {
                 winkFlag = 4
             }
-            //            else if (frameNum - distFrameNum > 6 && heightAvg5 < -HEIGHT_DIFF_IKICHI && lrDiff > WINK_IKITCH_MAX) {
-            //                winkFlag = 4
-            //                lateWinkFlag = 1
-            //                DispatchQueue.main.async {
-            //                    self.lateFlagLabel.text = "Late Left"
-            //                    self.secondPeak.textColor = UIColor.blue
-            //                }
-            //            }
+//            else if (heightAvg5 < -HEIGHT_DIFF_IKICHI && lrDiff > WINK_IKITCH_MAX) {
+//                winkFlag = 4
+//                lateWinkFlag = 1
+//                DispatchQueue.main.async {
+//                    self.lateFlagLabel.text = "Late Left"
+//                    self.secondPeak.textColor = UIColor.blue
+//                }
+//            }
             
             // 右目のWink判別
             else if (winkFlag == 0 && lrDiff > WINK_IKITCH_MAX) {
@@ -111,14 +112,14 @@ extension ViewController {
             else if (winkFlag == -3 && lrDiff > WINK_IKITCH_MIN) {
                 winkFlag = -4
             }
-            //            else if (frameNum - distFrameNum > 6 && heightAvg5 > HEIGHT_DIFF_IKICHI && lrDiff < WINK_IKITCH_MIN) {
-            //                winkFlag = -4
-            //                lateWinkFlag = 1
-            //                DispatchQueue.main.async {
-            //                    self.lateFlagLabel.text = "Late Right"
-            //                    self.secondPeak.textColor = UIColor.red
-            //                }
-            //            }
+//            else if (heightAvg5 > HEIGHT_DIFF_IKICHI && lrDiff < WINK_IKITCH_MIN) {
+//                winkFlag = -4
+//                lateWinkFlag = 1
+//                DispatchQueue.main.async {
+//                    self.lateFlagLabel.text = "Late Right"
+//                    self.secondPeak.textColor = UIColor.red
+//                }
+//            }
         }
         
         // wink

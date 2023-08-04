@@ -23,11 +23,11 @@ extension ViewController {
             faceMoveFlag = 2
             faceMoveEndNum = frameNum
         }
-        else if (faceMoveFlag == 2 && frameNum - faceMoveEndNum <= 6) {
+        else if (faceMoveFlag == 2 && frameNum - faceMoveEndNum <= 5) {
             faceMoveFlag = 0
             glanceInit()
         }
-        else if (faceMoveFlag == 0 && frameNum - faceMoveEndNum > 6) {
+        else if (faceMoveFlag == 0 && frameNum - faceMoveEndNum > 5) {
             // Eye Glance判別
             eyeGlanceDitect(glanceDist: glanceDist, directionDist: directionDist, xPoint: lrPoint(l: left.x, r: right.x), ikichi: (max: ikichi.max, min: ikichi.min))
         }
@@ -144,7 +144,7 @@ extension ViewController {
         }
         
         //長すぎるeye glance初期化
-        if (glanceFlag != 0 && frameNum - glanceFirstPoint > 15) {
+        if (glanceFlag != 0 && frameNum - glanceFirstPoint > 20) {
             distInitNum = frameNum
             glanceInit()
         }

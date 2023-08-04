@@ -19,6 +19,7 @@ var printInputCountCha: Int = 0
 
 var firstInputFlag: Int = 1
 var questionList = ["あ", "い", "う", "え", "お", "か", "き", "く", "け", "こ", "さ", "し", "す", "せ", "そ","削除", "た", "ち", "つ", "て", "と", "な", "に", "ぬ", "ね", "の", "は", "ひ", "ふ", "へ", "ほ", "空白", "ま", "み", "む", "め", "も", "や", "ゆ", "よ", "ら", "り", "る", "れ", "ろ", "改行", "わ", "を", "ん", "、", "。", "？", "！"]
+//var questionList = ["あ", "い", "う", "え", "お"]
 
 var questionCharacter = "な"
 
@@ -45,7 +46,7 @@ extension ViewController {
                     self.questionLabel.text = "終わり。"
                     self.questionLabel.textColor = UIColor.green
                 }
-                judgeRatioAll = 30.0 / Double(inputCountAll)
+                judgeRatioAll = 53.0 / Double(inputCountAll) // questionListの総数記憶する方法わからん
             }
             else {
                 getRandomLetter()

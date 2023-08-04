@@ -31,11 +31,15 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     
     @IBOutlet weak var movementLabel: UILabel!
     
+    @IBOutlet weak var createCSVButton: UIButton!
     @IBOutlet weak var settingButton: UIButton!
     
     
     let camera = Camera()
     let tracker: SYIris = SYIris()!
+    
+    var recFlag: Int = 0
+    var fileName: String = ""
     
     public let FOCAL_LENGTH: Float = 1304.924438
     public let WIDTH: Float = 1080.0
@@ -97,7 +101,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     var rightDepthPrev: Float = 0.0
     var depthAll: [[Float]] = []
     var defDepth: Float = 0.0
-    
+    var heightAvg5: Float = 0
     var heightAll: [Float] = []
     
     //Eye Glance用
@@ -150,8 +154,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     var rectLayer: CAShapeLayer?
     
     var tapCount = 0
-    let imageSizeList = [(150, 126), (225, 189)]
-    let imageSizeListCon = [(75, 63), (113, 95)]
+    let imageSizeList = [(175, 147), (200, 168), (150, 126)]
+    let imageSizeListCon = [(87, 73), (127, 106), (75, 63)]
     let CURSOR_LANDMARK: Int = 1
     let IMAGE_INITISL_POSITION = CGPoint(x: 195.0, y: 422.0)
     let lineWidthList = [1.5, 1.0]
@@ -175,6 +179,9 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             imageview.topAnchor.constraint(equalTo: view.topAnchor),
             imageview.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+        
+        let symbolImage = UIImage(systemName: "record.circle")
+        createCSVButton.setImage(symbolImage, for: .normal)
         
         // 入力画面デザインの初期位置
         inputDesignImage.center = IMAGE_INITISL_POSITION
@@ -286,7 +293,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             }
             
   //Eye Glance用データ
-            //irisの正規化
+            // irisの正規化
             let normalizedLeftIris: [CGPoint] = normalizeLandmarks(leftEyeLandmark)
             let normalizedRightIris: [CGPoint] = normalizeLandmarks(rightEyeLandmark)
             
@@ -315,7 +322,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             
             // 左右の高さの差を5フレーム分記録
             heightAll.insert(lrHeightDiff, at: 0)
-            var heightAvg5: Float = 0
             if (heightAll.count >= 8) {
                 for i in (0 ..< 5) {
                     heightAvg5 += heightAll[i]
@@ -348,11 +354,11 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             // brink判別
             let brink = brinkDitect()
             
-            // Eye Glance判別
-            let eyeWave = eyeGlanceWithoutFaceMove(faceMove: faceMove, left: CGPoint(x: leftIrisDiff_x, y: leftIrisDiff_y), right: CGPoint(x: rightIrisDiff_x, y: rightIrisDiff_y), ikichi: (max: glanceIkichiMax, min: glanceIkichiMin, face: faceMoveIkichi))
-            
             // wink判別
             let wink = winkDitect()
+            
+            // Eye Glance判別
+            let eyeWave = eyeGlanceWithoutFaceMove(faceMove: faceMove, left: CGPoint(x: leftIrisDiff_x, y: leftIrisDiff_y), right: CGPoint(x: rightIrisDiff_x, y: rightIrisDiff_y), ikichi: (max: glanceIkichiMax, min: glanceIkichiMin, face: faceMoveIkichi))
             
             // 実験用入力判別
             judgment()
@@ -362,14 +368,22 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             let printBrinkFrame = distBrinkNum == frameNum ? String(distBrinkNum) : ""
             let printGlanceFrame = distGlanceNum == frameNum ? String(distGlanceNum) : ""
             let printInitFrame = frameNum - distInitNum <= 4 ? String(distInitNum) : ""
-            let printFaceMoveFrame = frameNum - faceMoveEndNum <= 6 ? String(faceMoveEndNum) : ""
+            let printFaceMoveFrame = frameNum - faceMoveEndNum <= 5 ? String(faceMoveEndNum) : ""
             
   //実験データ出力
-            print("\(frameNum), \(inputCharacter), \(printInputCountCha), \(successTimer), \(firstInputFlag), \(inputCountAll), \(String(format: "%.3f", judgeRatioAll)), \(frameNum), \(leftEyelidDiff), \(rightEyelidDiff), \(defDepth / 10.0), \(frameNum), \(lrHeightDiff), \(lrDiff), \(wink.WINK_IKITCH_MIN), \(wink.WINK_IKITCH_MAX), \(winkFlag * 5), \(printWinkFrame), \(moveMissjudgeFlag), \(frameNum), \(brink), \(Double(brinkFlag) * 4.5), \(printBrinkFrame), \(printInitFrame), \(frameNum), \(faceMove), \(ikichi.faceMove),  \(faceMoveFlag), \(printFaceMoveFrame), \(frameNum), \(leftIrisDiff_y), \(rightIrisDiff_y), \(eyeWave.glanceDist), \(ikichi.glanceMax), \(ikichi.glanceMin),  \(glanceFlag), \(glanceFirstPoint), \(printGlanceFrame), \(frameNum), \(leftIrisDiff_x), \(rightIrisDiff_x), \(eyeWave.directionDist),  \(firstDirect), \(secondDirect), \(inputResult)")
+//            print("\(frameNum), \(inputCharacter), \(printInputCountCha), \(successTimer), \(firstInputFlag), \(inputCountAll), \(String(format: "%.3f", judgeRatioAll)), \(frameNum), \(leftEyelidDiff), \(rightEyelidDiff), \(defDepth / 10.0), \(frameNum), \(lrHeightDiff), \(lrDiff), \(wink.WINK_IKITCH_MIN), \(wink.WINK_IKITCH_MAX), \(winkFlag * 5), \(printWinkFrame), \(moveMissjudgeFlag), \(frameNum), \(brink), \(Double(brinkFlag) * 4.5), \(printBrinkFrame), \(printInitFrame), \(frameNum), \(faceMove), \(ikichi.faceMove),  \(faceMoveFlag), \(printFaceMoveFrame), \(frameNum), \(leftIrisDiff_y), \(rightIrisDiff_y), \(nosePointDIff_x), \(nosePointDIff_y), \(frameNum), \(leftIrisDiff_y2), \(rightIrisDiff_y2), \(eyeWave.glanceDist), \(ikichi.glanceMax), \(ikichi.glanceMin),  \(glanceFlag), \(glanceFirstPoint), \(printGlanceFrame), \(frameNum), \(leftIrisDiff_x), \(rightIrisDiff_x), \(eyeWave.directionDist),  \(firstDirect), \(secondDirect), \(inputResult)")
             //            print("\(frameNum), \(leftIrisDiff_y), \(rightIrisDiff_y), \(frameNum), \(glanceDist), \(glanceFlag), \(glanceFirstPoint), \(printGlanceFrame), \(brinkFlag),  \(printBrinkFrame), \(printInitFrame), \(frameNum), \(leftIrisDiff_x), \(rightIrisDiff_x), \(normalizedLeftIris[0].x), \(refPoint.x), \(refPointDiff), \(relativeDistance_x.l), \(relativeDistance_x.r), \(relativeDistanceLeftDiff), \(relativeDistanceRightDiff), \(frameNum), \(leftInnerWhite), \(leftOuterWhite), \(rightInnerWhite), \(rightOuterWhite), \(frameNum), \(leftInnerWhiteDiff), \(leftOuterWhiteDiff), \(rightInnerWhiteDiff), \(rightOuterWhiteDiff)")
             //            print("\(frameNum), \(leftIrisDiff_y), \(rightIrisDiff_y), \(frameNum), \(glanceDist), \(glanceFlag), \(glanceFirstPoint), \(printGlanceFrame), \(brinkFlag),  \(printBrinkFrame), \(printInitFrame), \(frameNum), \(leftIrisDiff_x), \(rightIrisDiff_x), \(directionDist), \(firstDirect), \(secondDirect), \(firstDirectIris.l), \(firstDirectIris.r), \(secondDirectIris.l), \(secondDirectIris.r), \(glanceResult)")
 //            print("\(frameNum), \(leftIrisDiff_y), \(rightIrisDiff_y), \(eyeWave.glanceDist), \(round(glanceUpSliderValue*10)/10), \(round(glanceDownSliderValue*10)/10), \(glanceFlag), \(glanceFirstPoint), \(printGlanceFrame), \(brinkFlag),  \(printBrinkFrame), \(printInitFrame), \(frameNum), \(faceMove), \(printFaceMoveFrame), \(frameNum), \(leftIrisDiff_x), \(rightIrisDiff_x), \(eyeWave.directionDist),  \(firstDirect), \(secondDirect), \(inputResult)")
+//            print("\(frameNum), \(landmarkAll[0][0]), \(landmarkAll[0][1]), \(landmarkAll[6][0]), \(landmarkAll[6][1]))"
+            let output = "\(frameNum), \(inputCharacter), \(printInputCountCha), \(successTimer), \(firstInputFlag), \(inputCountAll), \(String(format: "%.3f", judgeRatioAll)), \(frameNum), \(leftEyelidDiff), \(rightEyelidDiff), \(defDepth / 10.0), \(frameNum), \(lrHeightDiff), \(lrDiff), \(wink.WINK_IKITCH_MIN), \(wink.WINK_IKITCH_MAX), \(winkFlag * 5), \(printWinkFrame), \(moveMissjudgeFlag), \(frameNum), \(brink), \(Double(brinkFlag) * 4.5), \(printBrinkFrame), \(printInitFrame), \(frameNum), \(faceMove), \(ikichi.faceMove),  \(faceMoveFlag), \(printFaceMoveFrame), \(frameNum), \(leftIrisDiff_y), \(rightIrisDiff_y), \(eyeWave.glanceDist), \(ikichi.glanceMax), \(ikichi.glanceMin),  \(glanceFlag), \(glanceFirstPoint), \(printGlanceFrame), \(frameNum), \(leftIrisDiff_x), \(rightIrisDiff_x), \(eyeWave.directionDist),  \(firstDirect), \(secondDirect), \(inputResult)"
             
+            if recFlag == 1 {
+                // コンソール出力
+                print(output)
+                // CSVファイルにデータを追記
+                appendDataToCSVFile(data: output + "\n")
+            }
             
             
   // ↓ここから下：次のフレームで使用する現在の値を保存・初期化
@@ -434,6 +448,57 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         }
     }
     
+    func appendDataToCSVFile(data: String) {
+        let fileManager = FileManager.default
+        let fileURL = getDocumentsDirectory().appendingPathComponent(fileName, isDirectory: false)
+        
+        if !fileManager.fileExists(atPath: fileURL.path) {
+            fileManager.createFile(atPath: fileURL.path, contents: nil, attributes: [:])
+        }
+        else {
+            do {
+                let fileHandle = try FileHandle(forWritingTo: fileURL)
+                fileHandle.seekToEndOfFile()
+                fileHandle.write(data.data(using: .utf8)!)
+                fileHandle.closeFile()
+            } catch {
+                print("Error writing to file: \(error)")
+            }
+        }
+    }
+    
+    func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
+    }
+
+    
+    @IBAction func createCSVButtonPush(_ sender: UIButton) {
+        // ボタンの表示変更
+        if recFlag == 0 {
+            let currentTime = getCurrentTime()
+            fileName = "\(currentTime).csv"
+            sender.setTitle("停止", for: .normal)
+            sender.setTitleColor(.red, for: .normal)
+            let symbolImage = UIImage(systemName: "stop.circle")
+            sender.setImage(symbolImage, for: .normal)
+            sender.tintColor = .red
+            recFlag = 1
+        } else {
+            sender.setTitle("データ取得", for: .normal)
+            sender.setTitleColor(.blue, for: .normal)
+            let symbolImage = UIImage(systemName: "record.circle")
+            sender.setImage(symbolImage, for: .normal)
+            sender.tintColor = .blue
+            recFlag = 0
+        }
+    }
+    
+    func getCurrentTime() -> String {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyyMMdd_HHmmss"
+            return formatter.string(from: Date())
+        }
     
     // 設定画面遷移ボタン 画面キャプチャを止める
     @IBAction func settingButtonPush(_ sender: Any) {

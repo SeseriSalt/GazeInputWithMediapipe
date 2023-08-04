@@ -8,7 +8,7 @@
 import UIKit
 import AVFoundation
 
-public var winkSliderValue: CGFloat = 9.5
+public var winkSliderValue: CGFloat = 8.2
 public var glanceSliderValue: CGFloat = 1.1
 public var faceMoveSliderValue: CGFloat = 50.0
 
