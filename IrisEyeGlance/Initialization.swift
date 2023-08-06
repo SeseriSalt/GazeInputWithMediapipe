@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 extension ViewController {
     func glanceInit() {
@@ -35,5 +36,23 @@ extension ViewController {
         winkInit()
         
         glanceInit()
+    }
+    
+    func inputInit() {
+        inputCountAll = 0
+        judgeRatioAll = 0.0
+        
+        inputCountCha = 0
+        printInputCountCha = 0
+        
+        firstInputFlag = 1
+        questionList = ["あ", "い", "う", "え", "お", "か", "き", "く", "け", "こ", "さ", "し", "す", "せ", "そ","削除", "た", "ち", "つ", "て", "と", "な", "に", "ぬ", "ね", "の", "は", "ひ", "ふ", "へ", "ほ", "空白", "ま", "み", "む", "め", "も", "や", "ゆ", "よ", "ら", "り", "る", "れ", "ろ", "改行", "わ", "を", "ん", "、", "。", "？", "！"]
+        //var questionList = ["あ", "い", "う", "え", "お"]
+        
+        questionCharacter = "な"
+        DispatchQueue.main.async {
+            self.questionLabel.text = "な"
+            self.questionLabel.textColor = UIColor.black
+        }
     }
 }

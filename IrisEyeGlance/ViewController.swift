@@ -31,6 +31,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     
     @IBOutlet weak var movementLabel: UILabel!
     
+    @IBOutlet weak var resetButton: UIButton!
+    
     @IBOutlet weak var createCSVButton: UIButton!
     @IBOutlet weak var settingButton: UIButton!
     
@@ -471,7 +473,17 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         return paths[0]
     }
-
+    
+    @IBAction func resetButtonPush(_ sender: UIButton) {
+        inputInit()
+        frameNum = 0
+        distBrinkNum = 0
+        distWinkNum = 0
+        distInitNum = 0
+        distGlanceNum = 0
+        faceMoveFlag = 0
+        allInit()
+    }
     
     @IBAction func createCSVButtonPush(_ sender: UIButton) {
         // ボタンの表示変更
