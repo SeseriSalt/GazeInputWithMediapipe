@@ -112,6 +112,11 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     
     var leftIrisPrev =  CGPoint(x: CGFloat(0.0), y: CGFloat(0.0))
     var rightIrisPrev = CGPoint(x: CGFloat(0.0), y: CGFloat(0.0))
+    var leftIrisPrev2 = CGPoint(x: CGFloat(0.0), y: CGFloat(0.0))
+    var rightIrisPrev2 = CGPoint(x: CGFloat(0.0), y: CGFloat(0.0))
+    var refPointPrev2 = CGPoint(x: CGFloat(0.0), y: CGFloat(0.0))
+    var refPointArr: [CGPoint] = []
+    var refPointMoveAvePrev = CGPoint(x: CGFloat(0.0), y: CGFloat(0.0))
     
     var glanceFlag: Int = 0
     var glanceFirstPoint: Int = 0
@@ -307,6 +312,34 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             let leftIrisDiff_x = normalizedLeftIris[0].x - leftIrisPrev.x
             let rightIrisDiff_x = normalizedRightIris[0].x - rightIrisPrev.x
             
+            // 基準点
+            let refPoint = CGPoint(x: CGFloat((landmarkAll[5][0] + landmarkAll[4][0] + landmarkAll[1][0]) / 3), y: CGFloat((landmarkAll[5][1] + landmarkAll[4][1] + landmarkAll[1][1]) / 3))
+            let refPointDiff = CGPoint(x: (refPoint.x - refPointPrev2.x), y: (refPoint.y - refPointPrev2.y))
+            
+            refPointArr.insert(refPoint, at: 0)
+            var refPointMoveSum = CGPoint(x: CGFloat(0.0), y: CGFloat(0.0))
+            let moveAveNum: Int = 3
+            if (refPointArr.count > moveAveNum) {
+                for i in (0 ..< moveAveNum) {
+                    refPointMoveSum.x += refPointArr[i].x
+                    refPointMoveSum.y += refPointArr[i].y
+                }
+            }
+            let refPointMoveAve = CGPoint(x: (refPointMoveSum.x / CGFloat(moveAveNum)), y: (refPointMoveSum.y / CGFloat(moveAveNum)))
+            let refPointMoveAveDiff = CGPoint(x: refPointMoveAve.x - refPointMoveAvePrev.x, y: refPointMoveAve.y - refPointMoveAvePrev.y)
+            
+            // 基準点との距離の差分
+            let leftIrisNoseDist = CGPoint(x: (CGFloat(landmarkAll[468][0]) - refPointMoveAve.x), y: (CGFloat(landmarkAll[468][1]) - refPointMoveAve.y))
+            let rightIrisNoseDist = CGPoint(x: (CGFloat(landmarkAll[473][0]) - refPointMoveAve.x), y: (CGFloat(landmarkAll[473][1]) - refPointMoveAve.y))
+            
+            //  y方向
+            let leftIrisDiff_y2 = leftIrisNoseDist.y - leftIrisPrev2.y
+            let rightIrisDiff_y2 = rightIrisNoseDist.y - rightIrisPrev2.y
+            
+            // x方向
+            let leftIrisDiff_x2 = leftIrisNoseDist.x - leftIrisPrev2.x
+            let rightIrisDiff_x2 = rightIrisNoseDist.x - rightIrisPrev2.x
+            
   // Wink・brink用データ
             // 瞼の高さ
             leftEyelidHeight = getLandmerkLength(point0: landmarkAll[159], point1: landmarkAll[145], imageSize: [WIDTH, HEIGHT])
@@ -378,11 +411,13 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             //            print("\(frameNum), \(leftIrisDiff_y), \(rightIrisDiff_y), \(frameNum), \(glanceDist), \(glanceFlag), \(glanceFirstPoint), \(printGlanceFrame), \(brinkFlag),  \(printBrinkFrame), \(printInitFrame), \(frameNum), \(leftIrisDiff_x), \(rightIrisDiff_x), \(directionDist), \(firstDirect), \(secondDirect), \(firstDirectIris.l), \(firstDirectIris.r), \(secondDirectIris.l), \(secondDirectIris.r), \(glanceResult)")
 //            print("\(frameNum), \(leftIrisDiff_y), \(rightIrisDiff_y), \(eyeWave.glanceDist), \(round(glanceUpSliderValue*10)/10), \(round(glanceDownSliderValue*10)/10), \(glanceFlag), \(glanceFirstPoint), \(printGlanceFrame), \(brinkFlag),  \(printBrinkFrame), \(printInitFrame), \(frameNum), \(faceMove), \(printFaceMoveFrame), \(frameNum), \(leftIrisDiff_x), \(rightIrisDiff_x), \(eyeWave.directionDist),  \(firstDirect), \(secondDirect), \(inputResult)")
 //            print("\(frameNum), \(landmarkAll[0][0]), \(landmarkAll[0][1]), \(landmarkAll[6][0]), \(landmarkAll[6][1]))"
-            let output = "\(frameNum), \(inputCharacter), \(printInputCountCha), \(successTimer), \(firstInputFlag), \(inputCountAll), \(String(format: "%.3f", judgeRatioAll)), \(frameNum), \(leftEyelidDiff), \(rightEyelidDiff), \(defDepth / 10.0), \(frameNum), \(lrHeightDiff), \(lrDiff), \(wink.WINK_IKITCH_MIN), \(wink.WINK_IKITCH_MAX), \(winkFlag * 5), \(printWinkFrame), \(moveMissjudgeFlag), \(frameNum), \(brink), \(Double(brinkFlag) * 4.5), \(printBrinkFrame), \(printInitFrame), \(frameNum), \(faceMove), \(ikichi.faceMove),  \(faceMoveFlag), \(printFaceMoveFrame), \(frameNum), \(leftIrisDiff_y), \(rightIrisDiff_y), \(eyeWave.glanceDist), \(ikichi.glanceMax), \(ikichi.glanceMin),  \(glanceFlag), \(glanceFirstPoint), \(printGlanceFrame), \(frameNum), \(leftIrisDiff_x), \(rightIrisDiff_x), \(eyeWave.directionDist),  \(firstDirect), \(secondDirect), \(inputResult)"
+            let output = "\(frameNum), \(inputCharacter), \(printInputCountCha), \(successTimer), \(firstInputFlag), \(inputCountAll), \(String(format: "%.3f", judgeRatioAll)), \(frameNum), \(leftEyelidDiff), \(rightEyelidDiff), \(defDepth / 10.0), \(frameNum), \(lrHeightDiff), \(lrDiff), \(wink.WINK_IKITCH_MIN), \(wink.WINK_IKITCH_MAX), \(winkFlag * 5), \(printWinkFrame), \(moveMissjudgeFlag), \(frameNum), \(brink), \(Double(brinkFlag) * 4.5), \(printBrinkFrame), \(printInitFrame), \(frameNum), \(refPointDiff.y), \(refPointMoveAveDiff.y), \(leftIrisDiff_y2), \(rightIrisDiff_y2), \((leftIrisDiff_y2+rightIrisDiff_y2)/2), \(frameNum), \(faceMove), \(ikichi.faceMove),  \(faceMoveFlag), \(printFaceMoveFrame), \(frameNum), \(leftIrisDiff_y), \(rightIrisDiff_y), \(eyeWave.glanceDist), \(ikichi.glanceMax), \(ikichi.glanceMin),  \(glanceFlag), \(glanceFirstPoint), \(printGlanceFrame), \(frameNum), \(leftIrisDiff_x), \(rightIrisDiff_x), \(eyeWave.directionDist),  \(firstDirect), \(secondDirect), \(inputResult)"
+//
+//            let output = "\(frameNum), \(refPointDiff.y), \(refPointMoveAveDiff.y), \(leftIrisDiff_y2), \(rightIrisDiff_y2), "
+            // コンソール出力
+            print(output)
             
             if recFlag == 1 {
-                // コンソール出力
-                print(output)
                 // CSVファイルにデータを追記
                 appendDataToCSVFile(data: output + "\n")
             }
@@ -399,6 +434,12 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             
             leftIrisPrev = normalizedLeftIris[0]
             rightIrisPrev = normalizedRightIris[0]
+            
+            refPointPrev2 = refPoint
+            refPointMoveAvePrev = refPointMoveAve
+            
+            leftIrisPrev2 = leftIrisNoseDist
+            rightIrisPrev2 = rightIrisNoseDist
             
             nosePointPrev = nosePoint
             leftCheekPrev = leftCheek

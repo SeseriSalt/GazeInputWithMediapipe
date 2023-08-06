@@ -8,9 +8,9 @@
 import UIKit
 import AVFoundation
 
-public var winkSliderValue: CGFloat = 8.2
-public var glanceSliderValue: CGFloat = 1.1
-public var faceMoveSliderValue: CGFloat = 50.0
+public var winkSliderValue: CGFloat = 8.7
+public var glanceSliderValue: CGFloat = 1.6
+public var faceMoveSliderValue: CGFloat = 10.0
 
 class SettingViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
 

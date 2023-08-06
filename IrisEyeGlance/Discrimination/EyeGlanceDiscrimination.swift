@@ -144,7 +144,7 @@ extension ViewController {
         }
         
         //長すぎるeye glance初期化
-        if (glanceFlag != 0 && frameNum - glanceFirstPoint > 20) {
+        if (glanceFlag != 0 && frameNum - glanceFirstPoint > 15) {
             distInitNum = frameNum
             glanceInit()
         }
