@@ -8,9 +8,9 @@
 import UIKit
 import AVFoundation
 
-public var winkSliderValue: CGFloat = 8.7
-public var glanceSliderValue: CGFloat = 1.6
-public var faceMoveSliderValue: CGFloat = 10.0
+public var winkSliderValue: CGFloat = 9.3
+public var glanceSliderValue: CGFloat = 1.4
+public var faceMoveSliderValue: CGFloat = 1.4
 
 class SettingViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
 
@@ -31,7 +31,7 @@ class SettingViewController: UIViewController, AVCaptureVideoDataOutputSampleBuf
         glanceLabel.text = String(format: "%.1f", glanceSliderValue)
         
         faceMoveSlider.value = Float(faceMoveSliderValue)
-        faceMoveLabel.text = String(round(faceMoveSliderValue))
+        faceMoveLabel.text = String(format: "%.1f", faceMoveSliderValue)
     }
     
     @IBAction func winkSliderAction(_ sender: UISlider) {
@@ -43,7 +43,7 @@ class SettingViewController: UIViewController, AVCaptureVideoDataOutputSampleBuf
     }
     
     @IBAction func faceMoveSliderAction(_ sender: UISlider) {
-        sliderDidChangeValueInt(sender, label: faceMoveLabel)
+        sliderDidChangeValue(sender, label: faceMoveLabel)
     }
     
     

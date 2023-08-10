@@ -202,7 +202,7 @@ extension ViewController {
         let shapeLayer = CAShapeLayer()
         shapeLayer.path = rectPath.cgPath
         shapeLayer.lineWidth = lineWidthList[tapCount]
-        if (faceMoveFlag != 0 || frameNum - distInitNum <= 4 || frameNum - distWinkNum <= 5 || frameNum - distGlanceNum <= 5 || frameNum - distBrinkNum <= 5) {
+        if (faceMoveFlag != 0 || frameNum - distGlanceInitNum <= 4 || frameNum - distWinkInitNum <= 4 || frameNum - distWinkNum <= 5 || frameNum - distGlanceNum <= 5 || frameNum - distBrinkNum <= 5) {
             shapeLayer.strokeColor = UIColor.red.cgColor
         }
         else {

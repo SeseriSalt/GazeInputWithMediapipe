@@ -15,7 +15,7 @@ extension ViewController {
         let WINK_IKITCH_MIN: Float = winkIkichiMin
         let HEIGHT_DIFF_IKICHI: Float = winkIkichiHeight
         
-        if (frameNum > 15 && frameNum - distGlanceNum > 6 && frameNum - distWinkNum > 6 && frameNum - distBrinkNum > 6 && frameNum - distInitNum > 5) {
+        if (frameNum > 15 && frameNum - distWinkNum > 6 && frameNum - distBrinkNum > 6 && frameNum - distWinkInitNum > 5) {
             // 左目のWink判別
             if (winkFlag == 0 && lrDiff < WINK_IKITCH_MIN) {
                 winkFlag = 1
@@ -155,7 +155,7 @@ extension ViewController {
         if ((winkFlag == 4 || winkFlag == -4) && (frameNum - firstPoint < 5 || abs(maxPeakFrameNum - minPeakFrameNum) < 4)) {
             // frameNum - firstPoint < 5 いる？
             moveMissjudgeFlag = 0
-            distInitNum = frameNum
+            distWinkInitNum = frameNum
             winkInit()
         }
         return(WINK_IKITCH_MAX, WINK_IKITCH_MIN)

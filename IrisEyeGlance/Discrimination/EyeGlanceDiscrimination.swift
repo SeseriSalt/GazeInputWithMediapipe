@@ -19,21 +19,29 @@ extension ViewController {
             faceMoveFlag = 1
             faceMoveFirstNum = frameNum
         }
+        else if (frameNum > 15 && faceMoveFlag == 0 && faceMove < -FACEMOVE_IKICHI) {
+            faceMoveFlag = -1
+            faceMoveFirstNum = frameNum
+        }
         else if (faceMoveFlag == 1 && faceMove < FACEMOVE_IKICHI) {
             faceMoveFlag = 2
             faceMoveEndNum = frameNum
         }
-        else if (faceMoveFlag == 2 && frameNum - faceMoveEndNum <= 5) {
+        else if (faceMoveFlag == -1 && faceMove > -FACEMOVE_IKICHI) {
+            faceMoveFlag = -2
+            faceMoveEndNum = frameNum
+        }
+        else if ((faceMoveFlag == 2 || faceMoveFlag == -2) && frameNum - faceMoveEndNum <= 7) {
             faceMoveFlag = 0
             glanceInit()
         }
-        else if (faceMoveFlag == 0 && frameNum - faceMoveEndNum > 5) {
+        else if (faceMoveFlag == 0 && frameNum - faceMoveEndNum > 7) {
             // Eye Glance判別
             eyeGlanceDitect(glanceDist: glanceDist, directionDist: directionDist, xPoint: lrPoint(l: left.x, r: right.x), ikichi: (max: ikichi.max, min: ikichi.min))
         }
         
         // バグった時の初期化
-        if (faceMoveFlag != 0 && frameNum - faceMoveFirstNum > 10) {
+        if (faceMoveFlag != 0 && frameNum - faceMoveFirstNum > 7) {
             faceMoveFlag = 0
             glanceInit()
         }
@@ -48,7 +56,7 @@ extension ViewController {
         let glanceIkichiDown: CGFloat = ikichi.max
         
         // eye glance判別開始
-        if (frameNum > 15 && frameNum - distGlanceNum > 6 && frameNum - distBrinkNum > 6 && frameNum - distWinkNum > 6 && frameNum - distInitNum > 5) {
+        if (frameNum > 15 && frameNum - distGlanceNum > 6 && frameNum - distBrinkNum > 6 && frameNum - distWinkNum > 6 && frameNum - distGlanceInitNum > 5) {
             if (glanceFlag == 0 && glanceDist < glanceIkichiUp) {
                 glanceFlag = 1
                 glanceFirstPoint = frameNum
@@ -139,13 +147,12 @@ extension ViewController {
         
         //短すぎるeye glance初期化
         if ((glanceFlag == 4 || glanceFlag == -4) && frameNum - glanceFirstPoint <= 5) {
-            distInitNum = frameNum
+            distGlanceInitNum = frameNum
             glanceInit()
         }
         
         //長すぎるeye glance初期化
         if (glanceFlag != 0 && frameNum - glanceFirstPoint > 15) {
-            distInitNum = frameNum
             glanceInit()
         }
     }
