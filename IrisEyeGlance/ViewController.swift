@@ -314,7 +314,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             let rightIrisDiff_x = normalizedRightIris[0].x - rightIrisPrev.x
             
             // 基準点
-            let refPoint = CGPoint(x: CGFloat((landmarkAll[44][0] + landmarkAll[1][0] + landmarkAll[274][0]) / 3), y: CGFloat((landmarkAll[5][1] + landmarkAll[4][1] + landmarkAll[1][1]) / 3))
+            let refPoint = CGPoint(x: CGFloat((landmarkAll[44][0] + landmarkAll[1][0] + landmarkAll[274][0]) / 3), y: CGFloat((landmarkAll[44][1] + landmarkAll[1][1] + landmarkAll[274][1]) / 3))
             let refPointDiff = sqrt(pow(refPoint.x - refPointPrev2.x, 2) + pow(refPoint.y - refPointPrev2.y, 2))
             
             refPointArr.insert(refPointDiff, at: 0)
@@ -563,9 +563,9 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     
     func irisTracker(_ irisTracker: SYIris!, didOutputPixelBuffer pixelBuffer: CVPixelBuffer!) {
         // キャプチャにランドマークを描画
-        DispatchQueue.main.async {
-            self.imageview.image = UIImage(ciImage: CIImage(cvPixelBuffer: pixelBuffer))
-        }
+//        DispatchQueue.main.async {
+//            self.imageview.image = UIImage(ciImage: CIImage(cvPixelBuffer: pixelBuffer))
+//        }
     }
 }
 

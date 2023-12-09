@@ -31,7 +31,7 @@ extension ViewController {
             faceMoveFlag = -2
             faceMoveEndNum = frameNum
         }
-        else if ((faceMoveFlag == 2 || faceMoveFlag == -2) && frameNum - faceMoveEndNum <= 7) {
+        else if ((faceMoveFlag == 2 || faceMoveFlag == -2) && frameNum - faceMoveEndNum <= 7) { //ここおかしい
             faceMoveFlag = 0
             glanceInit()
         }
