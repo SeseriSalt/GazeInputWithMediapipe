@@ -8,6 +8,12 @@
 import UIKit
 import AVFoundation
 
+// 右左の構造体
+struct lrPoint {
+    var l: CGFloat = 0.0
+    var r: CGFloat = 0.0
+}
+
 class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate, SYIrisDelegate {
     
     
@@ -48,20 +54,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     public let HEIGHT: Float = 1920.0
     public var frameNum: Int = 0
     
-    // 1つのランドマークの構造体
-    struct landmarkPoint {
-        var x: Float = 0.0
-        var y: Float = 0.0
-    }
-    // 右左の構造体
-    struct lrPoint {
-        var l: CGFloat = 0.0
-        var r: CGFloat = 0.0
-    }
-    
-    // x軸正規化の最小値・最大値
-    let NORMALIZED_CONST: (min: CGFloat, max: CGFloat) = (min: 0.08978804, max: 0.9095595)
-    
+    // Wink用
     var leftEyelidHeight: Float = 0.0
     var rightEyelidHeight: Float = 0.0
     var leftEyelidDiff: Float = 0.0
@@ -72,33 +65,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     var lrDiff: Float = 0.0
     var lrDiffPrev: Float = 0.0
     
-    // wink・brinkの閾値
-    //    public let ikichiWink: Float = 0.6
-    var winkIkichiMax: Float = 0.0
-    var winkIkichiMin: Float = 0.0
-    var winkIkichiHeight: Float = 0.0
-    var brinkIkichi: Float = 0.0
-    
-    var winkIkichiMaxNext: Float = 0.0
-    var winkIkichiMinNext: Float = 0.0
-    var heightIkichiNext: Float = 0.0
-    var brinkIkichNext: Float = 0.0
-    
-    var winkFlag = 0
-    var lateWinkFlag = 0
-    var moveMissjudgeFlag = 0
-    var maxDiff: Float = 0.0
-    var minDiff: Float = 0.0
-    var peakPrev: Float = 0.0
-    var peakNext: Float = 0.0
-    var maxPeakFrameNum = 0
-    var minPeakFrameNum = 0
-    var firstPoint = 0
-    var inputLabelFlag = 0
-    var distWinkNum = 0
-    var brinkFlag = 0
-    var brinkFirstPoint = 0
-    var distBrinkNum = 0
     var leftDepthPrev: Float = 0.0
     var rightDepthPrev: Float = 0.0
     var depthAll: [[Float]] = []
@@ -107,52 +73,39 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     var heightAll: [Float] = []
     
     //Eye Glance用
-    var normalizedLeftIris: [CGPoint] = []
-    var normalizedRightIris: [CGPoint] = []
+    lazy var leftEye = EyeData()
+    lazy var rightEye = EyeData()
     
-    var leftIrisPrev =  CGPoint(x: CGFloat(0.0), y: CGFloat(0.0))
-    var rightIrisPrev = CGPoint(x: CGFloat(0.0), y: CGFloat(0.0))
-    var leftIrisPrev2 = CGPoint(x: CGFloat(0.0), y: CGFloat(0.0))
-    var rightIrisPrev2 = CGPoint(x: CGFloat(0.0), y: CGFloat(0.0))
-    var refPointPrev2 = CGPoint(x: CGFloat(0.0), y: CGFloat(0.0))
-    var refPointArr: [CGFloat] = []
-    var refPointMoveAvePrev: CGFloat = 0.0
     
-    var glanceFlag: Int = 0
-    var glanceFirstPoint: Int = 0
-    var distGlanceNum: Int = 0
-    
-    var firstDirect: CGFloat = 0.0
-    var firstDirectIris = lrPoint(l: CGFloat(0.0), r: CGFloat(0.0))
-    var secondDirect: CGFloat = 0.0
-    var secondDirectIris = lrPoint(l: CGFloat(0.0), r: CGFloat(0.0))
-    
-    var inputResult: Int = 0
-    
-    var relativeDistance_x = lrPoint(l: 0.0, r: 0.0)
-    var relativeDistance_xPrev = lrPoint(l: 0.0, r: 0.0)
-    var refPointPrev = CGPoint(x: CGFloat(0.0), y: CGFloat(0.0))
-    
-    var leftInnerWhitePrev: CGFloat = 0.0
-    var leftOuterWhitePrev: CGFloat = 0.0
-    var rightInnerWhitePrev: CGFloat = 0.0
-    var rightOuterWhitePrev: CGFloat = 0.0
+    // 閾値
+    var winkIkichiMax: Float = 0.0
+    var winkIkichiMin: Float = 0.0
+    var winkIkichiHeight: Float = 0.0
+    var brinkIkichi: Float = 0.0
+    var winkIkichiMaxNext: Float = 0.0
+    var winkIkichiMinNext: Float = 0.0
+    var heightIkichiNext: Float = 0.0
+    var brinkIkichNext: Float = 0.0
     
     var glanceIkichiMax: CGFloat = 0.0
     var glanceIkichiMin: CGFloat = 0.0
+    var ikichiAreaUp: CGFloat = 0.0
+    var ikichiAreaDown: CGFloat = 0.0
+
     
-    // カーソル移動の検知用
-    var nosePointPrev = CGPoint(x: 0.0, y: 0.0)
-    var leftCheekPrev = CGPoint(x: 0.0, y: 0.0)
-    var rightCheekPrev = CGPoint(x: 0.0, y: 0.0)
-    var faceMoveFlag: Int = 0
-    var faceMoveFirstNum: Int = 0
-    var faceMoveEndNum: Int = 0
-    var faceMoveIkichi: CGFloat = 0.0
+    // 選択領域が起こったフレーム
+    var areaChangeFrame = 0
     
     //短すぎて初期化した時のフレーム（wink, glance）
     var distWinkInitNum: Int = 0
     var distGlanceInitNum: Int = 0
+    
+    //カットオフに関するパラメータ
+    let SAMPLE_RATE = 30.0 // 30fps
+    let CUTOFF_FREQUENCY = 4.0 // 4Hz
+    // フィルタのインスタンス
+    lazy var lowPassFilterX = LowPassFilter(cutoffFrequency: CUTOFF_FREQUENCY, sampleRate: SAMPLE_RATE)
+    lazy var lowPassFilterY = LowPassFilter(cutoffFrequency: CUTOFF_FREQUENCY, sampleRate: SAMPLE_RATE)
     
     /////// ここから下はランドマークポイント ///////
     let screenWidth = UIScreen.main.bounds.width // (390.0)
@@ -244,34 +197,10 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             // 位置が変わった時のフィードバック用バイブレーション
             let feedbackGenerator = UISelectionFeedbackGenerator()
             
-            let areaChangeFlnag = LandmarkPositionSerect(point: nosePoint)
-            if areaChangeFlnag == 1 {
+            let (areaChangeFlag, areaChangeFrame) = LandmarkPositionSerect(point: nosePoint)
+            if areaChangeFlag == 1 {
                 feedbackGenerator.selectionChanged()
             }
-            
-  // 顔の移動量検知
-            // 鼻(カーソル)の変化量
-            let nosePointDIff_x = nosePoint.x - nosePointPrev.x
-            let nosePointDIff_y = nosePoint.y - nosePointPrev.y
-            let nosePointMove = sqrt(pow(nosePointDIff_x, 2) + pow(nosePointDIff_y, 2))
-            
-            // 左頬1点の変化量
-            let normalizedleftCheek = normalizedLandmarkPoint(point: landmarkAll[50])
-            let leftCheek = CGPoint(x: normalizedleftCheek.x * screenWidth, y: normalizedleftCheek.y * screenHeight)
-            
-            let leftCheekDIff_x = leftCheek.x - leftCheekPrev.x
-            let leftCheekDIff_y = leftCheek.y - leftCheekPrev.y
-            let leftCheekMove = sqrt(pow(leftCheekDIff_x, 2) + pow(leftCheekDIff_y, 2))
-            
-            // 右頬1点の変化量
-            let normalizedRightCheek = normalizedLandmarkPoint(point: landmarkAll[280])
-            let rightCheek = CGPoint(x: normalizedRightCheek.x * screenWidth, y: normalizedRightCheek.y * screenHeight)
-            
-            let rightCheekDIff_x = rightCheek.x - rightCheekPrev.x
-            let rightCheekDIff_y = rightCheek.y - rightCheekPrev.y
-            let rightCheekMove = sqrt(pow(rightCheekDIff_x, 2) + pow(rightCheekDIff_y, 2))
-            
-//            let faceMove = nosePointMove * leftCheekMove * rightCheekMove
             
   // Depthの計算・表示
             let leftEyeLandmark = [
@@ -302,33 +231,18 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             
   //Eye Glance用データ
             // irisの正規化
-            let normalizedLeftIris: [CGPoint] = normalizeLandmarks(leftEyeLandmark)
-            let normalizedRightIris: [CGPoint] = normalizeLandmarks(rightEyeLandmark)
-            
-            //  y方向
-            let leftIrisDiff_y = normalizedLeftIris[0].y - leftIrisPrev.y
-            let rightIrisDiff_y = normalizedRightIris[0].y - rightIrisPrev.y
-            
-            // x方向
-            let leftIrisDiff_x = normalizedLeftIris[0].x - leftIrisPrev.x
-            let rightIrisDiff_x = normalizedRightIris[0].x - rightIrisPrev.x
+            leftEye.landmarks = normalizeLandmarks(leftEyeLandmark)
+            rightEye.landmarks = normalizeLandmarks(rightEyeLandmark)
             
             // 基準点
-            let refPoint = CGPoint(x: CGFloat((landmarkAll[44][0] + landmarkAll[1][0] + landmarkAll[274][0]) / 3), y: CGFloat((landmarkAll[44][1] + landmarkAll[1][1] + landmarkAll[274][1]) / 3))
-            let refPointDiff = sqrt(pow(refPoint.x - refPointPrev2.x, 2) + pow(refPoint.y - refPointPrev2.y, 2))
+            let refPoint = CGPoint(x: CGFloat((landmarkAll[193][0] + landmarkAll[168][0] + landmarkAll[417][0]) / 3), y: CGFloat((landmarkAll[193][1] + landmarkAll[168][1] + landmarkAll[417][1]) / 3))
+            // ローパスフィルタ
+            let filteredRefPoint = CGPoint(x: lowPassFilterX.filter(value: refPoint.x), y: lowPassFilterY.filter(value: refPoint.y))
             
-            refPointArr.insert(refPointDiff, at: 0)
-            var refPointMoveSum :CGFloat = 0.0
-            let moveAveNum: Int = 3
-            if (refPointArr.count > moveAveNum) {
-                for i in (0 ..< moveAveNum) {
-                    refPointMoveSum += refPointArr[i]
-                }
-            }
-            let refPointMoveAve = refPointMoveSum / CGFloat(moveAveNum)
-            let refPointMoveAveDiff = refPointMoveAve - refPointMoveAvePrev
+            leftEye.refPoint = filteredRefPoint
+            rightEye.refPoint = filteredRefPoint
             
-            let faceMove = refPointMoveAveDiff * 800
+//            let refPointdist = sqrt(leftEye.refPointDiff2().x * leftEye.refPointDiff2().x + leftEye.refPointDiff2().y * leftEye.refPointDiff2().y)
             
   // Wink・brink用データ
             // 瞼の高さ
@@ -374,7 +288,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             
   // 判別
             // 閾値の決定
-            let ikichi = ikichiDecision(depth: defDepth)
+            let ikichi = ikichiDecision(depth: defDepth) //// ????なんで5フレーム前のdepth使ってる？
             
             // brink判別
             let brink = brinkDitect()
@@ -383,7 +297,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             let wink = winkDitect()
             
             // Eye Glance判別
-            let eyeWave = eyeGlanceWithoutFaceMove(faceMove: faceMove, left: CGPoint(x: leftIrisDiff_x, y: leftIrisDiff_y), right: CGPoint(x: rightIrisDiff_x, y: rightIrisDiff_y), ikichi: (max: glanceIkichiMax, min: glanceIkichiMin, face: faceMoveIkichi))
+            let eyeWave = eyeGlance(left: leftEye.irisNoseDiff2(), right: rightEye.irisNoseDiff2(), refDiff: leftEye.refPointDiff2(), ikichi: (max: glanceIkichiMax, min: glanceIkichiMin, areaup: ikichi.areaUp, areadown: ikichi.areaDown))
             
             // 実験用入力判別
             judgment()
@@ -394,19 +308,84 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             let printGlanceFrame = distGlanceNum == frameNum ? String(distGlanceNum) : ""
             let printWinkInitFrame = frameNum - distWinkInitNum <= 4 ? String(distWinkInitNum) : ""
             let printGlanceInitFrame = frameNum - distGlanceInitNum <= 4 ? String(distGlanceInitNum) : ""
-            let printFaceMoveFrame = frameNum - faceMoveEndNum <= 5 ? String(faceMoveEndNum) : ""
             
-  //実験データ出力
-//            print("\(frameNum), \(inputCharacter), \(printInputCountCha), \(successTimer), \(firstInputFlag), \(inputCountAll), \(String(format: "%.3f", judgeRatioAll)), \(frameNum), \(leftEyelidDiff), \(rightEyelidDiff), \(defDepth / 10.0), \(frameNum), \(lrHeightDiff), \(lrDiff), \(wink.WINK_IKITCH_MIN), \(wink.WINK_IKITCH_MAX), \(winkFlag * 5), \(printWinkFrame), \(moveMissjudgeFlag), \(frameNum), \(brink), \(Double(brinkFlag) * 4.5), \(printBrinkFrame), \(printInitFrame), \(frameNum), \(faceMove), \(ikichi.faceMove),  \(faceMoveFlag), \(printFaceMoveFrame), \(frameNum), \(leftIrisDiff_y), \(rightIrisDiff_y), \(nosePointDIff_x), \(nosePointDIff_y), \(frameNum), \(leftIrisDiff_y2), \(rightIrisDiff_y2), \(eyeWave.glanceDist), \(ikichi.glanceMax), \(ikichi.glanceMin),  \(glanceFlag), \(glanceFirstPoint), \(printGlanceFrame), \(frameNum), \(leftIrisDiff_x), \(rightIrisDiff_x), \(eyeWave.directionDist),  \(firstDirect), \(secondDirect), \(inputResult)")
-            //            print("\(frameNum), \(leftIrisDiff_y), \(rightIrisDiff_y), \(frameNum), \(glanceDist), \(glanceFlag), \(glanceFirstPoint), \(printGlanceFrame), \(brinkFlag),  \(printBrinkFrame), \(printInitFrame), \(frameNum), \(leftIrisDiff_x), \(rightIrisDiff_x), \(normalizedLeftIris[0].x), \(refPoint.x), \(refPointDiff), \(relativeDistance_x.l), \(relativeDistance_x.r), \(relativeDistanceLeftDiff), \(relativeDistanceRightDiff), \(frameNum), \(leftInnerWhite), \(leftOuterWhite), \(rightInnerWhite), \(rightOuterWhite), \(frameNum), \(leftInnerWhiteDiff), \(leftOuterWhiteDiff), \(rightInnerWhiteDiff), \(rightOuterWhiteDiff)")
-            //            print("\(frameNum), \(leftIrisDiff_y), \(rightIrisDiff_y), \(frameNum), \(glanceDist), \(glanceFlag), \(glanceFirstPoint), \(printGlanceFrame), \(brinkFlag),  \(printBrinkFrame), \(printInitFrame), \(frameNum), \(leftIrisDiff_x), \(rightIrisDiff_x), \(directionDist), \(firstDirect), \(secondDirect), \(firstDirectIris.l), \(firstDirectIris.r), \(secondDirectIris.l), \(secondDirectIris.r), \(glanceResult)")
-//            print("\(frameNum), \(leftIrisDiff_y), \(rightIrisDiff_y), \(eyeWave.glanceDist), \(round(glanceUpSliderValue*10)/10), \(round(glanceDownSliderValue*10)/10), \(glanceFlag), \(glanceFirstPoint), \(printGlanceFrame), \(brinkFlag),  \(printBrinkFrame), \(printInitFrame), \(frameNum), \(faceMove), \(printFaceMoveFrame), \(frameNum), \(leftIrisDiff_x), \(rightIrisDiff_x), \(eyeWave.directionDist),  \(firstDirect), \(secondDirect), \(inputResult)")
-//            print("\(frameNum), \(landmarkAll[0][0]), \(landmarkAll[0][1]), \(landmarkAll[6][0]), \(landmarkAll[6][1]))"
-            let output = "\(frameNum), \(inputCharacter), \(printInputCountCha), \(successTimer), \(firstInputFlag), \(inputCountAll), \(String(format: "%.3f", judgeRatioAll)), \(frameNum), \(leftEyelidDiff), \(rightEyelidDiff), \(defDepth / 10.0), \(frameNum), \(lrHeightDiff), \(lrDiff), \(wink.WINK_IKITCH_MIN), \(wink.WINK_IKITCH_MAX), \(winkFlag * 5), \(printWinkFrame), \(moveMissjudgeFlag), \(printWinkInitFrame), \(frameNum), \(brink), \(Double(brinkFlag) * 4.5), \(printBrinkFrame), \(frameNum), \(refPointDiff), \(refPointMoveAveDiff), \(frameNum), \(faceMove), \(ikichi.faceMove),  \(faceMoveFlag), \(printFaceMoveFrame), \(printGlanceInitFrame), \(frameNum), \(leftIrisDiff_y), \(rightIrisDiff_y), \(eyeWave.glanceDist), \(ikichi.glanceMax), \(ikichi.glanceMin),  \(glanceFlag), \(glanceFirstPoint), \(printGlanceFrame), \(frameNum), \(leftIrisDiff_x), \(rightIrisDiff_x), \(eyeWave.directionDist),  \(firstDirect), \(secondDirect), \(inputResult)"
+//実験データ出力
+            //矢田さんの出力
+//            let output = "\(frameNum), \(inputCharacter), \(printInputCountCha), \(successTimer), \(firstInputFlag), \(inputCountAll), \(String(format: "%.3f", judgeRatioAll)), \(leftEyelidDiff), \(rightEyelidDiff), \(defDepth / 10.0), \(lrHeightDiff), \(lrDiff), \(wink.WINK_IKITCH_MIN), \(wink.WINK_IKITCH_MAX), \(winkFlag * 5), \(printWinkFrame), \(moveMissjudgeFlag), \(printWinkInitFrame), \(brink), \(Double(brinkFlag) * 4.5), \(printBrinkFrame), \(printGlanceInitFrame), \(leftIrisDiff_y), \(rightIrisDiff_y), \(eyeWave.glanceDist), \(ikichi.glanceMax), \(ikichi.glanceMin), \(glanceFlag), \(glanceFirstPoint), \(printGlanceFrame), \(leftIrisDiff_x), \(rightIrisDiff_x), \(eyeWave.directionDist),  \(firstDirect), \(secondDirect), \(inputResult)"
+
+//            var indices = Array(468...477)
+//            indices.append(contentsOf: [45, 1, 275, 5, 4, 1])
+            
+//            var variableNames = """
+//              frameNum, lrDepthDiff, brink, brinkFirstPoint, distBrinkNum, brinkFlag, normalizedLeft[0].x, normalizedLeft[0].y, normalizedRight[0].x, normalizedRight[0].y, refpointX, refpointY, filteredRefPoint.x, filteredRefPoint.y, filteredRefPointDiff.x, filteredRefPointDiff.y, leftEyeNose2Diff.x,leftEyeNose2Diff.y, rightEyeNose2Diff.x, rightEyeNose2Diff.y,
+//"""
+            var variableNames = """
+
+"""
+            
+            variableNames += """
+questionCharacter, inputCharacter, areaChangeFrame, changePositionFlag, printInputCountCha, successTimer, firstInputFlag, inputCountAll, judgeRatioAll, leftEyelidDiff, rightEyelidDiff, defDepth/10.0, lrHeightDiff, lrDiff, wink.WINK_IKITCH_MIN, wink.WINK_IKITCH_MAX, winkFlag*5, printWinkFrame, moveMissjudgeFlag, printWinkInitFrame, brink, brinkFlag*4.5, printBrinkFrame, printGlanceInitFrame, leftIrisDiff_y, rightIrisDiff_y, eyeWave.glanceDist, ikichi.glanceMax, ikichi.glanceMin, areaDown, areaUp, endFrame, ikichi.areaUp, ikichi.areaDown, glanceFlag, glanceFirstPoint, printGlanceFrame, leftIrisDiff_x, rightIrisDiff_x, eyeWave.directionDist, inputResult, arrayAreaUp[0].frame, arrayAreaUp[1].frame, arrayAreaUp[2].frame, arrayAreaUp[0].area, arrayAreaUp[1].area, arrayAreaUp[2].area, directUp, directIrisUp.l, directIrisUp.r, arrayAreaDown[0].frame, arrayAreaDown[1].frame, arrayAreaDown[2].frame, arrayAreaDown[0].area, arrayAreaDown[1].area, arrayAreaDown[2].area, directDown, directIrisDown.l, directIrisDown.r,
+"""
+
+              
+//              var header = ""
+//              for index in indices {
+//                  header += "x\(index), y\(index), "
+//              }
+//              header = String(header.dropLast(2))  // 最後のカンマとスペースを削除
+////              ランドマークとその他のヘッダー名を結合
+//              variableNames += header
+//            if(frameNum == 202){
+//              if arrayAreaUp.count > 3 && arrayAreaDown.count > 3{
+//                  print("-------------------------------------------------------------------------------------------------------")
+//                  print(variableNames)
+//              }
 //
-//            let output = "\(frameNum), \(refPointDiff.y), \(refPointMoveAveDiff.y), \(leftIrisDiff_y2), \(rightIrisDiff_y2), "
+//          }
+//            print(variableNames)
+            
+            
+            var output = "\(frameNum), \(lrDepthDiff), \(brink), \(brinkFirstFrame), \(distBrinkNum), \(brinkFlag), \(leftEye.landmarks[0].x), \(leftEye.landmarks[0].y), \(rightEye.landmarks[0].x), \(rightEye.landmarks[0].y), \(refPoint.x), \(refPoint.y), \(filteredRefPoint.x), \(filteredRefPoint.y), \(leftEye.refPointDiff().x), \(rightEye.refPointDiff().y), \(leftEye.irisNoseDiff2().x), \(leftEye.irisNoseDiff2().y), \(rightEye.irisNoseDiff2().x), \(rightEye.irisNoseDiff2().y),"
+
+            
+            if arrayAreaUp.count > 3 && arrayAreaDown.count > 3{
+                output += "\(questionCharacter), \(inputCharacter), \(areaChangeFrame), \(changePositionFlag), \(printInputCountCha), \(successTimer), \(firstInputFlag), \(inputCountAll), \(String(format: "%.3f", judgeRatioAll)), \(leftEyelidDiff), \(rightEyelidDiff), \(defDepth / 10.0), \(lrHeightDiff), \(lrDiff), \(wink.WINK_IKITCH_MIN), \(wink.WINK_IKITCH_MAX), \(winkFlag*5), \(printWinkFrame), \(moveMissjudgeFlag), \(printWinkInitFrame), \(brink), \(Double(brinkFlag) * 4.5), \(printBrinkFrame), \(printGlanceInitFrame), \(leftEye.irisDiff().y), \(rightEye.irisDiff().y), \(eyeWave.glanceDist), \(ikichi.glanceMax), \(ikichi.glanceMin), \(areaDown), \(areaUp), \(glanceEndFrame), \(ikichi.areaUp), \(ikichi.areaDown), \(glanceFlag), \(glanceFirstFrame), \(printGlanceFrame), \(leftEye.irisDiff().x), \(rightEye.irisDiff().x), \(eyeWave.directionDist),  \(inputResult), \(arrayAreaUp[0].frame), \(arrayAreaUp[1].frame), \(arrayAreaUp[2].frame), \(arrayAreaUp[0].area), \(arrayAreaUp[1].area), \(arrayAreaUp[2].area), \(directUp), \(directIrisUp.l), \(directIrisUp.r), \(arrayAreaDown[0].frame), \(arrayAreaDown[1].frame), \(arrayAreaDown[2].frame), \(arrayAreaDown[0].area), \(arrayAreaDown[1].area), \(arrayAreaDown[2].area), \(directDown), \(directIrisDown.l), \(directIrisDown.r),"
+            }
+//            var data = ""
+//            for index in indices {
+//                let x = landmarkAll[index][0]
+//                let y = landmarkAll[index][1]
+//                data += "\(x), \(y), "
+//            }
+//            data = String(data.dropLast(2))  // 最後のカンマとスペースを削除
+//            
+//            output += data
+            
+//            output += "\(leftEye.landmarks[0].x), \(leftEye.landmarks[0].y), \(rightEye.landmarks[0].x), \(rightEye.landmarks[0].y), \(leftEye.refPoint.x), \(rightEye.refPoint.y), \(leftEye.refPointDiff().x), \(rightEye.refPointDiff().y), \(leftEye.irisNoseDiff2().x), \(leftEye.irisNoseDiff2().y), \(rightEye.irisNoseDiff2().x), \(rightEye.irisNoseDiff2().y)"
+            
             // コンソール出力
-            print(output)
+//            if arrayAreaUp.count > 3 && arrayAreaDown.count > 3{
+//                print(output)
+//            }
+//            print(output)
+            
+            let aadFrame: Any = arrayAreaDown.count == 0 ? "" : arrayAreaDown[0].frame
+            let aadArea: Any  = arrayAreaDown.count == 0 ? "" : arrayAreaDown[0].area
+            let aauFrame: Any  = arrayAreaUp.count == 0 ? "" : arrayAreaUp[0].frame
+            let aauArea: Any  = arrayAreaUp.count == 0 ? "" : arrayAreaUp[0].area
+            
+            // データの出力
+            func printVariablesAsCSV(_ variables: Any...) {
+                let values = variables.map { "\($0)" }.joined(separator: ", ")
+                print(values)
+            }
+            
+            let HEADER = "frameNum, defDepth, inputCharacter, eyeWave.glanceDist, eyeWave.correctionValue, ikichi.glanceMax, ikichi.glanceMin, areaChangeFrame, areaDown, ikichi.areaDown, aadFrame, aadArea, arrayAreaDown.count, glanceFlag, areaUp, ikichi.areaUp, aauFrame, aauArea, arrayAreaUp.count, directDown, directUp"
+            if frameNum == 101 {
+                print("\n\n---------------------------------------------------------------------------------------------")
+                print(HEADER)
+            }
+            printVariablesAsCSV(frameNum, defDepth, inputCharacter, eyeWave.glanceDist, eyeWave.correctionValue, ikichi.glanceMax, ikichi.glanceMin, areaChangeFrame, areaDown, ikichi.areaDown, aadFrame, aadArea, arrayAreaDown.count, glanceFlag, areaUp, ikichi.areaUp, aauFrame, aauArea, arrayAreaUp.count, directDown, directUp)
             
             if recFlag == 1 {
                 // CSVファイルにデータを追記
@@ -423,15 +402,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             leftDepthPrev = leftDepth_mm
             rightDepthPrev = rightDepth_mm
             
-            leftIrisPrev = normalizedLeftIris[0]
-            rightIrisPrev = normalizedRightIris[0]
-            
-            refPointPrev2 = refPoint
-            refPointMoveAvePrev = refPointMoveAve
-            
-            nosePointPrev = nosePoint
-            leftCheekPrev = leftCheek
-            rightCheekPrev = rightCheek
+            leftEye.storeData()
+            rightEye.storeData()
             
             //　glance確認用
             if (frameNum - distGlanceNum > 4 && frameNum - distWinkNum > 4 && frameNum - distBrinkNum > 4) {
@@ -462,9 +434,9 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             if (glanceFlag == 0) {
                 glanceIkichiMax = ikichi.glanceMax
                 glanceIkichiMin = ikichi.glanceMin
+//                ikichiAreaUp = ikichi.areaUp
+//                ikichiAreaDown = ikichi.areaDown
             }
-            
-            faceMoveIkichi = ikichi.faceMove
             
             // winkが右か左か判別して色付けするやつ
             inputLabelFlag = 0
@@ -511,7 +483,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         distGlanceInitNum = 0
         distWinkInitNum = 0
         distGlanceNum = 0
-        faceMoveFlag = 0
         allInit()
     }
     
@@ -557,7 +528,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         distGlanceInitNum = 0
         distWinkInitNum = 0
         distGlanceNum = 0
-        faceMoveFlag = 0
         allInit()
     }
     

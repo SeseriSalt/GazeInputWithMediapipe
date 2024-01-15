@@ -15,7 +15,7 @@ let CHARACTER = [["あ", "い", "う", "え", "お"], ["か", "き", "く", "け
 
 extension ViewController {
    //ランドマークの位置で領域を選択する関数
-    func LandmarkPositionSerect(point: CGPoint) -> Int {
+    func LandmarkPositionSerect(point: CGPoint) -> (Int, Int) {
         
         // 入力画面の中心座標・幅・高さを取得
         let inputScreen = getScreenInfo()
@@ -44,7 +44,7 @@ extension ViewController {
         let RectWidth = abs(areaCol0 - areaCol1)
         let RectHeight0 = abs(areaRow0 - areaRow1)
         let RectHeight1 = abs(areaRow0 - areaRow2)
-        //1段目
+        //1段目(あ~削除まで)
         if (point.x > areaCol0 && point.x < areaCol1 && point.y > areaRow0 && point.y < areaRow1) {
             lineRect = CGRect(x: areaCol0, y: areaRow0, width: RectWidth, height: RectHeight0)
             let position = CGPoint(x: (areaCol0 + areaCol1) / 2, y: (areaRow0 + areaRow1) / 2)
@@ -52,6 +52,7 @@ extension ViewController {
                 self.drawSelectionBorder(lineRect)
                 self.showConsonantImage(named: "rowA", at: position)
             }
+            //changepoisitionflagは子音が選ばれる
             changePositionFlag = 1
         }
         else if (point.x > areaCol1 && point.x < areaCol2 && point.y > areaRow0 && point.y < areaRow1) {
@@ -188,12 +189,16 @@ extension ViewController {
             }
             changePositionFlag = 0
         }
-        
+        //areaはカーソルが動いたらフラグを立てる(バイブレーション用にしか使われていない模様)
         let areaChangeFlag = (changePositionFlag != prevChangePositionFlag) ? 1 : 0
+        if(changePositionFlag != prevChangePositionFlag){
+            areaChangeFrame = frameNum
+        }
         
+        var printChangePositionFlag = changePositionFlag
         prevChangePositionFlag = changePositionFlag
         
-        return areaChangeFlag
+        return (areaChangeFlag, areaChangeFrame)
     }
     
     @objc func drawSelectionBorder(_ rectInfo: CGRect) {
@@ -202,12 +207,7 @@ extension ViewController {
         let shapeLayer = CAShapeLayer()
         shapeLayer.path = rectPath.cgPath
         shapeLayer.lineWidth = lineWidthList[tapCount]
-        if (faceMoveFlag != 0 || frameNum - distGlanceInitNum <= 4 || frameNum - distWinkInitNum <= 4 || frameNum - distWinkNum <= 5 || frameNum - distGlanceNum <= 5 || frameNum - distBrinkNum <= 5) {
-            shapeLayer.strokeColor = UIColor.red.cgColor
-        }
-        else {
-            shapeLayer.strokeColor = UIColor(red: 26/255, green: 128/255, blue: 133/255, alpha: 1.0).cgColor
-        }
+        shapeLayer.strokeColor = UIColor(red: 26/255, green: 128/255, blue: 133/255, alpha: 1.0).cgColor
         shapeLayer.fillColor = UIColor.clear.cgColor
         
         // すでに囲い線が描画されている場合、過去の線を削除
@@ -234,16 +234,22 @@ extension ViewController {
                 self.lateFlagLabel.textColor = UIColor.green
             }
         }
+        //ウィンクが行われた。すなわち、「あ」行が選択された場合の処理
         else if (frameNum - distWinkNum <= 5) {
             switch changePositionFlag {
             case 0:
                 break
             default:
                 DispatchQueue.main.async {
+                    //inputLabelは選ばれた子音から母音が入る
+                    //inputLabelにはまず「あ」行が入る
+                    //Flagは1が「あ」なので、CHARACTERリストと合わせるため-1している
                     self.inputLabel.text = CHARACTER[changePositionFlag - 1][0]
                 }
                 inputCharacter = CHARACTER[changePositionFlag - 1][0]
+                //間違った場合でも正しい場合でも1ずつ加算される(一発okでも1が出る)
                 inputCountCha += 1
+                //inputLabelflagはwinkした際に1か2か(左目か右目か)きまる
                 if inputLabelFlag == 1 {
                     DispatchQueue.main.async {
                         self.inputLabel.textColor = UIColor.blue
@@ -258,6 +264,7 @@ extension ViewController {
                 }
             }
         }
+        //glanceが行われた。つまり「あ」行以外の入力
         else if (frameNum - distGlanceNum <= 5) {
             switch changePositionFlag {
             case 0:
@@ -267,6 +274,7 @@ extension ViewController {
                     self.inputLabel.text = CHARACTER[changePositionFlag - 1][vowelNumber]
                 }
                 inputCharacter = CHARACTER[changePositionFlag - 1][vowelNumber]
+                //間違った場合でも正しい場合でも1ずつ加算される(一発okでも1が出る)
                 inputCountCha += 1
             }
         }

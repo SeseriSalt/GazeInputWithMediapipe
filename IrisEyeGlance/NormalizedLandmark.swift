@@ -7,6 +7,8 @@
 
 import Foundation
 
+// x軸正規化の最小値・最大値
+public let NORMALIZED_CONST: (min: CGFloat, max: CGFloat) = (min: 0.08978804, max: 0.9095595)
 
 extension ViewController {
     

@@ -8,6 +8,19 @@
 import Foundation
 import UIKit
 
+var winkFlag = 0
+var lateWinkFlag = 0
+var moveMissjudgeFlag = 0
+var maxDiff: Float = 0.0
+var minDiff: Float = 0.0
+var peakPrev: Float = 0.0
+var peakNext: Float = 0.0
+var winkMaxPeakFrame = 0
+var winkMinPeakFrame = 0
+var winkFirstFrame = 0
+var inputLabelFlag = 0
+var distWinkNum = 0
+
 extension ViewController {
     func winkDitect() -> (WINK_IKITCH_MAX: Float, WINK_IKITCH_MIN: Float) {
         // 判別に用いる閾値の決定
@@ -21,13 +34,13 @@ extension ViewController {
                 winkFlag = 1
                 minDiff = lrDiff
                 peakPrev = lrDiffPrev
-                minPeakFrameNum = frameNum
-                firstPoint = frameNum
+                winkMinPeakFrame = frameNum
+                winkFirstFrame = frameNum
             }
             else if (winkFlag == 1 && lrDiff < minDiff) {
                 minDiff = lrDiff
                 peakPrev = lrDiffPrev
-                minPeakFrameNum = frameNum
+                winkMinPeakFrame = frameNum
             }
             else if (winkFlag == 1 && lrDiff >= minDiff) {
                 if (peakNext == 0.0) {
@@ -47,14 +60,14 @@ extension ViewController {
                 }
             }
             // Flagが1のフレームから3フレームで1,2,3と上がる時、2のまま放置する→この現象は閉じた時の反動が出てるだけ。その後ちゃんと反対のピークが来るのでその時判別する。
-            else if (winkFlag == 2 && lrDiff > WINK_IKITCH_MAX && frameNum - minPeakFrameNum != 2) {
+            else if (winkFlag == 2 && lrDiff > WINK_IKITCH_MAX && frameNum - winkMinPeakFrame != 2) {
                 winkFlag = 3
                 maxDiff = lrDiff
-                maxPeakFrameNum = frameNum
+                winkMaxPeakFrame = frameNum
             }
             else if (winkFlag == 3 && lrDiff > maxDiff) {
                 maxDiff = lrDiff
-                maxPeakFrameNum = frameNum
+                winkMaxPeakFrame = frameNum
             }
             else if (winkFlag == 3 && lrDiff < WINK_IKITCH_MAX) {
                 winkFlag = 4
@@ -73,13 +86,13 @@ extension ViewController {
                 winkFlag = -1
                 maxDiff = lrDiff
                 peakPrev = lrDiffPrev
-                maxPeakFrameNum = frameNum
-                firstPoint = frameNum
+                winkMaxPeakFrame = frameNum
+                winkFirstFrame = frameNum
             }
             else if (winkFlag == -1 && lrDiff > maxDiff) {
                 maxDiff = lrDiff
                 peakPrev = lrDiffPrev
-                maxPeakFrameNum = frameNum
+                winkMaxPeakFrame = frameNum
             }
             else if (winkFlag == -1 && lrDiff <= maxDiff) {
                 if (peakNext == 0) {
@@ -100,14 +113,14 @@ extension ViewController {
                 }
             }
             // Flagが-1のフレームから3フレームで1,-2,-3と上がる時、-2のまま放置する→この現象は閉じた時の反動が出てるだけ。その後ちゃんと反対のピークが来るのでその時判別する。
-            else if (winkFlag == -2 && lrDiff < WINK_IKITCH_MIN && frameNum - maxPeakFrameNum != 2) {
+            else if (winkFlag == -2 && lrDiff < WINK_IKITCH_MIN && frameNum - winkMaxPeakFrame != 2) {
                 winkFlag = -3
                 minDiff = lrDiff
-                minPeakFrameNum = frameNum
+                winkMinPeakFrame = frameNum
             }
             else if (winkFlag == -3 && lrDiff < minDiff) {
                 minDiff = lrDiff
-                minPeakFrameNum = frameNum
+                winkMinPeakFrame = frameNum
             }
             else if (winkFlag == -3 && lrDiff > WINK_IKITCH_MIN) {
                 winkFlag = -4
@@ -125,7 +138,7 @@ extension ViewController {
         // wink
         if (winkFlag == 4 || winkFlag == -4) {
             // ピーク感覚が5フレーム以上10フレーム以下の時、wink入力判定
-            if (abs(maxPeakFrameNum - minPeakFrameNum) >= 4 || lateWinkFlag == 1) {
+            if (abs(winkMaxPeakFrame - winkMinPeakFrame) >= 4 || lateWinkFlag == 1) {
                 //                if (abs(maxPeakFrameNum - minPeakFrameNum) >= 5 && abs(maxPeakFrameNum - minPeakFrameNum) <= 10 || lateWinkFlag == 1) {
                 inputLabelFlag = winkFlag == 4 ? 1 : 2
                 let inputNumber = -inputLabelFlag
@@ -146,13 +159,13 @@ extension ViewController {
         }
         
         // ピーク感覚が長すぎる時の初期化
-        if (winkFlag != 0 && frameNum - firstPoint > 13) {
+        if (winkFlag != 0 && frameNum - winkFirstFrame > 13) {
             moveMissjudgeFlag = 0
             winkInit()
         }
         
         // ピーク間隔が短すぎる時の初期化
-        if ((winkFlag == 4 || winkFlag == -4) && (frameNum - firstPoint < 5 || abs(maxPeakFrameNum - minPeakFrameNum) < 4)) {
+        if ((winkFlag == 4 || winkFlag == -4) && (frameNum - winkFirstFrame < 5 || abs(winkMaxPeakFrame - winkMinPeakFrame) < 4)) {
             // frameNum - firstPoint < 5 いる？
             moveMissjudgeFlag = 0
             distWinkInitNum = frameNum
