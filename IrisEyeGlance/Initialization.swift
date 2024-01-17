@@ -21,6 +21,12 @@ extension ViewController {
         glanceEndFrame = 0
         areaDown = 0
         areaUp = 0
+        glanceUpPrev = 0.0
+        glanceDownPrev = 0.0
+        glanceUpPeak = 0.0
+        glanceDownPeak = 0.0
+        glanceUpNext = 100.0
+        glanceDownNext = -100.0
     }
     
     func winkInit() {
@@ -36,8 +42,10 @@ extension ViewController {
     
     func allInit() {
         brinkFlag = 0
-        ikichiAreaUp = 0
-        ikichiAreaDown = 0
+        ikichiAreaUpBig = 0
+        ikichiAreaDownBig = 0
+        ikichiAreaUpSmall = 0
+        ikichiAreaDownSmall = 0
         moveMissjudgeFlag = 0
         winkInit()
         glanceInit()

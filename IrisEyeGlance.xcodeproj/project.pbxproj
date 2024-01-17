@@ -27,6 +27,8 @@
 		5BD7AA202A729E6C002CFBC4 /* WinkDiscrimination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD7AA1F2A729E6C002CFBC4 /* WinkDiscrimination.swift */; };
 		5BD7AA222A72A68D002CFBC4 /* BrinkDiscrimination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD7AA212A72A68D002CFBC4 /* BrinkDiscrimination.swift */; };
 		5BD7AA252A72C23F002CFBC4 /* Initialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD7AA242A72C23F002CFBC4 /* Initialization.swift */; };
+		5BF663C12B55935000BDB5B1 /* CalibrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF663C02B55935000BDB5B1 /* CalibrationViewController.swift */; };
+		5BF663C32B55C62C00BDB5B1 /* Calibration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF663C22B55C62C00BDB5B1 /* Calibration.swift */; };
 		5BF9DA9729049F9500F7ED35 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF9DA9629049F9500F7ED35 /* Camera.swift */; };
 		5BF9DA9A2904A27700F7ED35 /* SYIris.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BF9DA992904A27700F7ED35 /* SYIris.framework */; };
 		5BF9DA9B2904A27700F7ED35 /* SYIris.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5BF9DA992904A27700F7ED35 /* SYIris.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -69,6 +71,8 @@
 		5BD7AA1F2A729E6C002CFBC4 /* WinkDiscrimination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WinkDiscrimination.swift; sourceTree = "<group>"; };
 		5BD7AA212A72A68D002CFBC4 /* BrinkDiscrimination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrinkDiscrimination.swift; sourceTree = "<group>"; };
 		5BD7AA242A72C23F002CFBC4 /* Initialization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Initialization.swift; sourceTree = "<group>"; };
+		5BF663C02B55935000BDB5B1 /* CalibrationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationViewController.swift; sourceTree = "<group>"; };
+		5BF663C22B55C62C00BDB5B1 /* Calibration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Calibration.swift; sourceTree = "<group>"; };
 		5BF9DA9629049F9500F7ED35 /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		5BF9DA992904A27700F7ED35 /* SYIris.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SYIris.framework; path = sources/Iris/SYIris.framework; sourceTree = "<group>"; };
 		5BF9DA9D2904A2BF00F7ED35 /* IrisEyeGlance-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "IrisEyeGlance-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -128,7 +132,9 @@
 				5BACC0E328F6767F00B36EBC /* ViewController.swift */,
 				5B97628B2A25D32F00E10481 /* Experiment.swift */,
 				5B9589242A764BFA00509329 /* Threshold.swift */,
+				5BF663C22B55C62C00BDB5B1 /* Calibration.swift */,
 				5BD7AA1D2A715D71002CFBC4 /* SettingViewController.swift */,
+				5BF663C02B55935000BDB5B1 /* CalibrationViewController.swift */,
 				5BACC0E528F6767F00B36EBC /* Main.storyboard */,
 				5BACC0E828F6768200B36EBC /* Assets.xcassets */,
 				5BF9DA9D2904A2BF00F7ED35 /* IrisEyeGlance-Bridging-Header.h */,
@@ -241,11 +247,13 @@
 				5BD7A8CC2B262A6300A757E8 /* LowPass.swift in Sources */,
 				5B9762872A1BC20800E10481 /* MouseCursor.swift in Sources */,
 				5BD7AA222A72A68D002CFBC4 /* BrinkDiscrimination.swift in Sources */,
+				5BF663C32B55C62C00BDB5B1 /* Calibration.swift in Sources */,
 				5BACC0E228F6767F00B36EBC /* SceneDelegate.swift in Sources */,
 				5B9762832A1B36AD00E10481 /* LandmarkPositionSerect.swift in Sources */,
 				5B827BA0290C511C0091E06C /* Depth.swift in Sources */,
 				5B9762892A1BC59900E10481 /* InputScreenUI.swift in Sources */,
 				5BD7AA202A729E6C002CFBC4 /* WinkDiscrimination.swift in Sources */,
+				5BF663C12B55935000BDB5B1 /* CalibrationViewController.swift in Sources */,
 				5BD7AA1E2A715D71002CFBC4 /* SettingViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

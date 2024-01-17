@@ -9,8 +9,6 @@ import Foundation
 
 // x軸正規化の最小値・最大値
 public let NORMALIZED_CONST: (min: CGFloat, max: CGFloat) = (min: 0.08978804, max: 0.9095595)
-
-extension ViewController {
     
     // 1点のランドマークを正規化するための関数
     func normalizedLandmarkPoint(point: [Float]) -> CGPoint {
@@ -28,4 +26,3 @@ extension ViewController {
         }
         return normalizedIris
     }
-}

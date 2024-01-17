@@ -11,6 +11,13 @@ var glanceFlag: Int = 0
 var glanceFirstFrame: Int = 0
 var distGlanceNum: Int = 0
 
+var glanceDistPrev: CGFloat = 0.0
+var glanceUpPrev: CGFloat = 0.0
+var glanceDownPrev: CGFloat = 0.0
+var glanceUpPeak: CGFloat = 0.0
+var glanceDownPeak: CGFloat = 0.0
+var glanceUpNext: CGFloat = 100.0
+var glanceDownNext: CGFloat = -100.0
 var areaUp: CGFloat = 0.0
 var areaDown: CGFloat = 0.0
 var countAreaUp: CGFloat = 0.0
@@ -21,12 +28,12 @@ var directDown: CGFloat = 0.0
 var directIrisDown = lrPoint(l: CGFloat(0.0), r: CGFloat(0.0))
 var inputResult: Int = 0
 var glanceEndFrame: Int = 0
-var arrayAreaDown: [(frame: Int, area: CGFloat, direct_d: CGFloat, direct_i: lrPoint, isUsed: Bool)] = [(frame: 0, area: 0, direct_d: 0, direct_i: lrPoint(l: 0.0, r: 0.0), isUsed: false)]
-var arrayAreaUp: [(frame: Int, area: CGFloat, direct_d: CGFloat, direct_i: lrPoint, isUsed: Bool)] = [(frame: 0, area: 0, direct_d: 0, direct_i: lrPoint(l: 0.0, r: 0.0), isUsed: false)]
+var arrayAreaDown: [(frame: Int, area: CGFloat, prev: CGFloat, peak: CGFloat, next: CGFloat, direct_d: CGFloat, direct_i: lrPoint, isUsed: Bool)] = [(frame: 0, area: 0, prev: 0, peak: 0, next: 0, direct_d: 0, direct_i: lrPoint(l: 0.0, r: 0.0), isUsed: false)]
+var arrayAreaUp: [(frame: Int, area: CGFloat, prev: CGFloat, peak: CGFloat, next: CGFloat, direct_d: CGFloat, direct_i: lrPoint, isUsed: Bool)] = [(frame: 0, area: 0, prev: 0, peak: 0, next: 0, direct_d: 0, direct_i: lrPoint(l: 0.0, r: 0.0), isUsed: false)]
 
 extension ViewController {
     
-    func eyeGlance(left: CGPoint, right: CGPoint, refDiff: CGPoint, ikichi: (max: CGFloat, min: CGFloat, areaup: CGFloat, areadown:CGFloat)) -> (glanceDist: CGFloat, directionDist: CGFloat, correctionValue: CGFloat) {
+    func eyeGlance(left: CGPoint, right: CGPoint, refDiff: CGPoint, ikichi: (maxBig: CGFloat, minBig: CGFloat, maxSmall: CGFloat, minSmall: CGFloat, areaupBig: CGFloat, areadownBig: CGFloat, areaupSmall: CGFloat, areadownSmall: CGFloat)) -> (glanceDist: CGFloat, directionDist: CGFloat, correctionValue: CGFloat) {
         //left, rightには左目と右目の1点差分のデータが入ってる(x, y座標が入ってる)
         //注意！！！！英瑠は左目と右目の平均を取ってから差分を取っていたが、ヤダさんは左目と右目でそれぞれ1点差分を取ってから左目と右目の平均を取っている
         // 鼻部の移動に対してかかる補正値
@@ -36,8 +43,8 @@ extension ViewController {
         let directionDist = left.x * right.x * 100000
         
         // Eye Glance判別
-        if (frameNum > 15 && frameNum - distGlanceNum > 6 /*&& frameNum - areaChangeFrame > 6*/ && frameNum - distBrinkNum > 6 && frameNum - distWinkNum > 6 && frameNum - distGlanceInitNum > 5) {
-            eyeGlanceDitect(glanceDist: glanceDist, directionDist: directionDist, xPoint: lrPoint(l: left.x, r: right.x), ikichi: (max: ikichi.max, min: ikichi.min, ikichi.areaup, ikichi.areadown))
+        if (frameNum > 15 && frameNum - distGlanceNum > 6 && frameNum - areaChangeFrame > 6 && frameNum - distBrinkNum > 6 && frameNum - distWinkNum > 6 && frameNum - distGlanceInitNum > 5) {
+            eyeGlanceDitect(glanceDist: glanceDist, directionDist: directionDist, xPoint: lrPoint(l: left.x, r: right.x), ikichi: (maxBig: ikichi.maxBig, minBig: ikichi.minBig, maxSmall: ikichi.maxSmall, minSmall: ikichi.minSmall, areaupBig: ikichi.areaupBig, areadownBig: ikichi.areadownBig, areaupSmall: ikichi.areaupSmall, areadownSmall: ikichi.areadownSmall))
         }
         else{
             glanceInit()
@@ -45,43 +52,53 @@ extension ViewController {
         return(glanceDist, directionDist, correctionValue)
     }
     
-    func eyeGlanceDitect(glanceDist: CGFloat, directionDist: CGFloat, xPoint: lrPoint, ikichi: (max: CGFloat, min: CGFloat, areaup: CGFloat, areadown: CGFloat)) {
+    func eyeGlanceDitect(glanceDist: CGFloat, directionDist: CGFloat, xPoint: lrPoint, ikichi: (maxBig: CGFloat, minBig: CGFloat, maxSmall: CGFloat, minSmall: CGFloat, areaupBig: CGFloat, areadownBig: CGFloat, areaupSmall: CGFloat, areadownSmall: CGFloat)) {
         //　xpoint(lrPoint)は左目xの差分値と右目xの差分値が入ってる
         // eye glance判別の閾値 上方向と下方向の移動で分ける
         //ikichi: (max: glanceIkichiMax, min: glanceIkichiMin, face: faceMoveIkichi).ikichidecesionでこう定義されている
         //glanceIkichiUpは目が上を向いた時(波形的には下向き)の時に使われるものと予想。だから、ikichiUPの方がikichiDownより小さい！！！
-        let glanceIkichiUp: CGFloat = ikichi.min
-        let glanceIkichiDown: CGFloat = ikichi.max
+//        let glanceIkichiUpBig: CGFloat = ikichi.minBig
+//        let glanceIkichiDownBig: CGFloat = ikichi.maxBig
+        let glanceIkichiUpSmall: CGFloat = ikichi.minSmall
+        let glanceIkichiDownSmall: CGFloat = ikichi.maxSmall
         
         let frameLimit = frameNum - 20
         
         // eye glance判別開始
         // 目が上を見た時(波形的には下向き)
-        if (glanceFlag == 0 && glanceDist < glanceIkichiUp) {
+        if (glanceFlag == 0 && glanceDist < glanceIkichiUpSmall) {
             glanceFlag = 1
             glanceFirstFrame = frameNum
-            // とりあえずxの最大値(記録)
+            //yの閾値超える1つ前のフレームと，とりあえずのピーク
+            glanceDownPrev = glanceDistPrev
+            glanceDownPeak = glanceDist
+            // とりあえずxのピーク
             directDown = directionDist
             directIrisDown = xPoint
-            areaDown += (glanceDist / glanceIkichiUp) * glanceDist
+            areaDown += /*(glanceDist / glanceIkichiUpSmall * */ glanceDist
             countAreaDown += 1
             glanceEndFrame = frameNum
         }
-        else if (glanceFlag == 1 && glanceDist < glanceIkichiUp) {
-            areaDown += (glanceDist / glanceIkichiUp) * glanceDist //
+        else if (glanceFlag == 1 && glanceDist < 0.0) {
+            areaDown += /*(glanceDist / glanceIkichiUpSmall * */ glanceDist //
             countAreaDown += 1
             glanceEndFrame = frameNum
+            // yのピーク更新
+            glanceDownPeak = glanceDownPeak > glanceDist ? glanceDist : glanceDownPeak
+            // xのピーク更新
             if (directDown < directionDist) {
                 directDown = directionDist
-                //最大値更新
                 directIrisDown = xPoint
                 //directIrisDownには左目xと右目xの差分値が入ってる
             }
         }
+        if (glanceFlag == 1 && glanceDist > glanceIkichiUpSmall && glanceDownNext < glanceDownPeak) {
+            glanceDownNext = glanceDist
+        }
         else if (glanceFlag == 1 && glanceDist > 0.0) {
             glanceFlag = 2
-            arrayAreaDown.insert((frame: glanceEndFrame, area: areaDown, direct_d: directDown, direct_i: directIrisDown, isUsed: false), at:0)
-            if areaDown < ikichi.areadown {
+            arrayAreaDown.insert((frame: glanceEndFrame, area: areaDown, prev: glanceDownPrev, peak: glanceDownPeak, next: glanceDownNext, direct_d: directDown, direct_i: directIrisDown, isUsed: false), at:0)
+            if areaDown < ikichi.areadownSmall {
                 // 20フレーム以内の要素をフィルタリングして新しい配列を作成する
                 let filteredArray = arrayAreaUp.filter { element in
                     if let frame = element.frame as? Int {
@@ -92,7 +109,7 @@ extension ViewController {
                 arrayAreaUp = filteredArray
                 // 新しい配列の要素に対して閾値判定
                 for i in 0..<arrayAreaUp.count {
-                    if arrayAreaUp[i].area > ikichi.areaup && arrayAreaUp[i].isUsed == false{
+                    if arrayAreaUp[i].area > ikichi.areaupSmall /*&& arrayAreaUp[i].peak - arrayAreaUp[i].prev > 0.9 && arrayAreaUp[i].peak - arrayAreaUp[i].next > 0.9*/ && arrayAreaUp[i].isUsed == false{
                         glanceFlag = -4
                         arrayAreaDown[0].isUsed = true
                         arrayAreaUp[i].isUsed = true
@@ -109,31 +126,40 @@ extension ViewController {
             }
             glanceEndFrame = 0
             areaDown = 0
+            glanceDownNext = -100.0
         }
-        else if (glanceFlag == 0 && glanceDist > glanceIkichiDown) {
+        // 目が下を見た時(波形的には上向き)
+        else if (glanceFlag == 0 && glanceDist > glanceIkichiDownSmall) {
             glanceFlag = -1
             glanceFirstFrame = frameNum
+            glanceUpPrev = glanceDistPrev
+            glanceUpPeak = glanceDist
             directUp = directionDist
             directIrisUp = xPoint
-            areaUp += (glanceDist / glanceIkichiDown) * glanceDist
+            areaUp += /*(glanceDist / glanceIkichiDownSmall * */ glanceDist
             countAreaUp += 1
             glanceEndFrame = frameNum
         }
-        else if (glanceFlag == -1 && glanceDist > glanceIkichiDown) {
-            areaUp += (glanceDist / glanceIkichiDown) * glanceDist
+        else if (glanceFlag == -1 && glanceDist > 0.0) {
+            areaUp += /*(glanceDist / glanceIkichiUpSmall * */ glanceDist
             countAreaUp += 1
             glanceEndFrame = frameNum
+            // yのピーク更新
+            glanceUpPeak = glanceUpPeak < glanceDist ? glanceDist : glanceUpPeak
+            // xのピーク更新
             if (directUp < directionDist) {
                 directUp = directionDist
-                //最大値更新
                 directIrisUp = xPoint
                 //directIrisDownには左目xと右目xの差分値が入ってる
             }
         }
+        if (glanceFlag == -1 && glanceDist < glanceIkichiDownSmall && glanceUpNext > glanceUpPeak) {
+            glanceUpNext = glanceDist
+        }
         else if(glanceFlag == -1 && glanceDist < 0.0) {
             glanceFlag = -2
-            arrayAreaUp.insert((frame: glanceEndFrame, area: areaUp, direct_d: directUp, direct_i: directIrisUp, isUsed: false), at:0)
-            if areaUp > ikichi.areaup {
+            arrayAreaUp.insert((frame: glanceEndFrame, area: areaUp, prev: glanceUpPrev, peak: glanceUpPeak, next: glanceUpNext, direct_d: directUp, direct_i: directIrisUp, isUsed: false), at:0)
+            if areaUp > ikichi.areaupBig {
                 // 20フレーム以内の要素をフィルタリングして新しい配列を作成する
                 let filteredArray = arrayAreaDown.filter { element in
                     if let frame = element.frame as? Int {
@@ -144,7 +170,7 @@ extension ViewController {
                 arrayAreaDown = filteredArray
                 // 新しい配列の要素に対して閾値判定
                 for i in 0..<arrayAreaDown.count {
-                    if arrayAreaDown[i].area < ikichi.areadown && arrayAreaDown[i].isUsed == false{
+                    if arrayAreaDown[i].area < ikichi.areadownBig /*&& arrayAreaDown[i].prev - arrayAreaDown[i].peak > 1.5 && arrayAreaDown[i].next - arrayAreaDown[i].peak > 1.5 */&& arrayAreaDown[i].isUsed == false{
                         glanceFlag = 4
                         arrayAreaUp[0].isUsed = true
                         arrayAreaDown[i].isUsed = true
@@ -161,6 +187,7 @@ extension ViewController {
             }
             glanceEndFrame = 0
             areaUp = 0
+            glanceUpNext = 100.0
         }
         
         // x方向決めのための値取得
@@ -258,7 +285,7 @@ extension ViewController {
         }
         
         //長すぎるeye glance初期化
-        if (glanceFlag != 0 && frameNum - glanceFirstFrame > 15) {
+        if (glanceFlag != 0 && frameNum - glanceFirstFrame > 20) {
             glanceInit()
         }
     }
