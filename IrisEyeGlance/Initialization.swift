@@ -14,8 +14,21 @@ extension ViewController {
         glanceFirstPoint = 0
         firstDirect = 0.0
         firstDirectIris = lrPoint(l: 0.0, r: 0.0)
+        firstAreaUp = 0
+        firstAreaDown = 0
+        countAreaUp = 0
+        countAreaDown = 0
         secondDirect = 0.0
         secondDirectIris = lrPoint(l: 0.0, r: 0.0)
+        secondAreaUp = 0
+        secondAreaDown = 0
+        directUp = 0
+        directIrisUp = lrPoint(l: 0.0, r: 0.0)
+        directDown = 0
+        directIrisDown = lrPoint(l: 0.0, r: 0.0)
+        endFrame = 0
+        areaDown = 0
+        areaUp = 0
     }
     
     func winkInit() {

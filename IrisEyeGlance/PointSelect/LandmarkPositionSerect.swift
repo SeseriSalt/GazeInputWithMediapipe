@@ -15,7 +15,7 @@ let CHARACTER = [["あ", "い", "う", "え", "お"], ["か", "き", "く", "け
 
 extension ViewController {
    //ランドマークの位置で領域を選択する関数
-    func LandmarkPositionSerect(point: CGPoint) -> Int {
+    func LandmarkPositionSerect(point: CGPoint) -> (Int, Int) {
         
         // 入力画面の中心座標・幅・高さを取得
         let inputScreen = getScreenInfo()
@@ -193,7 +193,7 @@ extension ViewController {
         
         prevChangePositionFlag = changePositionFlag
         
-        return areaChangeFlag
+        return (areaChangeFlag, areaChangeFrame)
     }
     
     @objc func drawSelectionBorder(_ rectInfo: CGRect) {

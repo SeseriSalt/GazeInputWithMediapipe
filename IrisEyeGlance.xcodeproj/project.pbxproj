@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5B3C02CE2B5868B000FEA688 /* LowPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B3C02CD2B5868B000FEA688 /* LowPass.swift */; };
 		5B827BA0290C511C0091E06C /* Depth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B827B9F290C511C0091E06C /* Depth.swift */; };
 		5B9589252A764BFA00509329 /* Threshold.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9589242A764BFA00509329 /* Threshold.swift */; };
 		5B9762832A1B36AD00E10481 /* LandmarkPositionSerect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9762822A1B36AD00E10481 /* LandmarkPositionSerect.swift */; };
@@ -45,6 +46,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5B3C02CD2B5868B000FEA688 /* LowPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LowPass.swift; sourceTree = "<group>"; };
 		5B827B9F290C511C0091E06C /* Depth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Depth.swift; sourceTree = "<group>"; };
 		5B9589242A764BFA00509329 /* Threshold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Threshold.swift; sourceTree = "<group>"; };
 		5B9762822A1B36AD00E10481 /* LandmarkPositionSerect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandmarkPositionSerect.swift; sourceTree = "<group>"; };
@@ -123,6 +125,7 @@
 				5BACC0E328F6767F00B36EBC /* ViewController.swift */,
 				5B97628B2A25D32F00E10481 /* Experiment.swift */,
 				5B9589242A764BFA00509329 /* Threshold.swift */,
+				5B3C02CD2B5868B000FEA688 /* LowPass.swift */,
 				5BD7AA1D2A715D71002CFBC4 /* SettingViewController.swift */,
 				5BACC0E528F6767F00B36EBC /* Main.storyboard */,
 				5BACC0E828F6768200B36EBC /* Assets.xcassets */,
@@ -231,6 +234,7 @@
 				5B97628C2A25D32F00E10481 /* Experiment.swift in Sources */,
 				5BC6F76E2A6EB1FE002CDF1F /* EyeGlanceDiscrimination.swift in Sources */,
 				5B9589252A764BFA00509329 /* Threshold.swift in Sources */,
+				5B3C02CE2B5868B000FEA688 /* LowPass.swift in Sources */,
 				5B9762872A1BC20800E10481 /* MouseCursor.swift in Sources */,
 				5BD7AA222A72A68D002CFBC4 /* BrinkDiscrimination.swift in Sources */,
 				5BACC0E228F6767F00B36EBC /* SceneDelegate.swift in Sources */,
