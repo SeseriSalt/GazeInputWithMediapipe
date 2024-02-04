@@ -10,7 +10,8 @@ import UIKit
 
 extension ViewController {
     func glanceInit() {
-        glanceFlag = 0
+        glanceUpFlag = 0
+        glanceDownFlag = 0
         glanceFirstFrame = 0
         countAreaUp = 0
         countAreaDown = 0
@@ -21,16 +22,11 @@ extension ViewController {
         glanceEndFrame = 0
         areaDown = 0
         areaUp = 0
-        glanceUpPrev = 0.0
-        glanceDownPrev = 0.0
-        glanceUpPeak = 0.0
-        glanceDownPeak = 0.0
-        glanceUpNext = 100.0
-        glanceDownNext = -100.0
     }
     
     func winkInit() {
-        winkFlag = 0
+        winkUpFlag = 0
+        winkDownFlag = 0
         lateWinkFlag = 0
         maxDiff = 0
         minDiff = 0
@@ -38,14 +34,15 @@ extension ViewController {
         winkMinPeakFrame = 0
         peakPrev = 0
         peakNext = 0
+        // winkFirstFrame = 0
+        winkAreaUp = 0
+        winkAreaDown = 0
     }
     
     func allInit() {
         brinkFlag = 0
-        ikichiAreaUpBig = 0
-        ikichiAreaDownBig = 0
-        ikichiAreaUpSmall = 0
-        ikichiAreaDownSmall = 0
+        ikichiAreaUp = 0
+        ikichiAreaDown = 0
         moveMissjudgeFlag = 0
         winkInit()
         glanceInit()
@@ -64,8 +61,10 @@ extension ViewController {
         
         questionCharacter = "な"
         DispatchQueue.main.async {
+            self.inputLabel.text = ""
             self.questionLabel.text = "な"
             self.questionLabel.textColor = UIColor.black
+            self.resultLabel.text = ""
         }
     }
 }

@@ -250,7 +250,7 @@ extension ViewController {
                 //間違った場合でも正しい場合でも1ずつ加算される(一発okでも1が出る)
                 inputCountCha += 1
                 //inputLabelflagはwinkした際に1か2か(左目か右目か)きまる
-                if inputLabelFlag == 1 {
+                if inputLabelFlag == 2 {
                     DispatchQueue.main.async {
                         self.inputLabel.textColor = UIColor.blue
                         self.questionLabel.textColor = UIColor.blue

@@ -8,6 +8,12 @@
 import Foundation
 import Accelerate
 
+var pushTimes: Int = -1
+
+var dataArrayRest: [CGFloat] = [0.0, 0.0]
+var dataArray30: [[CGFloat]] = [[0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0]]
+var dataAveRest: [CGFloat] = [0.0, 0.0]
+var dataAve30: [CGFloat] = [0.0, 0.0]
 
 extension ViewController {
     
@@ -17,112 +23,73 @@ extension ViewController {
         let glanceDist = (left.y + right.y) / 2 * 800 * correctionValue
         
         switch pushTimes {
-        case 1, 2, 3, 4, 5, 6, 7, 8:
+        case 1:
             // 最大値の更新
-            if dataArray20[pushTimes-1][0] < glanceDist {
-                dataArray20[pushTimes-1][0] = glanceDist
+            if dataArrayRest[0] < glanceDist {
+                dataArrayRest[0] = glanceDist
             }
             // 最小値の更新
-            if dataArray20[pushTimes-1][1] > glanceDist {
-                dataArray20[pushTimes-1][1] = glanceDist
+            if dataArrayRest[1] > glanceDist {
+                dataArrayRest[1] = glanceDist
             }
+        case 2:
+            dataAveRest = roundFloatArray(floatArray: dataArrayRest)
+            glanceSliderValue = dataAveRest[0] < abs(dataAveRest[1]) ? dataAveRest[0] + 0.1 : abs(dataAveRest[1]) + 0.1
+            UserDefaults.standard.set(glanceSliderValue, forKey: "glanceSliderValue")
             
-        case 10, 11, 12, 13, 14, 15, 16, 17:
+        case 3, 4, 5, 6, 7, 8, 9, 10:
             // 最大値の更新
-            if dataArray30[pushTimes-10][0] < glanceDist {
-                dataArray30[pushTimes-10][0] = glanceDist
+            if dataArray30[pushTimes-3][0] < areaUp {
+                dataArray30[pushTimes-3][0] = areaUp
             }
             // 最小値の更新
-            if dataArray30[pushTimes-10][1] > glanceDist {
-                dataArray30[pushTimes-10][1] = glanceDist
+            if dataArray30[pushTimes-3][1] > areaDown {
+                dataArray30[pushTimes-3][1] = areaDown
             }
-            
-        case 19, 20, 21, 22, 23, 24, 25, 26:
-            // 最大値の更新
-            if dataArray40[pushTimes-19][0] < glanceDist {
-                dataArray40[pushTimes-19][0] = glanceDist
-            }
-            // 最小値の更新
-            if dataArray40[pushTimes-19][1] > glanceDist {
-                dataArray40[pushTimes-19][1] = glanceDist
-            }
-            
-        case 27:
-            print("dataArray20: \(dataArray20)")
+                
+        case 11:
             print("dataArray30: \(dataArray30)")
-            print("dataArray40: \(dataArray40)")
-            // [maxBig, minBig, maxSamll, minSmall]
-            var dataAve20: [CGFloat] = [0.0, 0.0, 0.0, 0.0]
-            var dataAve30: [CGFloat] = [0.0, 0.0, 0.0, 0.0]
-            var dataAve40: [CGFloat] = [0.0, 0.0, 0.0, 0.0]
-            for i in 0...1 {
-                var ave20: CGFloat = 0
-                var ave30: CGFloat = 0
-                var ave40: CGFloat = 0
-                for j in 0...1 {
-                    ave20 += dataArray20[j][i] + dataArray20[j + 4][i]
-                    ave30 += dataArray30[j][i] + dataArray30[j + 4][i]
-                    ave40 += dataArray40[j][i] + dataArray40[j + 4][i]
-                }
-                dataAve20[i] = ave20 / 4
-                dataAve30[i] = ave30 / 4
-                dataAve40[i] = ave40 / 4
-                ave20 = 0
-                ave30 = 0
-                ave40 = 0
-                for j in 2...3 {
-                    ave20 += dataArray20[j][i] + dataArray20[j + 4][i]
-                    ave30 += dataArray30[j][i] + dataArray30[j + 4][i]
-                    ave40 += dataArray40[j][i] + dataArray40[j + 4][i]
-                }
-                dataAve20[i + 2] = ave20 / 4
-                dataAve30[i + 2] = ave30 / 4
-                dataAve40[i + 2] = ave40 / 4
-            }
+            // [max, min]
+            dataAve30 =  calculateAverages(twoDimensionalArray: dataArray30) as? [CGFloat] ?? [0.0, 0.0]
+            integralSliderValue = dataAve30[0] < abs(dataAve30[1]) ? round((dataAve30[0] - 0.1) / glanceSliderValue * 10)/10 : round((abs(dataAve30[1]) - 0.1) / glanceSliderValue * 10)/10
+            UserDefaults.standard.set(integralSliderValue, forKey: "integralSliderValue")
+            
+            
             print("\n\n----------------------------------------------------")
-            print("キャリブレーション40終了:\(frameNum)")
-            print("dataAve20: \(dataAve20)")
-            print("dataAve30: \(dataAve30)")
-            print("dataAve40: \(dataAve40)")
-            for i in 0...3 {
-                let n = (i == 0 || i == 1) ? 0.6 : 1.5
-                let resultTh = calculateLinearRegression(x: [20.0, 30.0, 40.0], y: [dataAve20[i % 2] * n, dataAve30[i % 2] * n, dataAve40[i % 2] * n])
-                eyeGlanceThBig[i * 2] = resultTh?.slope ?? 1.0
-                eyeGlanceThBig[i * 2 + 1] = resultTh?.intercept ?? 0.0
-            }
-            for i in 0...3 {
-                let n = (i == 0 || i == 1) ? 0.6 : 1.5
-                let resultTh = calculateLinearRegression(x: [20.0, 30.0, 40.0], y: [dataAve20[i % 2 + 2] * n, dataAve30[i % 2 + 2] * n, dataAve40[i % 2 + 2] * n])
-                eyeGlanceThSmall[i * 2] = resultTh?.slope ?? 1.0
-                eyeGlanceThSmall[i * 2 + 1] = resultTh?.intercept ?? 0.0
-            }
-            print("eyeGlanceThBig, \(eyeGlanceThBig)")
-            print("eyeGlanceThSmall, \(eyeGlanceThSmall)\n")
+            print("静止中最大値: \(dataAveRest[0]), 静止中最小値: \(dataAveRest[1])")
+            print("Glance30cm最大値: \(dataAve30[0]), Glance30cm最小値: \(dataAve30[1])\n")
+            print("glance閾値: \(glanceSliderValue)")
+            print("積分値倍率: \(integralSliderValue)")
             print("----------------------------------------------------\n\n")
+            dataArrayRest = [0.0, 0.0]
+            dataArray30 = [[0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0]]
             
             pushTimes += 1
         default:
             break
         }
-        
-        func calculateLinearRegression(x: [CGFloat], y: [CGFloat]) -> (slope: CGFloat, intercept: CGFloat)? {
-            guard x.count == y.count && x.count >= 2 else {
-                return nil // エラー：xとyの要素数が一致しないか、2つ未満
-            }
-
-            let n = CGFloat(x.count)
-
-            // Σxi, Σyi, Σxiyi, Σxi^2 の計算
-            let sumX = x.reduce(0, +)
-            let sumY = y.reduce(0, +)
-            let sumXY = zip(x, y).map { $0 * $1 }.reduce(0, +)
-            let sumXSquare = x.map { $0 * $0 }.reduce(0, +)
-
-            // 傾きと切片の計算
-            let slope = (n * sumXY - sumX * sumY) / (n * sumXSquare - sumX * sumX)
-            let intercept = (sumY - slope * sumX) / n
-
-            return (slope, intercept)
+    }
+    
+    func calculateAverages(twoDimensionalArray: [[CGFloat]]) -> [CGFloat]? {
+        guard twoDimensionalArray.count >= 4 else {
+            // 配列が4つ未満の場合はnilを返す（条件に応じてエラーハンドリングを変更可能）
+            return nil
         }
+
+        // 1つ目の値を小さい方から4つ取り出し、平均を計算
+        let firstValues = twoDimensionalArray.map { $0[0] }.sorted().prefix(4)
+        let averageFirstValue = firstValues.reduce(0, +) / CGFloat(firstValues.count)
+
+        // 2つ目の値を大きい方から4つ取り出し、平均を計算
+        let secondValues = twoDimensionalArray.map { $0[1] }.sorted(by: >).prefix(4)
+        let averageSecondValue = secondValues.reduce(0, +) / CGFloat(secondValues.count)
+        
+
+        return roundFloatArray(floatArray: [averageFirstValue, averageSecondValue])
+    }
+    
+    func roundFloatArray(floatArray: [CGFloat]) -> [CGFloat] {
+        let roundedArray = floatArray.map { round($0 * 10) / 10 }
+        return roundedArray
     }
 }
