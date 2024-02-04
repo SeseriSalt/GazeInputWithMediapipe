@@ -10,8 +10,13 @@ import UIKit
 
 public var changePositionFlag = 0
 public var prevChangePositionFlag = 0
+public var casedFlag = 0
 
-let CHARACTER = [["あ", "い", "う", "え", "お"], ["か", "き", "く", "け", "こ"], ["さ", "し", "す", "せ", "そ"],["削除", "削除", "削除", "削除", "削除"], ["た", "ち", "つ", "て", "と"], ["な", "に", "ぬ", "ね", "の"], ["は", "ひ", "ふ", "へ", "ほ"], ["空白", "空白", "空白", "空白", "空白"], ["ま", "み", "む", "め", "も"], ["や", "ゆ", "ゆ", "よ", "よ"], ["ら", "り", "る", "れ", "ろ"], ["改行", "改行", "改行", "改行", "改行"], ["○", "○", "○", "○", "○"], ["わ", "を", "を", "ん", "ん"], ["、", "。", "？", "！", ""]]
+let CHARACTERJ = [["あ", "い", "う", "え", "お"], ["か", "き", "く", "け", "こ"], ["さ", "し", "す", "せ", "そ"],["削除", "削除", "削除", "削除", "削除"], ["た", "ち", "つ", "て", "と"], ["な", "に", "ぬ", "ね", "の"], ["は", "ひ", "ふ", "へ", "ほ"], ["空白", "空白", "空白", "空白", "空白"], ["ま", "み", "む", "め", "も"], ["や", "ゆ", "ゆ", "よ", "よ"], ["ら", "り", "る", "れ", "ろ"], ["改行", "改行", "改行", "改行", "改行"], ["", "", "", "", ""], ["わ", "を", "を", "ん", "ん"], ["、", "。", "？", "！", ""]]
+let CHARACTERa = [["", "@", "#", "/", "&"], ["a", "b", "c", "", ""], ["d", "e", "f", "", ""],["delete", "delete", "delete", "delete", "delete"], ["g", "h", "i", "", ""], ["j", "k", "l", "", ""], ["m", "n", "o", "", ""], ["space", "space", "space", "space", "space"], ["p", "q", "r", "s", ""], ["t", "u", "v", "", ""], ["w", "x", "y", "z", ""], ["↩︎", "↩︎", "↩︎", "↩︎", "↩︎"], ["", "", "", "", ""], ["\'", "\"", "\"", "(", ")"], [".", ",", "？", "！", ""]]
+let CHARACTERA = [["", "@", "#", "/", "&"], ["A", "B", "C", "", ""], ["D", "E", "F", "", ""],["delete", "delete", "delete", "delete", "delete"], ["G", "H", "I", "", ""], ["J", "K", "L", "", ""], ["M", "N", "O", "", ""], ["space", "space", "space", "space", "space"], ["P", "Q", "R", "S", ""], ["T", "U", "V", "", ""], ["W", "X", "Y", "Z", ""], ["↩︎", "↩︎", "↩︎", "↩︎", "↩︎"], ["", "", "", "", ""], ["\'", "\"", "\"", "(", ")"], [".", ",", "？", "！", ""]]
+
+public var designFlag = 0
 
 extension ViewController {
    //ランドマークの位置で領域を選択する関数
@@ -48,9 +53,17 @@ extension ViewController {
         if (point.x > areaCol0 && point.x < areaCol1 && point.y > areaRow0 && point.y < areaRow1) {
             lineRect = CGRect(x: areaCol0, y: areaRow0, width: RectWidth, height: RectHeight0)
             let position = CGPoint(x: (areaCol0 + areaCol1) / 2, y: (areaRow0 + areaRow1) / 2)
-            DispatchQueue.main.async {
-                self.drawSelectionBorder(lineRect)
-                self.showConsonantImage(named: "rowA", at: position)
+            if designFlag == 0 {
+                DispatchQueue.main.async {
+                    self.drawSelectionBorder(lineRect)
+                    self.showConsonantImage(named: "rowA", at: position)
+                }
+            }
+            else {
+                DispatchQueue.main.async {
+                    self.drawSelectionBorder(lineRect)
+                    self.showConsonantImage(named: "row2At", at: position)
+                }
             }
             //changepoisitionflagは子音が選ばれる
             changePositionFlag = 1
@@ -58,18 +71,34 @@ extension ViewController {
         else if (point.x > areaCol1 && point.x < areaCol2 && point.y > areaRow0 && point.y < areaRow1) {
             lineRect = CGRect(x: areaCol1, y: areaRow0, width: RectWidth, height: RectHeight0)
             let position = CGPoint(x: (areaCol1 + areaCol2) / 2, y: (areaRow0 + areaRow1) / 2)
-            DispatchQueue.main.async {
-                self.drawSelectionBorder(lineRect)
-                self.showConsonantImage(named: "rowK", at: position)
+            if designFlag == 0 {
+                DispatchQueue.main.async {
+                    self.drawSelectionBorder(lineRect)
+                    self.showConsonantImage(named: "rowK", at: position)
+                }
+            }
+            else {
+                DispatchQueue.main.async {
+                    self.drawSelectionBorder(lineRect)
+                    self.showConsonantImage(named: "row2A", at: position)
+                }
             }
             changePositionFlag = 2
         }
         else if (point.x > areaCol2 && point.x < areaCol3 && point.y > areaRow0 && point.y < areaRow1) {
             lineRect = CGRect(x: areaCol2, y: areaRow0, width: RectWidth, height: RectHeight0)
             let position = CGPoint(x: (areaCol2 + areaCol3) / 2, y: (areaRow0 + areaRow1) / 2)
-            DispatchQueue.main.async {
-                self.drawSelectionBorder(lineRect)
-                self.showConsonantImage(named: "rowS", at: position)
+            if designFlag == 0 {
+                DispatchQueue.main.async {
+                    self.drawSelectionBorder(lineRect)
+                    self.showConsonantImage(named: "rowS", at: position)
+                }
+            }
+            else {
+                DispatchQueue.main.async {
+                    self.drawSelectionBorder(lineRect)
+                    self.showConsonantImage(named: "row2D", at: position)
+                }
             }
             changePositionFlag = 3
         }
@@ -85,27 +114,51 @@ extension ViewController {
         else if (point.x > areaCol0 && point.x < areaCol1 && point.y > areaRow1 && point.y < areaRow2) {
             lineRect = CGRect(x: areaCol0, y: areaRow1, width: RectWidth, height: RectHeight0)
             let position = CGPoint(x: (areaCol0 + areaCol1) / 2, y: (areaRow1 + areaRow2) / 2)
-            DispatchQueue.main.async {
-                self.drawSelectionBorder(lineRect)
-                self.showConsonantImage(named: "rowT", at: position)
+            if designFlag == 0 {
+                DispatchQueue.main.async {
+                    self.drawSelectionBorder(lineRect)
+                    self.showConsonantImage(named: "rowT", at: position)
+                }
+            }
+            else {
+                DispatchQueue.main.async {
+                    self.drawSelectionBorder(lineRect)
+                    self.showConsonantImage(named: "row2G", at: position)
+                }
             }
             changePositionFlag = 5
         }
         else if (point.x > areaCol1 && point.x < areaCol2 && point.y > areaRow1 && point.y < areaRow2) {
             lineRect = CGRect(x: areaCol1, y: areaRow1, width: RectWidth, height: RectHeight0)
             let position = CGPoint(x: (areaCol1 + areaCol2) / 2, y: (areaRow1 + areaRow2) / 2)
-            DispatchQueue.main.async {
-                self.drawSelectionBorder(lineRect)
-                self.showConsonantImage(named: "rowN", at: position)
+            if designFlag == 0 {
+                DispatchQueue.main.async {
+                    self.drawSelectionBorder(lineRect)
+                    self.showConsonantImage(named: "rowN", at: position)
+                }
+            }
+            else {
+                DispatchQueue.main.async {
+                    self.drawSelectionBorder(lineRect)
+                    self.showConsonantImage(named: "row2J", at: position)
+                }
             }
             changePositionFlag = 6
         }
         else if (point.x > areaCol2 && point.x < areaCol3 && point.y > areaRow1 && point.y < areaRow2) {
             lineRect = CGRect(x: areaCol2, y: areaRow1, width: RectWidth, height: RectHeight0)
             let position = CGPoint(x: (areaCol2 + areaCol3) / 2, y: (areaRow1 + areaRow2) / 2)
-            DispatchQueue.main.async {
-                self.drawSelectionBorder(lineRect)
-                self.showConsonantImage(named: "rowH", at: position)
+            if designFlag == 0 {
+                DispatchQueue.main.async {
+                    self.drawSelectionBorder(lineRect)
+                    self.showConsonantImage(named: "rowH", at: position)
+                }
+            }
+            else {
+                DispatchQueue.main.async {
+                    self.drawSelectionBorder(lineRect)
+                    self.showConsonantImage(named: "row2M", at: position)
+                }
             }
             changePositionFlag = 7
         }
@@ -121,27 +174,51 @@ extension ViewController {
         else if (point.x > areaCol0 && point.x < areaCol1 && point.y > areaRow2 && point.y < areaRow3) {
             lineRect = CGRect(x: areaCol0, y: areaRow2, width: RectWidth, height: RectHeight0)
             let position = CGPoint(x: (areaCol0 + areaCol1) / 2, y: (areaRow2 + areaRow3) / 2)
-            DispatchQueue.main.async {
-                self.drawSelectionBorder(lineRect)
-                self.showConsonantImage(named: "rowM", at: position)
+            if designFlag == 0 {
+                DispatchQueue.main.async {
+                    self.drawSelectionBorder(lineRect)
+                    self.showConsonantImage(named: "rowM", at: position)
+                }
+            }
+            else {
+                DispatchQueue.main.async {
+                    self.drawSelectionBorder(lineRect)
+                    self.showConsonantImage(named: "row2P", at: position)
+                }
             }
             changePositionFlag = 9
         }
         else if (point.x > areaCol1 && point.x < areaCol2 && point.y > areaRow2 && point.y < areaRow3) {
             lineRect = CGRect(x: areaCol1, y: areaRow2, width: RectWidth, height: RectHeight0)
             let position = CGPoint(x: (areaCol1 + areaCol2) / 2, y: (areaRow2 + areaRow3) / 2)
-            DispatchQueue.main.async {
-                self.drawSelectionBorder(lineRect)
-                self.showConsonantImage(named: "rowY", at: position)
+            if designFlag == 0 {
+                DispatchQueue.main.async {
+                    self.drawSelectionBorder(lineRect)
+                    self.showConsonantImage(named: "rowY", at: position)
+                }
+            }
+            else {
+                DispatchQueue.main.async {
+                    self.drawSelectionBorder(lineRect)
+                    self.showConsonantImage(named: "row2T", at: position)
+                }
             }
             changePositionFlag = 10
         }
         else if (point.x > areaCol2 && point.x < areaCol3 && point.y > areaRow2 && point.y < areaRow3) {
             lineRect = CGRect(x: areaCol2, y: areaRow2, width: RectWidth, height: RectHeight0)
             let position = CGPoint(x: (areaCol2 + areaCol3) / 2, y: (areaRow2 + areaRow3) / 2)
-            DispatchQueue.main.async {
-                self.drawSelectionBorder(lineRect)
-                self.showConsonantImage(named: "rowR", at: position)
+            if designFlag == 0 {
+                DispatchQueue.main.async {
+                    self.drawSelectionBorder(lineRect)
+                    self.showConsonantImage(named: "rowR", at: position)
+                }
+            }
+            else {
+                DispatchQueue.main.async {
+                    self.drawSelectionBorder(lineRect)
+                    self.showConsonantImage(named: "row2W", at: position)
+                }
             }
             changePositionFlag = 11
         }
@@ -165,18 +242,34 @@ extension ViewController {
         else if (point.x > areaCol1 && point.x < areaCol2 && point.y > areaRow3 && point.y < areaRow4) {
             lineRect = CGRect(x: areaCol1, y: areaRow3, width: RectWidth, height: RectHeight0)
             let position = CGPoint(x: (areaCol1 + areaCol2) / 2, y: (areaRow3 + areaRow4) / 2)
-            DispatchQueue.main.async {
-                self.drawSelectionBorder(lineRect)
-                self.showConsonantImage(named: "rowW", at: position)
+            if designFlag == 0 {
+                DispatchQueue.main.async {
+                    self.drawSelectionBorder(lineRect)
+                    self.showConsonantImage(named: "rowW", at: position)
+                }
+            }
+            else {
+                DispatchQueue.main.async {
+                    self.drawSelectionBorder(lineRect)
+                    self.showConsonantImage(named: "row2\"\"", at: position)
+                }
             }
             changePositionFlag = 14
         }
         else if (point.x > areaCol2 && point.x < areaCol3 && point.y > areaRow3 && point.y < areaRow4) {
             lineRect = CGRect(x: areaCol2, y: areaRow3, width: RectWidth, height: RectHeight0)
             let position = CGPoint(x: (areaCol2 + areaCol3) / 2, y: (areaRow3 + areaRow4) / 2)
-            DispatchQueue.main.async {
-                self.drawSelectionBorder(lineRect)
-                self.showConsonantImage(named: "rowX", at: position)
+            if designFlag == 0 {
+                DispatchQueue.main.async {
+                    self.drawSelectionBorder(lineRect)
+                    self.showConsonantImage(named: "rowX", at: position)
+                }
+            }
+            else {
+                DispatchQueue.main.async {
+                    self.drawSelectionBorder(lineRect)
+                    self.showConsonantImage(named: "row2?!", at: position)
+                }
             }
             changePositionFlag = 15
         }
@@ -239,16 +332,55 @@ extension ViewController {
             switch changePositionFlag {
             case 0:
                 break
-            default:
-                DispatchQueue.main.async {
-                    //inputLabelは選ばれた子音から母音が入る
-                    //inputLabelにはまず「あ」行が入る
-                    //Flagは1が「あ」なので、CHARACTERリストと合わせるため-1している
-                    self.inputLabel.text = CHARACTER[changePositionFlag - 1][0]
+                
+            case 13:
+                if designFlag == 0 {
+                    DispatchQueue.main.async {
+                        self.inputDesignImage.image = UIImage(named: "designAlpha")
+                    }
+                    designFlag = 1
                 }
-                inputCharacter = CHARACTER[changePositionFlag - 1][0]
-                //間違った場合でも正しい場合でも1ずつ加算される(一発okでも1が出る)
-                inputCountCha += 1
+                else {
+                    DispatchQueue.main.async {
+                        self.inputDesignImage.image = UIImage(named: "designJapanese")
+                    }
+                    designFlag = 0
+                }
+                
+            default:
+                if designFlag == 1 && changePositionFlag == 1 {
+                    if casedFlag == 0 {
+                        DispatchQueue.main.async {
+                            self.inputLabel.text = self.inputLabel.text?.uppercased()
+                            self.inputCharacter = self.inputLabel.text ?? ""
+                        }
+                        casedFlag = 1
+                    }
+                    else {
+                        DispatchQueue.main.async {
+                            self.inputLabel.text = self.inputLabel.text?.lowercased()
+                            self.inputCharacter = self.inputLabel.text ?? ""
+                        }
+                        casedFlag = 0
+                    }
+                }
+                else {
+                    casedFlag = 0
+                    if designFlag == 0 {
+                        DispatchQueue.main.async {
+                            self.inputLabel.text = CHARACTERJ[changePositionFlag - 1][0]
+                        }
+                        inputCharacter = CHARACTERJ[changePositionFlag - 1][0]
+                        //間違った場合でも正しい場合でも1ずつ加算される(一発okでも1が出る)
+                        inputCountCha += 1
+                    }
+                    else {
+                        DispatchQueue.main.async {
+                            self.inputLabel.text = CHARACTERa[changePositionFlag - 1][0]
+                        }
+                        inputCharacter = CHARACTERa[changePositionFlag - 1][0]
+                    }
+                }
                 //inputLabelflagはwinkした際に1か2か(左目か右目か)きまる
                 if inputLabelFlag == 2 {
                     DispatchQueue.main.async {
@@ -270,12 +402,21 @@ extension ViewController {
             case 0:
                 break
             default:
-                DispatchQueue.main.async {
-                    self.inputLabel.text = CHARACTER[changePositionFlag - 1][vowelNumber]
+                casedFlag = 0
+                if designFlag == 0 {
+                    DispatchQueue.main.async {
+                        self.inputLabel.text = CHARACTERJ[changePositionFlag - 1][vowelNumber]
+                    }
+                    inputCharacter = CHARACTERJ[changePositionFlag - 1][vowelNumber]
+                    //間違った場合でも正しい場合でも1ずつ加算される(一発okでも1が出る)
+                    inputCountCha += 1
                 }
-                inputCharacter = CHARACTER[changePositionFlag - 1][vowelNumber]
-                //間違った場合でも正しい場合でも1ずつ加算される(一発okでも1が出る)
-                inputCountCha += 1
+                else {
+                    DispatchQueue.main.async {
+                        self.inputLabel.text = CHARACTERa[changePositionFlag - 1][vowelNumber]
+                    }
+                    inputCharacter = CHARACTERa[changePositionFlag - 1][vowelNumber]
+                }
             }
         }
     }

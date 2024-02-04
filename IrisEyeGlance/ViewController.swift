@@ -466,14 +466,14 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         if recFlag == 0 {
             let currentTime = getCurrentTime()
             fileName = "\(currentTime).csv"
-            sender.setTitle("停止", for: .normal)
+            sender.setTitle("Stop", for: .normal)
             sender.setTitleColor(.red, for: .normal)
             let symbolImage = UIImage(systemName: "stop.circle")
             sender.setImage(symbolImage, for: .normal)
             sender.tintColor = .red
             recFlag = 1
         } else {
-            sender.setTitle("データ取得", for: .normal)
+            sender.setTitle("Data Aquisition", for: .normal)
             sender.setTitleColor(.blue, for: .normal)
             let symbolImage = UIImage(systemName: "record.circle")
             sender.setImage(symbolImage, for: .normal)
@@ -500,12 +500,12 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         case 0:
             calibrationCommentLabel.text = "距離を30cmくらいに調整してね\nボタンを押して5秒間＋を見つめて，\n5秒くらい経ったらもう一回ボタンを押してね"
             calibrationCenterLabel.text = "＋"
-            sender.setTitle("スタート", for: .normal)
+            sender.setTitle("Start", for: .normal)
             inputDesignImage.center = CGPoint(x: 1000.0, y: 1000.0)
             
         case 1:
             calibrationCommentLabel.text = ""
-            sender.setTitle("次へ", for: .normal)
+            sender.setTitle("Next", for: .normal)
             print("\n\n----------------------------------------------------")
             print("キャリブレーション静止開始:\(frameNum)")
             print("----------------------------------------------------\n\n")
@@ -513,12 +513,12 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         case 2:
             calibrationCommentLabel.text = "鼻を+に合わせて\n距離を30cmくらいに調整してね↓\n出てくる矢印の方向にEye Glanceしてね"
             calibrationCenterLabel.text = "＋"
-            sender.setTitle("スタート", for: .normal)
+            sender.setTitle("Start", for: .normal)
             
         case 3, 7:
             calibrationCommentLabel.text = ""
             calibrationCenterLabel.text = "↖︎"
-            sender.setTitle("次へ", for: .normal)
+            sender.setTitle("Next", for: .normal)
             if pushTimes == 3 {
                 print("\n\n----------------------------------------------------")
                 print("キャリブレーション30開始:\(frameNum)")
@@ -544,7 +544,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             
         case 13:
             calibrationCommentLabel.text = ""
-            sender.setTitle("補正", for: .normal)
+            sender.setTitle("Calibration", for: .normal)
             inputDesignImage.center = CGPoint(x: 195.0, y: 422.0)
             pushTimes = -1
             

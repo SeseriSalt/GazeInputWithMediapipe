@@ -113,7 +113,7 @@
                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="highlightedColor" systemColor="systemGray6Color"/>
                             </label>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.59999999999999998" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="design" translatesAutoresizingMaskIntoConstraints="NO" id="mvm-HV-dDp" userLabel="Input Design Image">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.59999999999999998" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="designJapanese" translatesAutoresizingMaskIntoConstraints="NO" id="mvm-HV-dDp" userLabel="Input Design Image">
                                 <rect key="frame" x="45" y="293" width="300" height="259"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
@@ -130,7 +130,7 @@
                                     <constraint firstAttribute="width" constant="140" id="C1G-b8-Bmi"/>
                                 </constraints>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="設定"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Manual setting"/>
                                 <connections>
                                     <action selector="settingButtonPush:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ExA-1e-HvA"/>
                                     <segue destination="wGa-mx-sfh" kind="presentation" id="clS-rw-5qZ"/>
@@ -142,16 +142,16 @@
                                     <constraint firstAttribute="width" constant="140" id="sTn-mk-8QR"/>
                                 </constraints>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="データ取得"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Data Acquisition"/>
                                 <connections>
                                     <action selector="createCSVButtonPush:" destination="BYZ-38-t0r" eventType="touchUpInside" id="3S7-OA-agi"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="W59-iy-2Bi">
-                                <rect key="frame" x="148" y="647" width="94" height="35"/>
+                                <rect key="frame" x="161" y="647" width="68" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="リセット"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Reset"/>
                                 <connections>
                                     <action selector="resetButtonPush:" destination="BYZ-38-t0r" eventType="touchUpInside" id="hy9-R1-m6o"/>
                                 </connections>
@@ -164,7 +164,7 @@
                                 <rect key="frame" x="136" y="586" width="118" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="tinted" title="補正"/>
+                                <buttonConfiguration key="configuration" style="tinted" title="Calibration"/>
                                 <connections>
                                     <action selector="calibrationButtonPush:" destination="BYZ-38-t0r" eventType="touchUpInside" id="sp6-Ea-2eX"/>
                                 </connections>
@@ -260,8 +260,8 @@
                                     <action selector="winkSliderAction:" destination="wGa-mx-sfh" eventType="valueChanged" id="Lr2-hr-dlI"/>
                                 </connections>
                             </slider>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Wink・Brink波形閾値" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JiH-9t-Pmo">
-                                <rect key="frame" x="83" y="118" width="225" height="30"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Wink・Brink Waveform Threshold" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JiH-9t-Pmo">
+                                <rect key="frame" x="32" y="118" width="328" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                                 <nil key="textColor"/>
@@ -288,8 +288,8 @@
                                     <action selector="glanceSliderAction:" destination="wGa-mx-sfh" eventType="valueChanged" id="TsF-fa-eZt"/>
                                 </connections>
                             </slider>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Eye Glance波形閾値" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="syl-4z-H29">
-                                <rect key="frame" x="82" y="348" width="225" height="30"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Eye Glance Waveform Threshold" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="syl-4z-H29">
+                                <rect key="frame" x="9" y="348" width="371" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                                 <nil key="textColor"/>
@@ -316,8 +316,8 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Wink積分値倍数" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="w98-Rz-HrH">
-                                <rect key="frame" x="82" y="232" width="225" height="30"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Wink Integral Value Magnification" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="w98-Rz-HrH">
+                                <rect key="frame" x="38" y="232" width="315" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                                 <nil key="textColor"/>
@@ -344,8 +344,8 @@
                                     <action selector="faceMoveSliderAction:" destination="wGa-mx-sfh" eventType="valueChanged" id="LUy-k7-tb9"/>
                                 </connections>
                             </slider>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Eye Glance積分値倍数" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fKo-Wp-ZM1">
-                                <rect key="frame" x="83" y="469" width="225" height="30"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Eye Glance Integral Value Magnification" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fKo-Wp-ZM1">
+                                <rect key="frame" x="10" y="469" width="371" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                                 <nil key="textColor"/>
@@ -373,9 +373,9 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5Ct-BN-evM">
-                                <rect key="frame" x="157" y="699.66666666666663" width="76" height="34.333333333333371"/>
+                                <rect key="frame" x="161.66666666666666" y="699" width="67" height="35"/>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="閉じる"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Close"/>
                                 <connections>
                                     <action selector="exit:" destination="wGa-mx-sfh" eventType="touchUpInside" id="KPv-Ak-1rE"/>
                                 </connections>
@@ -428,7 +428,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="design" width="1732" height="1457"/>
+        <image name="designJapanese" width="1729" height="1453"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
