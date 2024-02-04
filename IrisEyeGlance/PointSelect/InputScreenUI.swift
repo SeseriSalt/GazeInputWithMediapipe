@@ -19,7 +19,7 @@ extension ViewController {
     
     @objc func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
         let translation = gesture.translation(in: view)
-        imputDesignImage.center = CGPoint(x: imputDesignImage.center.x + translation.x, y: imputDesignImage.center.y + translation.y)
+        inputDesignImage.center = CGPoint(x: inputDesignImage.center.x + translation.x, y: inputDesignImage.center.y + translation.y)
         inputLabel.center = CGPoint(x: inputLabel.center.x + translation.x, y: inputLabel.center.y + translation.y)
         questionLabel.center = CGPoint(x: questionLabel.center.x + translation.x, y: questionLabel.center.y + translation.y)
         gesture.setTranslation(.zero, in: view)
@@ -37,17 +37,23 @@ extension ViewController {
     
     func updateImageViewSize() {
         let imageSize = imageSizeList[tapCount]
-        let center = imputDesignImage.center
-        let labelHeight = center.y - CGFloat(imageSize.1) / 2 - 11.0
+        let center = inputDesignImage.center
+        let labelHeight = center.y - CGFloat(imageSize.1) / 2 - 22.0
         
-        imputDesignImage.frame.size = CGSize(width: imageSize.0, height: imageSize.1)
-        imputDesignImage.center = center
+        let imageSizeCon = imageSizeListCon[tapCount]
+        let centerCon = consonantDesignImage.center
+        
+        inputDesignImage.frame.size = CGSize(width: imageSize.0, height: imageSize.1)
+        inputDesignImage.center = center
         inputLabel.center = CGPoint(x: center.x, y: labelHeight)
         questionLabel.center = CGPoint(x: center.x, y: labelHeight - 22.0)
+        
+        consonantDesignImage.frame.size = CGSize(width: imageSizeCon.0, height: imageSizeCon.1)
+        consonantDesignImage.center = centerCon
     }
     
     func getScreenInfo() -> RectInfo {
-        let screenInfo = RectInfo(center: imputDesignImage.center, width: imputDesignImage.bounds.width, height: imputDesignImage.bounds.height)
+        let screenInfo = RectInfo(center: inputDesignImage.center, width: inputDesignImage.bounds.width, height: inputDesignImage.bounds.height)
         DispatchQueue.main.async {
             self.ISCenterLabel.text = "x:\(round(screenInfo.center.x*10)/10) y:\(round(screenInfo.center.y*10)/10)"
             self.ISWidthLabel.text = "Width:\(screenInfo.width)"

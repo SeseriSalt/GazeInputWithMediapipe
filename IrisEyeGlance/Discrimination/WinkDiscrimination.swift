@@ -6,181 +6,200 @@
 //
 
 import Foundation
+import UIKit
+
+var winkUpFlag = 0
+var winkDownFlag = 0
+var lateWinkFlag = 0
+var moveMissjudgeFlag = 0
+var maxDiff: Float = 0.0
+var minDiff: Float = 0.0
+var peakPrev: Float = 0.0
+var peakNext: Float = 0.0
+var winkMaxPeakFrame = 0
+var winkMinPeakFrame = 0
+var winkUpFirstFrame = 0
+var winkDownFirstFrame = 0
+var inputLabelFlag = 0
+var distWinkNum = 0
+
+var winkAreaUp: Float = 0.0
+var winkAreaDown: Float = 0.0
+var winkArrayAreaDown: [(frame: Int, area: Float, isUsed: Bool)] = [(frame: 0, area: 0, isUsed: false)]
+var winkArrayAreaUp: [(frame: Int, area: Float, isUsed: Bool)] = [(frame: 0, area: 0, isUsed: false)]
+
 
 extension ViewController {
     func winkDitect() -> (WINK_IKITCH_MAX: Float, WINK_IKITCH_MIN: Float) {
-        // 距離から次のフレームの閾値の導出
-        winkIkichiMaxNext = -0.01244 * defDepth + 9.524
-        winkIkichiMinNext = -winkIkichiMaxNext
-        heightIkichiNext = -0.03 * defDepth + 23
-        
         // 判別に用いる閾値の決定
-        let WINK_IKITCH_MAX: Float = determinedIkichiMax
-        let WINK_IKITCH_MIN: Float = determinedIkichiMin
-//        let HEIGHT_DIFF_IKICHI: Float = determinedIkichiHeight
+        let WINK_IKITCH_MAX: Float = winkIkichiMax
+        let WINK_IKITCH_MIN: Float = winkIkichiMin
+        let HEIGHT_DIFF_IKICHI: Float = winkIkichiHeight
         
-        // 左目のWink判別
-        if (winkFlag == 0 && lrDiff < WINK_IKITCH_MIN && frameNum > 15 && frameNum - distWinkNum > 6 && frameNum - distBrinkNum > 6) {
-            winkFlag = 1
-            minDiff = lrDiff
-            peakPrev = lrDiffPrev
-            minPeakFrameNum = frameNum
-            firstPoint = frameNum
-        }
-        else if (winkFlag == 1 && lrDiff < minDiff) {
-            minDiff = lrDiff
-            peakPrev = lrDiffPrev
-            minPeakFrameNum = frameNum
-        }
-        else if (winkFlag == 1 && lrDiff >= minDiff) {
-            if (peakNext == 0.0) {
-                peakNext = lrDiff
-            }
-            if (moveMissjudgeFlag == 0 && peakPrev * minDiff < 0 && peakNext * minDiff < 0) {
-                moveMissjudgeFlag = 1   // 他の動作による誤判別の検知
-            }
-            else if (lrDiff > WINK_IKITCH_MIN) {
-                winkFlag = 2
-                peakPrev = 0
-                peakNext = 0
-                moveMissjudgeFlag = 0
-            }
-            else {
-                moveMissjudgeFlag = -1 // wink閾値判定の継続
-            }
-        }
-        // Flagが1のフレームから3フレームで1,2,3と上がる時、2のまま放置する→この現象は閉じた時の反動が出てるだけ。その後ちゃんと反対のピークが来るのでその時判別する。
-        else if (winkFlag == 2 && lrDiff > WINK_IKITCH_MAX && frameNum - minPeakFrameNum != 2) {
-            winkFlag = 3
-            maxDiff = lrDiff
-            maxPeakFrameNum = frameNum
-        }
-        else if (winkFlag == 3 && lrDiff > maxDiff) {
-            maxDiff = lrDiff
-            maxPeakFrameNum = frameNum
-        }
-        else if (winkFlag == 3 && lrDiff < WINK_IKITCH_MAX) {
-            winkFlag = 4
-        }
-//            else if (frameNum - distFrameNum > 6 && heightAvg5 < -HEIGHT_DIFF_IKICHI && lrDiff > WINK_IKITCH_MAX) {
-//                winkFlag = 4
-//                lateWinkFlag = 1
-//                DispatchQueue.main.async {
-//                    self.lateFlagLabel.text = "Late Left"
-//                    self.secondPeak.textColor = UIColor.blue
-//                }
-//            }
+        let WINK_IKITCH_AREAMAX: Float = winkIkichiMax * Float(winkAreaSliderValue)
+        let WINK_IKITCH_AREAMIN: Float = winkIkichiMin * Float(winkAreaSliderValue)
         
-        // 右目のWink判別
-        if (winkFlag == 0 && lrDiff > WINK_IKITCH_MAX && frameNum > 15 && frameNum - distWinkNum > 6 && frameNum - distBrinkNum > 6) {
-            winkFlag = -1
-            maxDiff = lrDiff
-            peakPrev = lrDiffPrev
-            maxPeakFrameNum = frameNum
-            firstPoint = frameNum
-        }
-        else if (winkFlag == -1 && lrDiff > maxDiff) {
-            maxDiff = lrDiff
-            peakPrev = lrDiffPrev
-            maxPeakFrameNum = frameNum
-        }
-        else if (winkFlag == -1 && lrDiff <= maxDiff) {
-            if (peakNext == 0) {
-                peakNext = lrDiff
+        let frameLimit = frameNum - 15
+        
+        if (frameNum > 15 && frameNum - distWinkNum > 6 && frameNum - distBrinkNum > 6 && frameNum - distWinkInitNum > 5) {
+            // 左目のWink判別
+            if (winkUpFlag == 0 && lrDiff < WINK_IKITCH_MIN) {
+                winkUpFlag = 1
+                minDiff = lrDiff
+                peakPrev = lrDiffPrev
+                winkMinPeakFrame = frameNum
+                winkUpFirstFrame = frameNum
+                
+                winkAreaUp += lrDiff
+            }
+            else if (winkUpFlag == 1 && lrDiff < minDiff) {
+                minDiff = lrDiff
+                peakPrev = lrDiffPrev
+                winkMinPeakFrame = frameNum
+                
+                winkAreaUp += lrDiff
+            }
+            else if (winkUpFlag == 1 && lrDiff >= minDiff) {
+                if (peakNext == 0.0) {
+                    peakNext = lrDiff
+                    
+                    winkAreaUp += lrDiff
+                }
+                if (lrDiff > WINK_IKITCH_MIN) {
+                    winkUpFlag = 2
+                    peakPrev = 0
+                    peakNext = 0
+                    moveMissjudgeFlag = 0
+                    
+                    winkArrayAreaUp.insert((frame: winkUpFirstFrame, area: winkAreaUp, isUsed: false), at:0)
+                    if winkAreaUp < WINK_IKITCH_AREAMIN {
+                        // 15フレーム以内の要素をフィルタリングして新しい配列を作成する
+                        let filteredArray = winkArrayAreaDown.filter { element in
+                            if let frame = element.frame as? Int {
+                                return frame >= frameLimit
+                            }
+                            return false
+                        }
+                        winkArrayAreaDown = filteredArray
+                        // 新しい配列の要素に対して閾値判定
+                        for i in 0..<winkArrayAreaDown.count {
+                            if winkArrayAreaDown[i].area > WINK_IKITCH_AREAMAX && winkArrayAreaDown[i].isUsed == false {
+                                winkUpFlag = 4
+                                winkArrayAreaUp[0].isUsed = true
+                                winkArrayAreaDown[i].isUsed = true
+                                break
+                            }
+                        }
+                    }
+                    if winkUpFlag != 4 {
+                        winkUpFlag = 0
+                    }
+                    winkUpFirstFrame = 0
+                    winkAreaUp = 0
+                    
+                }
+                else if (moveMissjudgeFlag == 0 && peakPrev * minDiff < 0 && peakNext * minDiff < 0) {
+                    moveMissjudgeFlag = 1   // 他の動作による誤判別の検知
+                }
             }
             
-            if (moveMissjudgeFlag == 0 && peakPrev * maxDiff < 0 && peakNext * maxDiff < 0) {
-                moveMissjudgeFlag = 1   // 他の動作による誤判別の検知
+            // 右目のWink判別
+            if (winkDownFlag == 0 && lrDiff > WINK_IKITCH_MAX) {
+                winkDownFlag = -1
+                maxDiff = lrDiff
+                peakPrev = lrDiffPrev
+                winkMaxPeakFrame = frameNum
+                winkDownFirstFrame = frameNum
+                
+                winkAreaDown += lrDiff
             }
-            else if (lrDiff < WINK_IKITCH_MAX) {
-                winkFlag = -2
-                peakPrev = 0
-                peakNext = 0
-                moveMissjudgeFlag = 0
+            else if (winkDownFlag == -1 && lrDiff > maxDiff) {
+                maxDiff = lrDiff
+                peakPrev = lrDiffPrev
+                winkMaxPeakFrame = frameNum
+                
+                winkAreaDown += lrDiff
             }
-            else {
-                moveMissjudgeFlag = -1 // wink閾値判定の継続
+            else if (winkDownFlag == -1 && lrDiff <= maxDiff) {
+                if (peakNext == 0) {
+                    peakNext = lrDiff
+                    
+                    winkAreaDown += lrDiff
+                }
+                
+                if (lrDiff < WINK_IKITCH_MAX) {
+                    winkDownFlag = -2
+                    peakPrev = 0
+                    peakNext = 0
+                    moveMissjudgeFlag = 0
+                    
+                    winkArrayAreaDown.insert((frame: winkDownFirstFrame, area: winkAreaDown, isUsed: false), at:0)
+                    if winkAreaDown > WINK_IKITCH_AREAMAX {
+                        // 15フレーム以内の要素をフィルタリングして新しい配列を作成する
+                        let filteredArray = winkArrayAreaUp.filter { element in
+                            if let frame = element.frame as? Int {
+                                return frame >= frameLimit
+                            }
+                            return false
+                        }
+                        winkArrayAreaUp = filteredArray
+                        // 新しい配列の要素に対して閾値判定
+                        for i in 0..<winkArrayAreaUp.count {
+                            if winkArrayAreaUp[i].area < WINK_IKITCH_AREAMIN && winkArrayAreaUp[i].isUsed == false {
+                                winkDownFlag = -4
+                                winkArrayAreaDown[0].isUsed = true
+                                winkArrayAreaUp[i].isUsed = true
+                                break
+                            }
+                        }
+                    }
+                    if winkDownFlag != -4 {
+                        winkDownFlag = 0
+                    }
+                    winkDownFirstFrame = 0
+                    winkAreaDown = 0
+                    
+                }
+                else if (moveMissjudgeFlag == 0 && peakPrev * maxDiff < 0 && peakNext * maxDiff < 0) {
+                    moveMissjudgeFlag = 1   // 他の動作による誤判別の検知
+                }
             }
         }
-        // Flagが-1のフレームから3フレームで1,-2,-3と上がる時、-2のまま放置する→この現象は閉じた時の反動が出てるだけ。その後ちゃんと反対のピークが来るのでその時判別する。
-        else if (winkFlag == -2 && lrDiff < WINK_IKITCH_MIN && frameNum - maxPeakFrameNum != 2) {
-            winkFlag = -3
-            minDiff = lrDiff
-            minPeakFrameNum = frameNum
-        }
-        else if (winkFlag == -3 && lrDiff < minDiff) {
-            minDiff = lrDiff
-            minPeakFrameNum = frameNum
-        }
-        else if (winkFlag == -3 && lrDiff > WINK_IKITCH_MIN) {
-            winkFlag = -4
-        }
-//            else if (frameNum - distFrameNum > 6 && heightAvg5 > HEIGHT_DIFF_IKICHI && lrDiff < WINK_IKITCH_MIN) {
-//                winkFlag = -4
-//                lateWinkFlag = 1
-//                DispatchQueue.main.async {
-//                    self.lateFlagLabel.text = "Late Right"
-//                    self.secondPeak.textColor = UIColor.red
-//                }
-//            }
-        
         
         // wink
-        if (winkFlag == 4 || winkFlag == -4) {
+        if (winkUpFlag == 4 || winkDownFlag == -4) {
             // ピーク感覚が5フレーム以上10フレーム以下の時、wink入力判定
-            if (abs(maxPeakFrameNum - minPeakFrameNum) >= 4 || lateWinkFlag == 1) {
+//            if (abs(winkMaxPeakFrame - winkMinPeakFrame) >= 4 || lateWinkFlag == 1) {
                 //                if (abs(maxPeakFrameNum - minPeakFrameNum) >= 5 && abs(maxPeakFrameNum - minPeakFrameNum) <= 10 || lateWinkFlag == 1) {
-                inputLabelFlag = winkFlag == 4 ? 1 : 2
-                winkFlag = 0
-                lateWinkFlag = 0
-                minDiff = 0
-                maxDiff = 0
-                maxPeakFrameNum = 0
-                minPeakFrameNum = 0
+                inputLabelFlag = winkUpFlag == 4 ? 1 : 2
+                let inputNumber = -inputLabelFlag
+                DispatchQueue.main.async {
+                    self.movementLabel.text = String(inputNumber)
+                }
+                inputResult = inputNumber
                 distWinkNum = frameNum
-                selectionDiscernment(vowelNumber: 0) //ランドマークによる領域選択
+                selectionDiscernment(vowelNumber: 0) //入力
+                
+                allInit()
             }
-        }
+//        }
         
         // 他の動作による誤判別の場合の初期化
         if (moveMissjudgeFlag == 1) {
-            winkFlag = 0
-            lateWinkFlag = 0
-            maxDiff = 0
-            minDiff = 0
-            maxPeakFrameNum = 0
-            minPeakFrameNum = 0
-            peakPrev = 0
-            peakNext = 0
+            winkInit()
         }
         
-        // ピーク感覚が長すぎる時の初期化
-        if (winkFlag != 0 && frameNum - firstPoint > 13) {
-            winkFlag = 0
-            lateWinkFlag = 0
-            maxDiff = 0
-            minDiff = 0
-            maxPeakFrameNum = 0
-            minPeakFrameNum = 0
-            peakPrev = 0
-            peakNext = 0
+        // ピーク感覚が長すぎる時の初期化          多分違うからあとで切る
+        if (winkUpFlag != 0 && frameNum - winkUpFirstFrame > 7) {
             moveMissjudgeFlag = 0
+            winkInit()
+        }
+        // ピーク感覚が長すぎる時の初期化   あとで切る
+        if (winkDownFlag != 0 && frameNum - winkDownFirstFrame > 7) {
+            moveMissjudgeFlag = 0
+            winkInit()
         }
         
-        // ピーク間隔が短すぎる時の初期化
-        if ((winkFlag == 4 || winkFlag == -4) && (frameNum - firstPoint < 5 || abs(maxPeakFrameNum - minPeakFrameNum) < 4)) {
-            // frameNum - firstPoint < 5 いる？
-            winkFlag = 0
-            lateWinkFlag = 0
-            maxDiff = 0
-            minDiff = 0
-            maxPeakFrameNum = 0
-            minPeakFrameNum = 0
-            peakPrev = 0
-            peakNext = 0
-            moveMissjudgeFlag = 0
-            distInitNum = frameNum
-        }
         return(WINK_IKITCH_MAX, WINK_IKITCH_MIN)
     }
 }

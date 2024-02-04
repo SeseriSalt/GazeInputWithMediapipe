@@ -4,43 +4,46 @@
 //
 //  Created by 矢田翔大 on 2023/07/27.
 //
-
 import Foundation
+
+var brinkFlag = 0
+var brinkFirstFrame = 0
+var distBrinkNum = 0
 
 extension ViewController {
     func brinkDitect() -> Float {
-        
-        brinkIkichNext = winkIkichiMinNext
-        let BRINK_IKICHI: Float = determinedIkichBrink
+        let BRINK_IKICHI: Float = brinkIkichi
+        //brinkFlagが2というのは出力したい。出力後の次のフレームで0に初期化
+        if(brinkFlag == 2){
+            brinkFlag = 0
+        }
         
         if (brinkFlag == 0 && frameNum - distBrinkNum > 5 && leftEyelidDiff < BRINK_IKICHI && rightEyelidDiff < BRINK_IKICHI) {
             brinkFlag = 1
-            brinkFirstPoint = frameNum
+            brinkFirstFrame = frameNum
         }
-        else if (brinkFlag == 1 && leftEyelidDiff > -BRINK_IKICHI && rightEyelidDiff > -BRINK_IKICHI && frameNum - brinkFirstPoint <= 4) {
+        
+        else if (brinkFlag == 1 && leftEyelidDiff > -BRINK_IKICHI && rightEyelidDiff > -BRINK_IKICHI && frameNum - brinkFirstFrame <= 4) {
             brinkFlag = 2
         }
         
         if (brinkFlag == 2) {
-            brinkFlag = 0
+            let inputNumber = 0
+            DispatchQueue.main.async {
+                self.movementLabel.text = String(inputNumber)
+            }
+            inputResult = inputNumber
             distBrinkNum = frameNum
-            
-            winkFlag = 0
-            lateWinkFlag = 0
-            maxDiff = 0
-            minDiff = 0
-            maxPeakFrameNum = 0
-            minPeakFrameNum = 0
-            peakPrev = 0
-            peakNext = 0
+//            allInit()
+//            allInit関数からbrinkflag = 0を排除
             moveMissjudgeFlag = 0
+            winkInit()
             
-            glanceFlag = 0
-            glanceFirstPoint = 0
+            glanceInit()
         }
         
-        // 瞬きが失敗？した時の初期化
-        if (brinkFlag != 0 && frameNum - brinkFirstPoint > 4) {
+        // 瞬きが失敗？(長すぎる)した時の初期化
+        if (brinkFlag != 0 && frameNum - brinkFirstFrame > 8) {
             brinkFlag = 0
         }
         return BRINK_IKICHI

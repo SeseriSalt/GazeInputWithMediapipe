@@ -15,7 +15,7 @@ let CHARACTER = [["あ", "い", "う", "え", "お"], ["か", "き", "く", "け
 
 extension ViewController {
    //ランドマークの位置で領域を選択する関数
-    func LandmarkPositionSerect(point: CGPoint) -> Int {
+    func LandmarkPositionSerect(point: CGPoint) -> (Int, Int) {
         
         // 入力画面の中心座標・幅・高さを取得
         let inputScreen = getScreenInfo()
@@ -44,25 +44,32 @@ extension ViewController {
         let RectWidth = abs(areaCol0 - areaCol1)
         let RectHeight0 = abs(areaRow0 - areaRow1)
         let RectHeight1 = abs(areaRow0 - areaRow2)
-        //1段目
+        //1段目(あ~削除まで)
         if (point.x > areaCol0 && point.x < areaCol1 && point.y > areaRow0 && point.y < areaRow1) {
             lineRect = CGRect(x: areaCol0, y: areaRow0, width: RectWidth, height: RectHeight0)
+            let position = CGPoint(x: (areaCol0 + areaCol1) / 2, y: (areaRow0 + areaRow1) / 2)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.showConsonantImage(named: "rowA", at: position)
             }
+            //changepoisitionflagは子音が選ばれる
             changePositionFlag = 1
         }
         else if (point.x > areaCol1 && point.x < areaCol2 && point.y > areaRow0 && point.y < areaRow1) {
             lineRect = CGRect(x: areaCol1, y: areaRow0, width: RectWidth, height: RectHeight0)
+            let position = CGPoint(x: (areaCol1 + areaCol2) / 2, y: (areaRow0 + areaRow1) / 2)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.showConsonantImage(named: "rowK", at: position)
             }
             changePositionFlag = 2
         }
         else if (point.x > areaCol2 && point.x < areaCol3 && point.y > areaRow0 && point.y < areaRow1) {
             lineRect = CGRect(x: areaCol2, y: areaRow0, width: RectWidth, height: RectHeight0)
+            let position = CGPoint(x: (areaCol2 + areaCol3) / 2, y: (areaRow0 + areaRow1) / 2)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.showConsonantImage(named: "rowS", at: position)
             }
             changePositionFlag = 3
         }
@@ -70,28 +77,35 @@ extension ViewController {
             lineRect = CGRect(x: areaCol3, y: areaRow0, width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.consonantDesignImage.image = nil
             }
             changePositionFlag = 4
         }
         //2段目
         else if (point.x > areaCol0 && point.x < areaCol1 && point.y > areaRow1 && point.y < areaRow2) {
             lineRect = CGRect(x: areaCol0, y: areaRow1, width: RectWidth, height: RectHeight0)
+            let position = CGPoint(x: (areaCol0 + areaCol1) / 2, y: (areaRow1 + areaRow2) / 2)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.showConsonantImage(named: "rowT", at: position)
             }
             changePositionFlag = 5
         }
         else if (point.x > areaCol1 && point.x < areaCol2 && point.y > areaRow1 && point.y < areaRow2) {
             lineRect = CGRect(x: areaCol1, y: areaRow1, width: RectWidth, height: RectHeight0)
+            let position = CGPoint(x: (areaCol1 + areaCol2) / 2, y: (areaRow1 + areaRow2) / 2)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.showConsonantImage(named: "rowN", at: position)
             }
             changePositionFlag = 6
         }
         else if (point.x > areaCol2 && point.x < areaCol3 && point.y > areaRow1 && point.y < areaRow2) {
             lineRect = CGRect(x: areaCol2, y: areaRow1, width: RectWidth, height: RectHeight0)
+            let position = CGPoint(x: (areaCol2 + areaCol3) / 2, y: (areaRow1 + areaRow2) / 2)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.showConsonantImage(named: "rowH", at: position)
             }
             changePositionFlag = 7
         }
@@ -99,28 +113,35 @@ extension ViewController {
             lineRect = CGRect(x: areaCol3, y: areaRow1, width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.consonantDesignImage.image = nil
             }
             changePositionFlag = 8
         }
         //3段目
         else if (point.x > areaCol0 && point.x < areaCol1 && point.y > areaRow2 && point.y < areaRow3) {
             lineRect = CGRect(x: areaCol0, y: areaRow2, width: RectWidth, height: RectHeight0)
+            let position = CGPoint(x: (areaCol0 + areaCol1) / 2, y: (areaRow2 + areaRow3) / 2)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.showConsonantImage(named: "rowM", at: position)
             }
             changePositionFlag = 9
         }
         else if (point.x > areaCol1 && point.x < areaCol2 && point.y > areaRow2 && point.y < areaRow3) {
             lineRect = CGRect(x: areaCol1, y: areaRow2, width: RectWidth, height: RectHeight0)
+            let position = CGPoint(x: (areaCol1 + areaCol2) / 2, y: (areaRow2 + areaRow3) / 2)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.showConsonantImage(named: "rowY", at: position)
             }
             changePositionFlag = 10
         }
         else if (point.x > areaCol2 && point.x < areaCol3 && point.y > areaRow2 && point.y < areaRow3) {
             lineRect = CGRect(x: areaCol2, y: areaRow2, width: RectWidth, height: RectHeight0)
+            let position = CGPoint(x: (areaCol2 + areaCol3) / 2, y: (areaRow2 + areaRow3) / 2)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.showConsonantImage(named: "rowR", at: position)
             }
             changePositionFlag = 11
         }
@@ -128,6 +149,7 @@ extension ViewController {
             lineRect = CGRect(x: areaCol3, y: areaRow2, width: RectWidth, height: RectHeight1)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.consonantDesignImage.image = nil
             }
             changePositionFlag = 12
         }
@@ -136,20 +158,25 @@ extension ViewController {
             lineRect = CGRect(x: areaCol0, y: areaRow3, width: RectWidth, height: RectHeight0)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.consonantDesignImage.image = nil
             }
             changePositionFlag = 13
         }
         else if (point.x > areaCol1 && point.x < areaCol2 && point.y > areaRow3 && point.y < areaRow4) {
             lineRect = CGRect(x: areaCol1, y: areaRow3, width: RectWidth, height: RectHeight0)
+            let position = CGPoint(x: (areaCol1 + areaCol2) / 2, y: (areaRow3 + areaRow4) / 2)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.showConsonantImage(named: "rowW", at: position)
             }
             changePositionFlag = 14
         }
         else if (point.x > areaCol2 && point.x < areaCol3 && point.y > areaRow3 && point.y < areaRow4) {
             lineRect = CGRect(x: areaCol2, y: areaRow3, width: RectWidth, height: RectHeight0)
+            let position = CGPoint(x: (areaCol2 + areaCol3) / 2, y: (areaRow3 + areaRow4) / 2)
             DispatchQueue.main.async {
                 self.drawSelectionBorder(lineRect)
+                self.showConsonantImage(named: "rowX", at: position)
             }
             changePositionFlag = 15
         }
@@ -158,15 +185,20 @@ extension ViewController {
                 if let oldRectLayer = self.rectLayer {
                     oldRectLayer.removeFromSuperlayer()
                 }
+                consonantDesignImage.image = nil
             }
             changePositionFlag = 0
         }
-        
+        //areaはカーソルが動いたらフラグを立てる(バイブレーション用にしか使われていない模様)
         let areaChangeFlag = (changePositionFlag != prevChangePositionFlag) ? 1 : 0
+        if(changePositionFlag != prevChangePositionFlag){
+            areaChangeFrame = frameNum
+        }
         
+        var printChangePositionFlag = changePositionFlag
         prevChangePositionFlag = changePositionFlag
         
-        return areaChangeFlag
+        return (areaChangeFlag, areaChangeFrame)
     }
     
     @objc func drawSelectionBorder(_ rectInfo: CGRect) {
@@ -188,25 +220,37 @@ extension ViewController {
         rectLayer = shapeLayer
     }
     
+    func showConsonantImage(named imageName: String, at position: CGPoint) {
+        let image = UIImage(named: imageName)
+            consonantDesignImage.image = image
+            consonantDesignImage.center = position
+    }
+    
     func selectionDiscernment(vowelNumber: Int) {
-        // winkLabelの出力   →今viewControllerで使われてない
+        // winkLabelの出力   →多分ここ入らない
         if (frameNum - distBrinkNum <= 6) {
             DispatchQueue.main.async {
                 self.lateFlagLabel.text = "brink"
                 self.lateFlagLabel.textColor = UIColor.green
             }
         }
-        else if (frameNum - distWinkNum <= 6) {    // これ違うくない？ 普通にframeNum = distFramenumでいんじゃね
+        //ウィンクが行われた。すなわち、「あ」行が選択された場合の処理
+        else if (frameNum - distWinkNum <= 5) {
             switch changePositionFlag {
             case 0:
                 break
             default:
                 DispatchQueue.main.async {
+                    //inputLabelは選ばれた子音から母音が入る
+                    //inputLabelにはまず「あ」行が入る
+                    //Flagは1が「あ」なので、CHARACTERリストと合わせるため-1している
                     self.inputLabel.text = CHARACTER[changePositionFlag - 1][0]
                 }
                 inputCharacter = CHARACTER[changePositionFlag - 1][0]
+                //間違った場合でも正しい場合でも1ずつ加算される(一発okでも1が出る)
                 inputCountCha += 1
-                if inputLabelFlag == 1 {
+                //inputLabelflagはwinkした際に1か2か(左目か右目か)きまる
+                if inputLabelFlag == 2 {
                     DispatchQueue.main.async {
                         self.inputLabel.textColor = UIColor.blue
                         self.questionLabel.textColor = UIColor.blue
@@ -220,7 +264,8 @@ extension ViewController {
                 }
             }
         }
-        else if (frameNum == distGlanceNum) {
+        //glanceが行われた。つまり「あ」行以外の入力
+        else if (frameNum - distGlanceNum <= 5) {
             switch changePositionFlag {
             case 0:
                 break
@@ -229,6 +274,7 @@ extension ViewController {
                     self.inputLabel.text = CHARACTER[changePositionFlag - 1][vowelNumber]
                 }
                 inputCharacter = CHARACTER[changePositionFlag - 1][vowelNumber]
+                //間違った場合でも正しい場合でも1ずつ加算される(一発okでも1が出る)
                 inputCountCha += 1
             }
         }
