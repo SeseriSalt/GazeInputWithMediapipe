@@ -169,7 +169,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         inputLabel.layer.borderWidth = 0.5
         inputLabel.text = ""
         questionLabel.layer.borderWidth = 0.5
-        questionLabel.text = "な"
+        questionLabel.text = "a"
         resultLabel.text = ""
     }
     

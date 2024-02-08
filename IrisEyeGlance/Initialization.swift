@@ -56,13 +56,13 @@ extension ViewController {
         printInputCountCha = 0
         
         firstInputFlag = 1
-        questionList = ["あ", "い", "う", "え", "お", "か", "き", "く", "け", "こ", "さ", "し", "す", "せ", "そ","削除", "た", "ち", "つ", "て", "と", "な", "に", "ぬ", "ね", "の", "は", "ひ", "ふ", "へ", "ほ", "空白", "ま", "み", "む", "め", "も", "や", "ゆ", "よ", "ら", "り", "る", "れ", "ろ", "改行", "わ", "を", "ん", "、", "。", "？", "！"]
-        //var questionList = ["あ", "い", "う", "え", "お"]
+//        questionList = ["あ", "い", "う", "え", "お", "か", "き", "く", "け", "こ", "さ", "し", "す", "せ", "そ","削除", "た", "ち", "つ", "て", "と", "な", "に", "ぬ", "ね", "の", "は", "ひ", "ふ", "へ", "ほ", "空白", "ま", "み", "む", "め", "も", "や", "ゆ", "よ", "ら", "り", "る", "れ", "ろ", "改行", "わ", "を", "ん", "、", "。", "？", "！"]
+        questionList = ["a", "b", "c", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u"]
         
-        questionCharacter = "な"
+        questionCharacter = "a"
         DispatchQueue.main.async {
             self.inputLabel.text = ""
-            self.questionLabel.text = "な"
+            self.questionLabel.text = "a"
             self.questionLabel.textColor = UIColor.black
             self.resultLabel.text = ""
         }
