@@ -29,10 +29,10 @@ extension ViewController {
     
     func eyeGlance(left: CGPoint, right: CGPoint, refDiff: CGPoint, ikichi: (max: CGFloat, min: CGFloat, areaup: CGFloat, areadown: CGFloat)) -> (glanceDist: CGFloat, directionDist: CGFloat, correctionValue: CGFloat) {
         //left, rightには左目と右目の1点差分のデータが入ってる(x, y座標が入ってる)
-        //注意！！！！英瑠は左目と右目の平均を取ってから差分を取っていたが、ヤダさんは左目と右目でそれぞれ1点差分を取ってから左目と右目の平均を取っている
+        
         // 鼻部の移動に対してかかる補正値
         var correctionValue = CGFloat(pow(0.9057236643, Double(abs(refDiff.y)) * 1000))
-        correctionValue = correctionValue > 0.8 ? correctionValue : 0.301111111111111
+
         // Eye Glance判別波形
         let glanceDist = (left.y + right.y) / 2 * 800 * correctionValue
         let directionDist = left.x * right.x * 100000
@@ -52,8 +52,6 @@ extension ViewController {
         // eye glance判別の閾値 上方向と下方向の移動で分ける
         //ikichi: (max: glanceIkichiMax, min: glanceIkichiMin, face: faceMoveIkichi).ikichidecesionでこう定義されている
         //glanceIkichiUpは目が上を向いた時(波形的には下向き)の時に使われるものと予想。だから、ikichiUPの方がikichiDownより小さい！！！
-//        let glanceIkichiUpBig: CGFloat = ikichi.minBig
-//        let glanceIkichiDownBig: CGFloat = ikichi.maxBig
         let glanceIkichiUpSmall: CGFloat = ikichi.min
         let glanceIkichiDownSmall: CGFloat = ikichi.max
         
@@ -117,9 +115,6 @@ extension ViewController {
             glanceEndFrame = 0
             areaDown = 0
         }
-        //        if (glanceDownFlag == 1 && glanceDist > glanceIkichiUpSmall && glanceDownNext < glanceDownPeak) {
-        //            glanceDownNext = glanceDist
-        //        }
         
         // 目が下を見た時(波形的には上向き)
         if (glanceUpFlag == 0 && glanceDist > glanceIkichiDownSmall) {
@@ -174,27 +169,7 @@ extension ViewController {
             glanceEndFrame = 0
             areaUp = 0
         }
-        //        if (glanceFlag == -1 && glanceDist < glanceIkichiDownSmall && glanceUpNext > glanceUpPeak) {
-        //            glanceUpNext = glanceDist
-        //        }
-        
-        // x方向決めのための値取得
-        //        if (glanceFlag == 1 || glanceFlag == -1) {
-        //            //x掛け算の最大値探し
-        //            //xの掛け算は必ず正になる(左目と右目は同時に正もしくは負になるため掛け算は必ず正)
-        //            if (firstDirect < directionDist) {
-        //                firstDirect = directionDist
-        //                //最大値更新
-        //                firstDirectIris = xPoint
-        //                //firstDirectIrisには左目xと右目xの差分値が入ってる
-        //            }
-        //        }
-        //        else if (glanceFlag == 3 || glanceFlag == -3) {
-        //            if (secondDirect < directionDist) {
-        //                secondDirect = directionDist
-        //                secondDirectIris = xPoint
-        //            }
-        //        }
+
         
         //glance判別関数
         func updateGlanceLabel(glanceDirection: Int, glanceSymbol1: Int, glanceSymbol2: Int) {

@@ -19,7 +19,7 @@ var printInputCountCha: Int = 0
 
 var firstInputFlag: Int = 1
 //var questionList = ["あ", "い", "う", "え", "お", "か", "き", "く", "け", "こ", "さ", "し", "す", "せ", "そ","削除", "た", "ち", "つ", "て", "と", "な", "に", "ぬ", "ね", "の", "は", "ひ", "ふ", "へ", "ほ", "空白", "ま", "み", "む", "め", "も", "や", "ゆ", "よ", "ら", "り", "る", "れ", "ろ", "改行", "わ", "を", "ん", "、", "。", "？", "！"]
-var questionList = ["a", "b", "c", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u"]
+var questionList = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 var questionListCount: Int = 0
 
 var questionCharacter = "a"
@@ -43,7 +43,7 @@ extension ViewController {
                 inputCountCha = 0
             }
             if questionList.isEmpty {// 全ての文字を表示し終わった場合
-                judgeRatioAll = 53.0 / Double(inputCountAll)
+                judgeRatioAll = 26.0 / Double(inputCountAll)
                 DispatchQueue.main.async {
                     self.questionLabel.text = "終わり。"
                     self.questionLabel.textColor = UIColor.green
