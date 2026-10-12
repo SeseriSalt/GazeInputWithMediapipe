@@ -26,7 +26,16 @@ quick **glance toward a screen corner** (an "Eye Glance") selects the character.
 
 ## Getting started
 
-1. Clone the repository. `sources/Iris/SYIris.framework` (the MediaPipe Iris tracker, ~80 MB) is checked in, so no extra download is needed to build.
+1. Install [Git LFS](https://git-lfs.com) before cloning. `sources/Iris/SYIris.framework/SYIris` (the MediaPipe Iris tracker, ~80 MB) is stored in LFS; without it the checkout only contains a pointer file and the linker fails with `unknown file type`.
+
+   ```sh
+   brew install git-lfs
+   git lfs install
+   git clone https://github.com/SeseriSalt/IrisEyeGlance.git
+   # for an existing clone:
+   git lfs pull
+   ```
+
 2. Open `IrisEyeGlance.xcodeproj`, select your team under *Signing & Capabilities*, choose your iPhone and run.
 3. On first launch allow camera access. Hold the phone about 30 cm from your face.
 
@@ -89,8 +98,10 @@ cd Packages/IrisEyeGlanceCore
 swift test
 ```
 
-The same suite runs in GitHub Actions (`.github/workflows/tests.yml`). It also validates the
-project configuration (Info.plist keys, privacy manifest, deployment target).
+The same suite runs in GitHub Actions (`.github/workflows/tests.yml`) together with an unsigned
+device build. The build job pulls the LFS binary and caches it, because every uncached run
+consumes about 80 MB of the LFS bandwidth quota. The tests also validate the project
+configuration (Info.plist keys, privacy manifest, deployment target).
 
 ### Building without a signing identity
 

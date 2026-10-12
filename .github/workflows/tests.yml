@@ -24,6 +24,20 @@ jobs:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
+
+      # SYIris.framework/SYIris (78 MB) is stored in Git LFS. actions/checkout only fetches
+      # the pointer file, so pull the real binary and cache it to save LFS bandwidth.
+      - name: Cache Git LFS objects
+        uses: actions/cache@v4
+        with:
+          path: .git/lfs
+          key: lfs-${{ hashFiles('.gitattributes', 'sources/Iris/SYIris.framework/SYIris') }}
+      - name: Fetch LFS binaries
+        run: |
+          git lfs install --local
+          git lfs pull
+          file sources/Iris/SYIris.framework/SYIris
+
       - name: Build for a generic iOS device
         run: |
           xcodebuild -project IrisEyeGlance.xcodeproj -scheme IrisEyeGlance \
