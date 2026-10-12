@@ -9,27 +9,57 @@ import AVFoundation
 import IrisEyeGlanceCore
 
 /// Wraps the front-camera capture session.
-/// Frame geometry (rotation, mirroring, pixel format) is driven by `CameraConfiguration`
-/// so the values can be unit tested without AVFoundation.
-class Camera: NSObject {
+///
+/// Frames are delivered on a dedicated queue so that tracking never runs on the main thread.
+/// Frame geometry (rotation, mirroring, pixel format) is driven by `CameraConfiguration`.
+final class Camera: NSObject, @unchecked Sendable {
     let configuration: CameraConfiguration
+    let session = AVCaptureSession()
 
-    lazy var session: AVCaptureSession = .init()
-    lazy var input: AVCaptureDeviceInput = try! AVCaptureDeviceInput(device: device)
-    lazy var device: AVCaptureDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)!
-    lazy var output: AVCaptureVideoDataOutput = .init()
+    /// Error raised while configuring inputs and outputs, nil when the camera is ready.
+    private(set) var configurationError: Error?
+
+    private let sessionQueue = DispatchQueue(label: "jp.lab413.IrisEyeGlance.Camera.session")
+    private let videoQueue = DispatchQueue(label: "jp.lab413.IrisEyeGlance.Camera.video", qos: .userInteractive)
+    private let output = AVCaptureVideoDataOutput()
+
+    enum CameraError: Error {
+        case frontCameraUnavailable
+        case cannotAddInput
+        case cannotAddOutput
+    }
 
     init(configuration: CameraConfiguration = .frontFacePortrait) {
         self.configuration = configuration
         super.init()
-        output.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: configuration.pixelFormat.coreVideoType]
+        do {
+            try configure()
+        } catch {
+            configurationError = error
+        }
+    }
+
+    private func configure() throws {
+        guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) else {
+            throw CameraError.frontCameraUnavailable
+        }
+        let input = try AVCaptureDeviceInput(device: device)
+
+        session.beginConfiguration()
+        defer { session.commitConfiguration() }
+
+        guard session.canAddInput(input) else { throw CameraError.cannotAddInput }
         session.addInput(input)
+
+        output.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: configuration.pixelFormat.coreVideoType]
+        output.alwaysDiscardsLateVideoFrames = true
+        guard session.canAddOutput(output) else { throw CameraError.cannotAddOutput }
         session.addOutput(output)
+
         applyConnectionSettings()
     }
 
-    /// Applies rotation and mirroring using the iOS 17 `videoRotationAngle` API
-    /// (`videoOrientation` is deprecated).
+    /// Applies rotation and mirroring using the iOS 17 `videoRotationAngle` API.
     private func applyConnectionSettings() {
         guard let connection = output.connection(with: .video) else { return }
         if connection.isVideoRotationAngleSupported(configuration.rotationAngle) {
@@ -42,15 +72,21 @@ class Camera: NSObject {
     }
 
     func setSampleBufferDelegate(_ delegate: AVCaptureVideoDataOutputSampleBufferDelegate) {
-        output.setSampleBufferDelegate(delegate, queue: .main)
+        output.setSampleBufferDelegate(delegate, queue: videoQueue)
     }
 
     func start() {
-        session.startRunning()
+        sessionQueue.async {
+            guard !self.session.isRunning else { return }
+            self.session.startRunning()
+        }
     }
 
     func stop() {
-        session.stopRunning()
+        sessionQueue.async {
+            guard self.session.isRunning else { return }
+            self.session.stopRunning()
+        }
     }
 }
 

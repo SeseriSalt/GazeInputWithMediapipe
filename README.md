@@ -11,6 +11,8 @@
 
 - Move the blue cursor on the tip of your nose.
 - After moving the cursor, look at wink or the four corners of the screen for a moment.
+- Drag the input panel to move it, double-tap it to cycle through three sizes.
+- The toolbar at the bottom offers Reset, Record (CSV to the Documents folder), Calibration, Settings and a Debug read-out. A long press anywhere also toggles the debug read-out.
 
 ### calibration, Setting
 
@@ -21,6 +23,28 @@
   - The data obtained from the automatic calibration is reflected in the manual settings "Eye Glance Waveform Threshould" and "Eye Glance Integral Value Maginification".
 - Manual Setting
   - The thresholds that affect the input can be set manually.
+
+## Project layout
+
+- `IrisEyeGlance/` — the iOS app (UIKit, built in code). `MainViewController` renders updates from `FrameProcessor`, which runs the detection pipeline off the main thread. `TrackerBridge` feeds camera frames to the `SYIris` tracker.
+- `Packages/IrisEyeGlanceCore/` — a local Swift package with all pure logic: landmark features, depth estimation, blink / wink / eye-glance detectors, the keyboard layout, calibration, CSV recording and the presentation models. It has no UIKit or AVFoundation dependency.
+- `docs/REFACTORING_PLAN.md` — the plan behind the current structure.
+
+### Running the tests
+
+`SYIris.framework` is built for arm64 devices only, so the app cannot run in the simulator. The logic is therefore tested in the package, which runs on macOS:
+
+```
+cd Packages/IrisEyeGlanceCore
+swift test
+```
+
+To compile the app without a signing identity:
+
+```
+xcodebuild -project IrisEyeGlance.xcodeproj -scheme IrisEyeGlance \
+  -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO build
+```
 
 ## Usage
 

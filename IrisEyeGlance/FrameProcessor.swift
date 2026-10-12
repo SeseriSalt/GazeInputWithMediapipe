@@ -22,6 +22,8 @@ final class FrameProcessor: @unchecked Sendable {
         var calibrationStep: Calibrator.Step
         /// Set on the frame that completes a calibration.
         var calibrationResult: CalibrationResult?
+        /// Camera frames captured so far (display only).
+        var cameraFrames: Int
     }
 
     // Camera intrinsics of the front camera used during the original experiments.
@@ -55,13 +57,18 @@ final class FrameProcessor: @unchecked Sendable {
     // MARK: Input
 
     /// Feed one frame of tracker landmarks (normalized coordinates). Safe from any thread.
-    func process(landmarks: [CGPoint]) {
-        queue.async { self.processOnQueue(landmarks) }
+    func process(landmarks: [CGPoint], cameraFrame: Int = 0) {
+        queue.async { self.processOnQueue(landmarks, cameraFrame: cameraFrame) }
     }
 
     /// Panel geometry used to map the cursor to an input region. Pass nil to disable input.
     func setPanelFrame(_ frame: InputPanelFrame?) {
         queue.async { self.panelFrame = frame }
+    }
+
+    /// Size of the view the cursor is drawn in.
+    func setScreenSize(_ size: CGSize) {
+        queue.async { self.screenSize = size }
     }
 
     func setParameters(_ parameters: DetectionParameters) {
@@ -118,7 +125,7 @@ final class FrameProcessor: @unchecked Sendable {
 
     // MARK: Processing
 
-    private func processOnQueue(_ landmarks: [CGPoint]) {
+    private func processOnQueue(_ landmarks: [CGPoint], cameraFrame: Int) {
         guard landmarks.count >= FaceFrame.landmarkCount else { return }
         frameIndex += 1
         let frame = FaceFrame(index: frameIndex, landmarks: landmarks)
@@ -178,7 +185,8 @@ final class FrameProcessor: @unchecked Sendable {
                             action: action,
                             layout: composer.layout,
                             calibrationStep: calibrator.step,
-                            calibrationResult: calibrationResult)
+                            calibrationResult: calibrationResult,
+                            cameraFrames: cameraFrame)
         guard let onUpdate else { return }
         DispatchQueue.main.async {
             onUpdate(update)

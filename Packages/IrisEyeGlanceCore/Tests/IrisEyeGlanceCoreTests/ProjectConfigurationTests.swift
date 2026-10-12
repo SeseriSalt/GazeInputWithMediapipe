@@ -56,11 +56,24 @@ struct ProjectConfigurationTests {
         #expect(plist.duplicatedKeys.isEmpty, "Duplicated: \(plist.duplicatedKeys.sorted())")
     }
 
-    @Test("Storyboard keys are defined exactly once")
+    @Test("UI is built in code: only the launch storyboard remains")
     func storyboardKeys() throws {
         let plist = try EffectiveInfoPlist()
-        #expect(plist.string("UIMainStoryboardFile") == "Main")
+        #expect(plist.string("UIMainStoryboardFile") == nil)
         #expect(plist.string("UILaunchStoryboardName") == "LaunchScreen")
+        let manifest = try #require(plist.fileKeys["UIApplicationSceneManifest"] as? [String: Any])
+        let configurations = try #require(manifest["UISceneConfigurations"] as? [String: Any])
+        let roles = try #require(configurations["UIWindowSceneSessionRoleApplication"] as? [[String: Any]])
+        #expect(roles.allSatisfy { $0["UISceneStoryboardFile"] == nil })
+        #expect(!FileManager.default.fileExists(atPath: RepositoryPaths.appSources.appendingPathComponent("Base.lproj/Main.storyboard").path))
+    }
+
+    @Test("Panel and row-hint PNG assets are no longer needed")
+    func noPanelImages() throws {
+        let assets = RepositoryPaths.appSources.appendingPathComponent("Assets.xcassets")
+        let contents = try FileManager.default.contentsOfDirectory(atPath: assets.path)
+        let leftovers = contents.filter { $0.hasPrefix("design") || $0.hasPrefix("row") || $0 == "apple.imageset" }
+        #expect(leftovers.isEmpty, "Unused image sets: \(leftovers)")
     }
 
     // MARK: Privacy manifest

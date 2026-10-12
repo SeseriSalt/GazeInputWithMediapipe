@@ -83,9 +83,13 @@ Packages/IrisEyeGlanceCore/Sources/IrisEyeGlanceCore/
 - `DebugSnapshot`: 表示用フォーマット
 
 ### 実装
-- Storyboard を廃止し、`MainViewController` を Auto Layout のコードで構築
-- `InputPanelView`（グリッドをコード描画、PNG 廃止）、`CursorOverlayView`（レイヤー再利用）、
-  `DebugOverlayView`（長押しで表示切替）、`CalibrationOverlayView`（進捗付き）
-- `SettingsViewController` を `UIStackView` で再構築、既定値リセット追加
-- カメラを専用キューに移し、`AVCaptureVideoPreviewLayer` でプレビュー
-- ハプティクス生成器を再利用、バックグラウンドでカメラ停止
+- `Main.storyboard` を削除し、`SceneDelegate` が `MainViewController` を生成。画面は Auto Layout のコードで構築
+- `InputPanelView`（`InputPanelLayoutModel` からグリッドをコード描画、PNG アセット削除）、
+  `GlanceHintView`（選択セルの4方向の文字）、`CursorOverlayView`（レイヤー1枚を再利用）、
+  `DebugOverlayView`（ツールバーの Debug ボタンまたは長押しで表示切替）、
+  `CalibrationOverlayView`（指示文・注視記号・進捗バー）、`InputStatusView`（出題・入力・ジェスチャ・正答率）
+- `SettingsViewController` を `UIStackView` で再構築し、説明文と「既定値に戻す」を追加
+- `Camera` は専用キューでフレームを配信し、`CameraPreviewView` の `AVCaptureVideoPreviewLayer` でプレビュー
+- `TrackerBridge` がカメラとトラッカーのデリゲートをメインアクターの外で受ける
+- ハプティクス生成器を再利用、`SceneDelegate` がバックグラウンドでカメラを停止・復帰
+- 主要要素に `accessibilityLabel`、ラベルは Dynamic Type 対応

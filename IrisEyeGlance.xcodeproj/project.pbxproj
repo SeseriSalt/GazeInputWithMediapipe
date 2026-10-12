@@ -9,19 +9,20 @@
 /* Begin PBXBuildFile section */
 		5B475EF7307D3BBA00212369 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5B475EF6307D3BBA00212369 /* PrivacyInfo.xcprivacy */; };
 		5B475EF9307D407500212369 /* FrameProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B475EF8307D407500212369 /* FrameProcessor.swift */; };
-		5B475EFB307D409E00212369 /* RegionHighlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B475EFA307D409E00212369 /* RegionHighlight.swift */; };
-		5B475EFD307D40B400212369 /* CalibrationFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B475EFC307D40B400212369 /* CalibrationFlow.swift */; };
-		5B9762872A1BC20800E10481 /* MouseCursor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9762862A1BC20800E10481 /* MouseCursor.swift */; };
-		5B9762892A1BC59900E10481 /* InputScreenUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9762882A1BC59900E10481 /* InputScreenUI.swift */; };
-		5B97628C2A25D32F00E10481 /* Experiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B97628B2A25D32F00E10481 /* Experiment.swift */; };
+		5B475EFF307D41D100212369 /* TrackerBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B475EFE307D41D100212369 /* TrackerBridge.swift */; };
+		5B475F07307D425800212369 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B475F06307D425800212369 /* MainViewController.swift */; };
+		5B475F09307D427100212369 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B475F08307D427100212369 /* SettingsViewController.swift */; };
+		5B475F0C307D42AB00212369 /* CameraPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B475F0B307D42AB00212369 /* CameraPreviewView.swift */; };
+		5B475F0E307D42B000212369 /* CursorOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B475F0D307D42B000212369 /* CursorOverlayView.swift */; };
+		5B475F10307D42C600212369 /* InputPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B475F0F307D42C600212369 /* InputPanelView.swift */; };
+		5B475F12307D42D200212369 /* InputStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B475F11307D42D200212369 /* InputStatusView.swift */; };
+		5B475F14307D42D700212369 /* DebugOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B475F13307D42D700212369 /* DebugOverlayView.swift */; };
+		5B475F16307D42E200212369 /* CalibrationOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B475F15307D42E200212369 /* CalibrationOverlayView.swift */; };
 		5BACC0E028F6767F00B36EBC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BACC0DF28F6767F00B36EBC /* AppDelegate.swift */; };
 		5BACC0E228F6767F00B36EBC /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BACC0E128F6767F00B36EBC /* SceneDelegate.swift */; };
-		5BACC0E428F6767F00B36EBC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BACC0E328F6767F00B36EBC /* ViewController.swift */; };
-		5BACC0E728F6767F00B36EBC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5BACC0E528F6767F00B36EBC /* Main.storyboard */; };
 		5BACC0E928F6768200B36EBC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5BACC0E828F6768200B36EBC /* Assets.xcassets */; };
 		5BACC0EC28F6768200B36EBC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5BACC0EA28F6768200B36EBC /* LaunchScreen.storyboard */; };
 		5BC0DE0000000000000000A1 /* IrisEyeGlanceCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5BC0DE0000000000000000A2 /* IrisEyeGlanceCore */; };
-		5BD7AA1E2A715D71002CFBC4 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD7AA1D2A715D71002CFBC4 /* SettingViewController.swift */; };
 		5BF9DA9729049F9500F7ED35 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF9DA9629049F9500F7ED35 /* Camera.swift */; };
 		5BF9DA9A2904A27700F7ED35 /* SYIris.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BF9DA992904A27700F7ED35 /* SYIris.framework */; };
 		5BF9DA9B2904A27700F7ED35 /* SYIris.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5BF9DA992904A27700F7ED35 /* SYIris.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -44,21 +45,22 @@
 /* Begin PBXFileReference section */
 		5B475EF6307D3BBA00212369 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		5B475EF8307D407500212369 /* FrameProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameProcessor.swift; sourceTree = "<group>"; };
-		5B475EFA307D409E00212369 /* RegionHighlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionHighlight.swift; sourceTree = "<group>"; };
-		5B475EFC307D40B400212369 /* CalibrationFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationFlow.swift; sourceTree = "<group>"; };
-		5B9762862A1BC20800E10481 /* MouseCursor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MouseCursor.swift; sourceTree = "<group>"; };
-		5B9762882A1BC59900E10481 /* InputScreenUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputScreenUI.swift; sourceTree = "<group>"; };
-		5B97628B2A25D32F00E10481 /* Experiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiment.swift; sourceTree = "<group>"; };
+		5B475EFE307D41D100212369 /* TrackerBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerBridge.swift; sourceTree = "<group>"; };
+		5B475F06307D425800212369 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		5B475F08307D427100212369 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		5B475F0B307D42AB00212369 /* CameraPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreviewView.swift; sourceTree = "<group>"; };
+		5B475F0D307D42B000212369 /* CursorOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CursorOverlayView.swift; sourceTree = "<group>"; };
+		5B475F0F307D42C600212369 /* InputPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputPanelView.swift; sourceTree = "<group>"; };
+		5B475F11307D42D200212369 /* InputStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputStatusView.swift; sourceTree = "<group>"; };
+		5B475F13307D42D700212369 /* DebugOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugOverlayView.swift; sourceTree = "<group>"; };
+		5B475F15307D42E200212369 /* CalibrationOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationOverlayView.swift; sourceTree = "<group>"; };
 		5BACC0DC28F6767F00B36EBC /* IrisEyeGlance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IrisEyeGlance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BACC0DF28F6767F00B36EBC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5BACC0E128F6767F00B36EBC /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		5BACC0E328F6767F00B36EBC /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		5BACC0E628F6767F00B36EBC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5BACC0E828F6768200B36EBC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5BACC0EB28F6768200B36EBC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5BACC0ED28F6768200B36EBC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5BC0DE0000000000000000A4 /* IrisEyeGlanceCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = IrisEyeGlanceCore; path = Packages/IrisEyeGlanceCore; sourceTree = "<group>"; };
-		5BD7AA1D2A715D71002CFBC4 /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
 		5BF9DA9629049F9500F7ED35 /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		5BF9DA992904A27700F7ED35 /* SYIris.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SYIris.framework; path = sources/Iris/SYIris.framework; sourceTree = "<group>"; };
 		5BF9DA9D2904A2BF00F7ED35 /* IrisEyeGlance-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "IrisEyeGlance-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -77,14 +79,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		5B97628A2A2573C800E10481 /* PointSelect */ = {
+		5B475F0A307D428E00212369 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				5B9762862A1BC20800E10481 /* MouseCursor.swift */,
-				5B9762882A1BC59900E10481 /* InputScreenUI.swift */,
-				5B475EFA307D409E00212369 /* RegionHighlight.swift */,
+				5B475F0B307D42AB00212369 /* CameraPreviewView.swift */,
+				5B475F0D307D42B000212369 /* CursorOverlayView.swift */,
+				5B475F0F307D42C600212369 /* InputPanelView.swift */,
+				5B475F11307D42D200212369 /* InputStatusView.swift */,
+				5B475F13307D42D700212369 /* DebugOverlayView.swift */,
+				5B475F15307D42E200212369 /* CalibrationOverlayView.swift */,
 			);
-			path = PointSelect;
+			path = UI;
 			sourceTree = "<group>";
 		};
 		5BACC0D328F6767F00B36EBC = {
@@ -111,18 +116,16 @@
 				5BACC0DF28F6767F00B36EBC /* AppDelegate.swift */,
 				5BACC0E128F6767F00B36EBC /* SceneDelegate.swift */,
 				5BF9DA9629049F9500F7ED35 /* Camera.swift */,
-				5B97628A2A2573C800E10481 /* PointSelect */,
-				5BACC0E328F6767F00B36EBC /* ViewController.swift */,
-				5B97628B2A25D32F00E10481 /* Experiment.swift */,
-				5BD7AA1D2A715D71002CFBC4 /* SettingViewController.swift */,
-				5BACC0E528F6767F00B36EBC /* Main.storyboard */,
 				5BACC0E828F6768200B36EBC /* Assets.xcassets */,
 				5BF9DA9D2904A2BF00F7ED35 /* IrisEyeGlance-Bridging-Header.h */,
 				5BACC0EA28F6768200B36EBC /* LaunchScreen.storyboard */,
 				5BACC0ED28F6768200B36EBC /* Info.plist */,
 				5B475EF6307D3BBA00212369 /* PrivacyInfo.xcprivacy */,
 				5B475EF8307D407500212369 /* FrameProcessor.swift */,
-				5B475EFC307D40B400212369 /* CalibrationFlow.swift */,
+				5B475EFE307D41D100212369 /* TrackerBridge.swift */,
+				5B475F06307D425800212369 /* MainViewController.swift */,
+				5B475F08307D427100212369 /* SettingsViewController.swift */,
+				5B475F0A307D428E00212369 /* UI */,
 			);
 			path = IrisEyeGlance;
 			sourceTree = "<group>";
@@ -203,7 +206,6 @@
 				5BACC0EC28F6768200B36EBC /* LaunchScreen.storyboard in Resources */,
 				5BACC0E928F6768200B36EBC /* Assets.xcassets in Resources */,
 				5B475EF7307D3BBA00212369 /* PrivacyInfo.xcprivacy in Resources */,
-				5BACC0E728F6767F00B36EBC /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -214,31 +216,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B475F0C307D42AB00212369 /* CameraPreviewView.swift in Sources */,
+				5B475F14307D42D700212369 /* DebugOverlayView.swift in Sources */,
 				5BF9DA9729049F9500F7ED35 /* Camera.swift in Sources */,
-				5BACC0E428F6767F00B36EBC /* ViewController.swift in Sources */,
+				5B475F07307D425800212369 /* MainViewController.swift in Sources */,
 				5BACC0E028F6767F00B36EBC /* AppDelegate.swift in Sources */,
-				5B475EFB307D409E00212369 /* RegionHighlight.swift in Sources */,
-				5B97628C2A25D32F00E10481 /* Experiment.swift in Sources */,
+				5B475F10307D42C600212369 /* InputPanelView.swift in Sources */,
+				5B475EFF307D41D100212369 /* TrackerBridge.swift in Sources */,
 				5B475EF9307D407500212369 /* FrameProcessor.swift in Sources */,
-				5B475EFD307D40B400212369 /* CalibrationFlow.swift in Sources */,
-				5B9762872A1BC20800E10481 /* MouseCursor.swift in Sources */,
+				5B475F09307D427100212369 /* SettingsViewController.swift in Sources */,
+				5B475F0E307D42B000212369 /* CursorOverlayView.swift in Sources */,
+				5B475F12307D42D200212369 /* InputStatusView.swift in Sources */,
 				5BACC0E228F6767F00B36EBC /* SceneDelegate.swift in Sources */,
-				5B9762892A1BC59900E10481 /* InputScreenUI.swift in Sources */,
-				5BD7AA1E2A715D71002CFBC4 /* SettingViewController.swift in Sources */,
+				5B475F16307D42E200212369 /* CalibrationOverlayView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		5BACC0E528F6767F00B36EBC /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				5BACC0E628F6767F00B36EBC /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		5BACC0EA28F6768200B36EBC /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -387,7 +383,6 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "視線とまばたきで文字を入力するため、前面カメラで顔と目の動きを追跡します。映像は端末外に送信されません。";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UIRequiredDeviceCapabilities = "arm64 front-facing-camera";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -433,7 +428,6 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "視線とまばたきで文字を入力するため、前面カメラで顔と目の動きを追跡します。映像は端末外に送信されません。";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UIRequiredDeviceCapabilities = "arm64 front-facing-camera";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
