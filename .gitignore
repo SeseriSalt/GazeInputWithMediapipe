@@ -92,3 +92,18 @@ iOSInjectionProject/
 .DS_Store
 IrisEyeGlance/.DS_Store
 
+
+# Merge leftovers and editor backups
+*.orig
+*.rej
+*_BACKUP_*.storyboard
+*_BASE_*.storyboard
+*_LOCAL_*.storyboard
+*_REMOTE_*.storyboard
+
+# Swift Package Manager (local packages)
+Packages/*/.build/
+.swiftpm/
+
+# macOS
+**/.DS_Store
