@@ -83,6 +83,11 @@ final class FrameProcessor: @unchecked Sendable {
         queue.sync { composer.layout }
     }
 
+    /// Switches the panel layout (also resets the pending case toggle).
+    func setLayout(_ layout: KeyboardLayout) {
+        queue.async { self.composer.setLayout(layout) }
+    }
+
     /// Clears all detector state, the frame counter and the pending text state.
     func reset() {
         queue.async {

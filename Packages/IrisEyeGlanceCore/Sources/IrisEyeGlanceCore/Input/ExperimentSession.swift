@@ -9,9 +9,57 @@ public struct ExperimentSession: Sendable {
         case finished(accuracy: Double)
     }
 
+    /// Which characters are presented. Each set matches one keyboard layout so that
+    /// every question can actually be typed.
+    public enum QuestionSet: String, CaseIterable, Sendable, Equatable {
+        case japanese
+        case alphabet
+
+        public init(layout: KeyboardLayout) {
+            self = layout.isAlphabet ? .alphabet : .japanese
+        }
+
+        public var layout: KeyboardLayout {
+            switch self {
+            case .japanese: return .japanese
+            case .alphabet: return .alphabetLower
+            }
+        }
+
+        public var firstQuestion: String {
+            questions[0]
+        }
+
+        public var questions: [String] {
+            switch self {
+            case .japanese: return ExperimentSession.japaneseQuestions
+            case .alphabet: return ExperimentSession.alphabetQuestions
+            }
+        }
+    }
+
     public static let alphabetQuestions: [String] = (UnicodeScalar("a").value...UnicodeScalar("z").value)
         .compactMap { UnicodeScalar($0).map { String(Character($0)) } }
 
+    /// Gojūon table in panel order including the special keys, as used in the original experiment.
+    public static let japaneseQuestions: [String] = [
+        "あ", "い", "う", "え", "お",
+        "か", "き", "く", "け", "こ",
+        "さ", "し", "す", "せ", "そ",
+        KeyboardLayout.deleteLabel,
+        "た", "ち", "つ", "て", "と",
+        "な", "に", "ぬ", "ね", "の",
+        "は", "ひ", "ふ", "へ", "ほ",
+        KeyboardLayout.spaceLabel,
+        "ま", "み", "む", "め", "も",
+        "や", "ゆ", "よ",
+        "ら", "り", "る", "れ", "ろ",
+        KeyboardLayout.newlineLabel,
+        "わ", "を", "ん",
+        "、", "。", "？", "！",
+    ]
+
+    public let questionSet: QuestionSet?
     public private(set) var remainingQuestions: [String]
     public private(set) var currentQuestion: String
     /// Inputs made since the warm-up answer, over all questions.
@@ -31,6 +79,7 @@ public struct ExperimentSession: Sendable {
     private var lastAnswerTime: Date?
 
     public init(questions: [String] = alphabetQuestions, firstQuestion: String = "a", randomize: Bool = true) {
+        questionSet = nil
         initialQuestions = questions
         self.firstQuestion = firstQuestion
         self.randomize = randomize
@@ -38,7 +87,14 @@ public struct ExperimentSession: Sendable {
         currentQuestion = firstQuestion
     }
 
-    public var isFinished: Bool { remainingQuestions.isEmpty && !isFirstAnswer && answeredCount > 0 && currentQuestion.isEmpty }
+    public init(questionSet: QuestionSet, randomize: Bool = true) {
+        self.questionSet = questionSet
+        initialQuestions = questionSet.questions
+        firstQuestion = questionSet.firstQuestion
+        self.randomize = randomize
+        remainingQuestions = questionSet.questions
+        currentQuestion = questionSet.firstQuestion
+    }
 
     /// Call whenever the user enters a character.
     public mutating func recordAttempt() {
@@ -75,6 +131,10 @@ public struct ExperimentSession: Sendable {
     }
 
     public mutating func reset() {
-        self = ExperimentSession(questions: initialQuestions, firstQuestion: firstQuestion, randomize: randomize)
+        if let questionSet {
+            self = ExperimentSession(questionSet: questionSet, randomize: randomize)
+        } else {
+            self = ExperimentSession(questions: initialQuestions, firstQuestion: firstQuestion, randomize: randomize)
+        }
     }
 }

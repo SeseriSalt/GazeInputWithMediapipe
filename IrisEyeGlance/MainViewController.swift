@@ -18,11 +18,14 @@ final class MainViewController: UIViewController {
     private let processor = FrameProcessor(parameters: DetectionParameters(userDefaults: .standard),
                                            screenSize: CGSize(width: 390, height: 844))
     private var trackerBridge: TrackerBridge?
-    private var experiment = ExperimentSession()
+    private var experiment = ExperimentSession(questionSet: ExperimentSession.QuestionSet(layout: KeyboardLayout.preferred(from: .standard)))
     private var isRecording = false
     private var lastEventFrame = 0
     private var hasPlacedPanel = false
+    private var lastHapticTime: TimeInterval = 0
     private static let feedbackFrames = 4
+    /// Minimum interval between selection haptics so cursor jitter on a grid line does not buzz.
+    private static let hapticInterval: TimeInterval = 0.12
 
     // MARK: Views
 
@@ -51,6 +54,9 @@ final class MainViewController: UIViewController {
         buildToolbar()
         installGestures()
 
+        let layout = KeyboardLayout.preferred(from: .standard)
+        panelView.layout = layout
+        processor.setLayout(layout)
         statusView.setQuestion(experiment.currentQuestion)
         statusView.pendingInput = ""
         statusView.setResult("")
@@ -153,6 +159,26 @@ final class MainViewController: UIViewController {
     // MARK: Camera
 
     private func startCamera() {
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .authorized:
+            break
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { granted in
+                DispatchQueue.main.async {
+                    if granted {
+                        self.startCamera()
+                    } else {
+                        self.presentCameraDeniedAlert()
+                    }
+                }
+            }
+            return
+        case .denied, .restricted:
+            presentCameraDeniedAlert()
+            return
+        @unknown default:
+            break
+        }
         if let error = camera.configurationError {
             presentAlert(title: "カメラを使用できません", message: String(describing: error))
             return
@@ -185,7 +211,12 @@ final class MainViewController: UIViewController {
     private func apply(_ update: FrameProcessor.Update) {
         cursorView.update(point: update.cursorPoint)
         if update.regionChanged {
-            feedbackGenerator.selectionChanged()
+            let now = CACurrentMediaTime()
+            if now - lastHapticTime > MainViewController.hapticInterval {
+                lastHapticTime = now
+                feedbackGenerator.selectionChanged()
+                feedbackGenerator.prepare()
+            }
         }
         panelView.setHighlightedRegion(update.region)
         panelView.layout = update.layout
@@ -224,10 +255,24 @@ final class MainViewController: UIViewController {
                 showExperimentOutcome(outcome)
             }
         case .switchLayout(let layout):
-            panelView.layout = layout
+            applyLayout(layout)
         case .toggleCase(let upper):
             statusView.pendingInput = upper ? statusView.pendingInput?.uppercased() : statusView.pendingInput?.lowercased()
         }
+    }
+
+    /// Switches the panel, persists the choice and restarts the experiment with the
+    /// question set that can be typed on that panel.
+    private func applyLayout(_ layout: KeyboardLayout) {
+        panelView.layout = layout
+        layout.savePreference(to: .standard)
+        let questionSet = ExperimentSession.QuestionSet(layout: layout)
+        guard experiment.questionSet != questionSet else { return }
+        experiment = ExperimentSession(questionSet: questionSet)
+        statusView.setQuestion(experiment.currentQuestion)
+        statusView.pendingInput = ""
+        statusView.setResult("")
+        statusView.setInputColor(.label)
     }
 
     private func showExperimentOutcome(_ outcome: ExperimentSession.Outcome) {
@@ -312,12 +357,15 @@ final class MainViewController: UIViewController {
     }
 
     @objc private func settingsTapped() {
-        camera.stop()
-        let settings = SettingsViewController(parameters: processor.parameters) { [weak self] parameters in
+        // The camera keeps running: stopping it only produced capture-session restarts.
+        let settings = SettingsViewController(parameters: processor.parameters, layout: panelView.layout) { [weak self] parameters, layout in
             guard let self else { return }
             processor.setParameters(parameters)
             processor.reset()
-            camera.start()
+            if layout != panelView.layout {
+                processor.setLayout(layout)
+                applyLayout(layout)
+            }
         }
         let navigation = UINavigationController(rootViewController: settings)
         navigation.modalPresentationStyle = .formSheet
@@ -357,6 +405,19 @@ final class MainViewController: UIViewController {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyyMMdd_HHmmss"
         return formatter.string(from: Date())
+    }
+
+    private func presentCameraDeniedAlert() {
+        let alert = UIAlertController(title: "カメラへのアクセスが必要です",
+                                      message: "視線とまばたきで入力するため、設定アプリでカメラを許可してください。",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "設定を開く", style: .default) { _ in
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(url)
+            }
+        })
+        alert.addAction(UIAlertAction(title: "閉じる", style: .cancel))
+        present(alert, animated: true)
     }
 
     private func presentAlert(title: String, message: String) {

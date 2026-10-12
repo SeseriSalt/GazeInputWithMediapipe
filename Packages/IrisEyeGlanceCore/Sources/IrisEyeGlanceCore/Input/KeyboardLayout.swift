@@ -2,10 +2,27 @@ import Foundation
 
 /// Character tables for the 4x4 input panel. Each of the 15 regions holds five characters,
 /// indexed by the vowel number: 0 = wink, 1...4 = glance direction.
-public enum KeyboardLayout: Sendable, Equatable, CaseIterable {
+public enum KeyboardLayout: String, Sendable, Equatable, CaseIterable {
     case japanese
     case alphabetLower
     case alphabetUpper
+
+    /// UserDefaults key for the layout the app starts with.
+    public static let preferenceKey = "keyboardLayout"
+
+    /// Layout saved by `savePreference(to:)`, Japanese when nothing is saved.
+    public static func preferred(from userDefaults: UserDefaults) -> KeyboardLayout {
+        guard let raw = userDefaults.string(forKey: preferenceKey), let layout = KeyboardLayout(rawValue: raw) else {
+            return .japanese
+        }
+        return layout
+    }
+
+    /// Persists the layout. The case variant is transient, so upper case is stored as lower case.
+    public func savePreference(to userDefaults: UserDefaults) {
+        let stored: KeyboardLayout = isAlphabet ? .alphabetLower : .japanese
+        userDefaults.set(stored.rawValue, forKey: KeyboardLayout.preferenceKey)
+    }
 
     public static let regionCount = 15
     public static let vowelCount = 5
