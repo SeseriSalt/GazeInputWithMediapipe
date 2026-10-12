@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5B475EF7307D3BBA00212369 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5B475EF6307D3BBA00212369 /* PrivacyInfo.xcprivacy */; };
 		5B827BA0290C511C0091E06C /* Depth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B827B9F290C511C0091E06C /* Depth.swift */; };
 		5B8F75602B2F71290087E5A5 /* EyeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B8F755F2B2F71290087E5A5 /* EyeData.swift */; };
 		5B9589252A764BFA00509329 /* Threshold.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9589242A764BFA00509329 /* Threshold.swift */; };
@@ -20,6 +21,7 @@
 		5BACC0E728F6767F00B36EBC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5BACC0E528F6767F00B36EBC /* Main.storyboard */; };
 		5BACC0E928F6768200B36EBC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5BACC0E828F6768200B36EBC /* Assets.xcassets */; };
 		5BACC0EC28F6768200B36EBC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5BACC0EA28F6768200B36EBC /* LaunchScreen.storyboard */; };
+		5BC0DE0000000000000000A1 /* IrisEyeGlanceCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5BC0DE0000000000000000A2 /* IrisEyeGlanceCore */; };
 		5BC6F76E2A6EB1FE002CDF1F /* EyeGlanceDiscrimination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC6F76D2A6EB1FE002CDF1F /* EyeGlanceDiscrimination.swift */; };
 		5BC6F7702A6ECC73002CDF1F /* NormalizedLandmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC6F76F2A6ECC73002CDF1F /* NormalizedLandmark.swift */; };
 		5BD7A8CC2B262A6300A757E8 /* LowPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD7A8CB2B262A6300A757E8 /* LowPass.swift */; };
@@ -48,6 +50,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5B475EF6307D3BBA00212369 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		5B827B9F290C511C0091E06C /* Depth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Depth.swift; sourceTree = "<group>"; };
 		5B8F755F2B2F71290087E5A5 /* EyeData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EyeData.swift; sourceTree = "<group>"; };
 		5B9589242A764BFA00509329 /* Threshold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Threshold.swift; sourceTree = "<group>"; };
@@ -63,6 +66,7 @@
 		5BACC0E828F6768200B36EBC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5BACC0EB28F6768200B36EBC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5BACC0ED28F6768200B36EBC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5BC0DE0000000000000000A4 /* IrisEyeGlanceCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = IrisEyeGlanceCore; path = Packages/IrisEyeGlanceCore; sourceTree = "<group>"; };
 		5BC6F76D2A6EB1FE002CDF1F /* EyeGlanceDiscrimination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EyeGlanceDiscrimination.swift; sourceTree = "<group>"; };
 		5BC6F76F2A6ECC73002CDF1F /* NormalizedLandmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalizedLandmark.swift; sourceTree = "<group>"; };
 		5BD7A8CB2B262A6300A757E8 /* LowPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LowPass.swift; sourceTree = "<group>"; };
@@ -82,6 +86,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BF9DA9A2904A27700F7ED35 /* SYIris.framework in Frameworks */,
+				5BC0DE0000000000000000A1 /* IrisEyeGlanceCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,6 +106,7 @@
 		5BACC0D328F6767F00B36EBC = {
 			isa = PBXGroup;
 			children = (
+				5BC0DE0000000000000000A4 /* IrisEyeGlanceCore */,
 				5BACC0DE28F6767F00B36EBC /* IrisEyeGlance */,
 				5BACC0DD28F6767F00B36EBC /* Products */,
 				5BF9DA982904A27600F7ED35 /* Frameworks */,
@@ -137,6 +143,7 @@
 				5BF9DA9D2904A2BF00F7ED35 /* IrisEyeGlance-Bridging-Header.h */,
 				5BACC0EA28F6768200B36EBC /* LaunchScreen.storyboard */,
 				5BACC0ED28F6768200B36EBC /* Info.plist */,
+				5B475EF6307D3BBA00212369 /* PrivacyInfo.xcprivacy */,
 			);
 			path = IrisEyeGlance;
 			sourceTree = "<group>";
@@ -177,6 +184,9 @@
 			dependencies = (
 			);
 			name = IrisEyeGlance;
+			packageProductDependencies = (
+				5BC0DE0000000000000000A2 /* IrisEyeGlanceCore */,
+			);
 			productName = IrisEyeGlance;
 			productReference = 5BACC0DC28F6767F00B36EBC /* IrisEyeGlance.app */;
 			productType = "com.apple.product-type.application";
@@ -205,6 +215,9 @@
 				Base,
 			);
 			mainGroup = 5BACC0D328F6767F00B36EBC;
+			packageReferences = (
+				5BC0DE0000000000000000A3 /* XCLocalSwiftPackageReference "Packages/IrisEyeGlanceCore" */,
+			);
 			productRefGroup = 5BACC0DD28F6767F00B36EBC /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -221,6 +234,7 @@
 			files = (
 				5BACC0EC28F6768200B36EBC /* LaunchScreen.storyboard in Resources */,
 				5BACC0E928F6768200B36EBC /* Assets.xcassets in Resources */,
+				5B475EF7307D3BBA00212369 /* PrivacyInfo.xcprivacy in Resources */,
 				5BACC0E728F6767F00B36EBC /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -326,7 +340,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -380,7 +394,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -408,12 +422,15 @@
 					"$(PROJECT_DIR)/sources/Iris",
 				);
 				INFOPLIST_FILE = IrisEyeGlance/Info.plist;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "視線とまばたきで文字を入力するため、前面カメラで顔と目の動きを追跡します。映像は端末外に送信されません。";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = "arm64 front-facing-camera";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -427,8 +444,9 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "IrisEyeGlance/IrisEyeGlance-Bridging-Header.h";
+				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -450,12 +468,15 @@
 					"$(PROJECT_DIR)/sources/Iris",
 				);
 				INFOPLIST_FILE = IrisEyeGlance/Info.plist;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "視線とまばたきで文字を入力するため、前面カメラで顔と目の動きを追跡します。映像は端末外に送信されません。";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = "arm64 front-facing-camera";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -468,8 +489,9 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "IrisEyeGlance/IrisEyeGlance-Bridging-Header.h";
+				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -495,6 +517,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		5BC0DE0000000000000000A3 /* XCLocalSwiftPackageReference "Packages/IrisEyeGlanceCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/IrisEyeGlanceCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5BC0DE0000000000000000A2 /* IrisEyeGlanceCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = IrisEyeGlanceCore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 5BACC0D428F6767F00B36EBC /* Project object */;
 }
